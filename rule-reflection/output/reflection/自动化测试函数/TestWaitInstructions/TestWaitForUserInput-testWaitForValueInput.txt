@@ -1,0 +1,58 @@
+##功能##
+该函数用于创建一个对话框，等待测试员输入数值，常用于测试过程中需要人工干预或确认的场景。对话框会显示指定的文本内容，并在设定的超时时间后自动关闭，或者等待用户点击OK按钮关闭。
+
+##vba规范##
+函数名：testWaitForValueInput  
+参数：  
+- text (str): 对话框上显示的文本内容  
+- timeout (int): 超时时间（毫秒），0表示无限等待  
+返回值：  
+- res (int): 0（超时关闭）、1（点击OK关闭）、-1（错误）  
+
+##capl规范##
+CAPL中没有完全对应的内置函数，但可以使用`TestWaitForUserInput`模拟类似功能。  
+参数：  
+- text (char[]): 对话框上显示的文本内容  
+- timeout (int): 超时时间（毫秒），0表示无限等待  
+返回值：  
+- int: 0（超时关闭）、1（点击OK关闭）、-1（错误）  
+
+示例1：  
+```capl
+int result;
+result = TestWaitForUserInput("Please enter a value", 5000);
+write("Result: %d", result);
+```
+
+示例2：  
+```capl
+if (TestWaitForUserInput("Confirm test step", 0) == 1) {
+  write("User confirmed");
+}
+```
+
+##capl名##
+TestWaitForUserInput
+
+##转换须知##
+1. CAPL的`TestWaitForUserInput`与VBA的`testWaitForValueInput`功能相似，但参数和返回值类型需保持一致。  
+2. CAPL中字符串使用`char[]`，而VBA使用`str`。  
+3. 超时逻辑和返回值含义在两者中完全一致。  
+4. 错误处理需在调用后检查返回值是否为-1。  
+
+##转换示例##
+1. CAPL原始代码：  
+```capl
+int res = TestWaitForUserInput("Input required", 3000);
+```
+
+2. 转换后的VBA代码：  
+```vba
+Dim res As Integer
+res = testWaitForValueInput("Input required", 3000)
+```
+
+3. 关键转换说明：  
+- 函数名直接映射（注意大小写差异）  
+- 参数类型和顺序保持一致  
+- 返回值类型和含义相同

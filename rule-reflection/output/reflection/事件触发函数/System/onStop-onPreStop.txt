@@ -1,0 +1,55 @@
+##功能##
+onPreStop函数在工程停止运行前触发，用于执行停止前的清理或日志记录操作。常用于保存数据、关闭连接或输出停止信息等场景。
+
+##vba规范##
+函数定义：使用@onPreStop装饰器声明
+函数名：自定义（需唯一）
+参数：无
+返回值：无
+内置函数：writeInfo()用于控制台输出
+
+##capl规范##
+CAPL中使用onStop预定义事件处理程序：
+1. 无参数
+2. 无返回值
+3. 通过on stop块定义
+4. 只能定义一个处理程序
+
+示例1：
+on stop
+{
+    write("工程正在停止！");
+}
+
+示例2：
+on stop
+{
+    closeAllConnections();
+    write("所有连接已关闭");
+}
+
+##capl名##
+onStop
+
+##转换须知##
+1. CAPL只能定义一个onStop处理程序，而VBA允许多个
+2. CAPL使用write()而非writeInfo()输出信息
+3. CAPL不需要装饰器声明
+4. 功能触发时机相同（停止前）
+
+##转换示例##
+1. CAPL原始代码：
+on stop
+{
+    write("Measurement stopped");
+}
+
+2. 转换后的VBA代码：
+@onPreStop
+def stopMessage():
+    writeInfo("Measurement stopped")
+
+3. 关键转换：
+- 将on stop块改为@onPreStop装饰函数
+- write()改为writeInfo()
+- 需要自定义唯一函数名

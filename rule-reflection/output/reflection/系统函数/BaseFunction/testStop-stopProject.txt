@@ -1,0 +1,53 @@
+##功能##
+该函数用于立即停止当前正在运行的工程。在实际应用中，常用于紧急停止或异常处理场景，需要立即终止程序执行时调用。
+
+##vba规范##
+函数名：stopProject
+参数：无
+返回值：无
+函数体：直接调用stopProject()即可停止当前工程
+内置函数：无
+调用方式：直接调用
+
+##capl规范##
+函数名：testStop
+参数：无
+返回值：无
+功能：立即停止当前测试执行
+
+示例1：
+// 紧急停止测试
+testStop();
+
+示例2：
+// 条件满足时停止测试
+if(errorCount > 10) {
+    testStop();
+}
+
+##capl名##
+testStop
+
+##转换须知##
+1. CAPL的testStop函数仅停止当前测试用例，而VBA的stopProject会停止整个工程
+2. 两者都不需要参数且无返回值
+3. CAPL中通常用于测试用例控制，VBA中用于工程控制
+4. 在CAPL中停止后可能触发其他测试用例，而VBA中会完全终止
+
+##转换示例##
+1. CAPL原始代码：
+// 检测到严重错误时停止测试
+if(criticalError == 1) {
+    testStop();
+}
+
+2. 转换后的VBA代码：
+' 检测到严重错误时停止工程
+If criticalError = 1 Then
+    stopProject
+End If
+
+3. 关键转换说明：
+- 将testStop()替换为stopProject
+- 条件语句从C风格改为VBA风格
+- 保持相同的逻辑结构和触发条件

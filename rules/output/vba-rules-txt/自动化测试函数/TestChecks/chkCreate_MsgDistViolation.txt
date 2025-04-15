@@ -1,0 +1,54 @@
+1. 函数名  
+chkCreate_MsgDistViolation  
+
+2. 函数描述  
+用于检测指定一条报文（参考报文）发送后，收到另一条报文（观测报文）的间隔时间是否在期望范围内。  
+
+3. 函数体  
+所有检测函数都有对应的`chkStart_xxxx()`和`chkCreate_xxxx()`。  
+`chkCreate_xxxx()`只创建检测对象但不开始检测，需要调用`chkControl_Start`；  
+`chkStart_xxxx()`创建检测对象同时直接开始检测。  
+
+4. 返回值  
+| 名称 | 类型 | 描述 |  
+|------|------|------|  
+| res  | int  | 代表创建的对象，-1代表创建失败 |  
+
+5. 参数  
+| 名称          | 类型                                      | 描述                     |  
+|---------------|------------------------------------------|--------------------------|  
+| refmessage    | CANDBCMessage, str, int, LINDBCMessage, CANMessage, LINMsg | 参考的报文对象           |  
+| obsmessage    | CANDBCMessage, str, int, LINDBCMessage, CANMessage, LINMsg | 获取的报文对象           |  
+| netWork       | Network                                  | 网段对象                 |  
+| aMinDistance  | int                                      | 最小间隔（单位：毫秒）   |  
+| aMaxDistance  | int                                      | 最大间隔（单位：毫秒）   |  
+
+6. 内置函数  
+| 函数名称               | 函数描述                                   |  
+|------------------------|--------------------------------------------|  
+| chkControl_Start       | 启动检测对象                               |  
+| testAddCondition       | 将统计信息加入自动化测试报告               |  
+| testWaitForTimeout     | 等待指定时间（单位：毫秒）                 |  
+| testRemoveCondition    | 从自动化测试报告中移除统计信息             |  
+
+7. 示例  
+**示例功能**：检测`ReferenceMsg`报文发出后，如果在90ms内检测到`MsgToObserve`，则不计入统计；如果在90-110ms内检测到，则视为合法；若超过110ms，视为非法。  
+
+**示例代码**：  
+```vba  
+checkId = chkStart_MsgDistViolation(ReferenceMsg, MsgToObserve, 90, 110)  
+testAddCondition(checkId)  
+testWaitForTimeout(1000)  
+testRemoveCondition(checkId)  
+```  
+
+**代码注释**：  
+- `chkStart_MsgDistViolation`：创建并启动检测对象，参数分别为参考报文、观测报文、最小间隔（90ms）、最大间隔（110ms）。  
+- `testAddCondition`：将检测结果添加到测试报告中。  
+- `testWaitForTimeout`：等待1000ms以收集统计数据。  
+- `testRemoveCondition`：移除检测条件，结束统计。  
+
+8. 其他相关说明  
+- 该函数属于自动化测试函数，需结合`testAddCondition`和`testRemoveCondition`使用以生成测试报告。  
+- 间隔时间单位为毫秒（ms），需根据实际需求设置合理的`aMinDistance`和`aMaxDistance`。  
+- 若仅创建检测对象而不启动，需调用`chkCreate_MsgDistViolation`后手动执行`chkControl_Start`。

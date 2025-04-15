@@ -1,0 +1,55 @@
+##功能##
+将字符串或数字转换为整型数值，常用于数据格式转换和数值处理场景，如从用户输入或文本文件中读取数值数据。
+
+##vba规范##
+函数名：int
+参数：parm（String类型），需要转换为整型的字符串或数字
+返回值：num（int类型），转换后的整型数值
+内置函数：无
+注意事项：如果字符串无法转换为整型会报错
+
+##capl规范##
+函数名：strToInt
+参数：str（char[]类型），需要转换的字符串
+返回值：long类型，转换后的整型数值
+示例1：
+```
+char str[] = "500";
+long num = strToInt(str);
+write("转换结果: %d", num);  // 输出：转换结果: 500
+```
+示例2：
+```
+char str[] = "-123";
+long num = strToInt(str);
+write("转换结果: %d", num);  // 输出：转换结果: -123
+```
+
+##capl名##
+strToInt
+
+##转换须知##
+1. CAPL的strToInt只能处理字符串参数，而VBA的int还可以处理数字参数
+2. CAPL返回long类型，VBA返回int类型
+3. CAPL在转换失败时会返回0，而VBA会报错
+4. 对于非数字字符串，需要在CAPL中额外添加校验逻辑
+
+##转换示例##
+1. CAPL原始代码：
+```
+char input[] = "1024";
+long result = strToInt(input);
+```
+
+2. 转换后的VBA代码：
+```
+Dim input As String
+input = "1024"
+Dim result As Integer
+result = CInt(input)
+```
+
+3. 关键转换说明：
+- 将CAPL的char[]类型改为VBA的String类型
+- 使用VBA的CInt函数替代CAPL的strToInt
+- 注意VBA的Integer类型范围比CAPL的long小

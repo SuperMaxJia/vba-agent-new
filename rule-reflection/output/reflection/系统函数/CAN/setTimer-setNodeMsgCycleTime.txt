@@ -1,0 +1,63 @@
+##功能##
+该函数用于为指定节点(Node)的报文设置新的发送周期(cycletime)，可以通过报文对象(message)或报文ID(id)来指定目标报文。主要用于CAN通信中动态调整报文发送频率的场景。
+
+##vba规范##
+函数定义：
+setNodeMsgCycleTime(Node As ECUNode, message As CANDBCMessage, cycletime As Integer) As Integer
+setNodeMsgCycleTime(Node As ECUNode, id As Variant, cycletime As Integer) As Integer
+
+参数：
+- Node: ECUNode类型，表示目标节点
+- message: CANDBCMessage类型，报文对象
+- id: Variant类型，可以是整数(标准帧)或字符串(扩展帧)
+- cycletime: Integer类型，新的发送周期(毫秒)
+
+返回值：
+Integer类型，0表示成功，-1表示失败
+
+##capl规范##
+函数定义：
+setTimer(message, cycletime)
+
+参数：
+- message: 报文变量名或报文ID
+- cycletime: 发送周期(毫秒)
+
+返回值：
+无
+
+示例1：
+// 通过报文变量设置周期
+message MyMsg;
+setTimer(MyMsg, 100);  // 设置100ms发送周期
+
+示例2：
+// 通过报文ID设置周期
+setTimer(0x123, 200);  // 设置ID为0x123的报文200ms发送周期
+
+##capl名##
+setTimer
+
+##转换须知##
+1. CAPL使用setTimer函数直接操作报文，而VBA需要通过节点对象
+2. CAPL没有返回值，VBA需要检查返回值判断是否成功
+3. CAPL可以直接使用报文ID，VBA需要区分标准帧和扩展帧
+4. CAPL不需要指定节点，VBA必须指定节点参数
+
+##转换示例##
+CAPL原始代码：
+message EngineMsg = {id=0x100};
+setTimer(EngineMsg, 50);
+
+转换后的VBA代码：
+Dim result As Integer
+result = setNodeMsgCycleTime(EngineNode, EngineMsg, 50)
+If result <> 0 Then
+    MsgBox "设置周期失败"
+End If
+
+关键转换步骤：
+1. 将CAPL的message声明转换为VBA的报文对象
+2. 添加节点参数(EngineNode)
+3. 添加返回值检查逻辑
+4. 保持相同的周期参数(50ms)

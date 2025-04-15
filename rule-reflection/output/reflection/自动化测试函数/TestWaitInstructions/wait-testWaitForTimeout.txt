@@ -1,0 +1,39 @@
+##功能##
+该函数用于在程序中暂停执行，直到指定的超时时间到期。常用于需要延迟或等待的场景，如等待硬件响应、定时触发事件等。
+
+##vba规范##
+函数名：testWaitForTimeout
+参数：timeout（int类型），表示超时时间（毫秒）
+返回值：无
+功能：使程序暂停执行指定的毫秒数
+
+##capl规范##
+函数名：wait
+参数：timeout（long类型），表示超时时间（毫秒）
+返回值：无
+示例1：
+wait(5000);  // 等待5秒
+示例2：
+long delay = 3000;
+wait(delay);  // 等待3秒
+
+##capl名##
+wait
+
+##转换须知##
+1. 参数类型：VBA使用int，CAPL使用long，但实际使用中通常可以兼容
+2. 函数名不同：VBA为testWaitForTimeout，CAPL为wait
+3. 功能完全相同，都是阻塞式等待
+4. 时间单位都是毫秒
+
+##转换示例##
+1. CAPL原始代码：
+wait(2000);  // 等待2秒
+
+2. 转换后的VBA代码：
+testWaitForTimeout(2000)  ' 等待2秒
+
+3. 关键转换说明：
+- 将wait函数名改为testWaitForTimeout
+- 参数值和功能保持不变
+- 注释风格从C风格改为VBA风格

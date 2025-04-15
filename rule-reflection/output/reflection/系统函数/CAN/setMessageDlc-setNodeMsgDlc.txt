@@ -1,0 +1,64 @@
+##功能##
+该函数用于为CAN报文设置新的数据长度代码(DLC)，可以基于报文对象或报文ID进行操作。主要用于在CAN通信测试中动态调整报文长度。
+
+##vba规范##
+函数定义：
+setNodeMsgDlc(Node, message, dlc)
+setNodeMsgDlc(Node, id, dlc)
+
+参数：
+- Node: ECUNode类型，表示目标节点
+- message: CANDBCMessage类型，表示报文对象
+- id: 整数或字符串类型，表示报文ID(标准帧用数字，扩展帧用字符串)
+- dlc: 整数类型，表示新的数据长度代码
+
+返回值：
+- 整数类型：0表示成功，-1表示失败
+
+##capl规范##
+函数定义：
+setMessageDlc(message, dlc)
+setMessageDlc(id, dlc)
+
+参数：
+- message: message类型，表示CAN报文对象
+- id: 整数或字符串类型，表示报文ID
+- dlc: 整数类型，表示新的数据长度代码(0-8)
+
+返回值：
+- 整数类型：0表示成功，-1表示失败
+
+示例1：
+message msg;
+int result = setMessageDlc(msg, 8);  // 设置报文DLC为8
+
+示例2：
+int result = setMessageDlc(0x100, 4);  // 设置ID为0x100的报文DLC为4
+
+##capl名##
+setMessageDlc
+
+##转换须知##
+1. CAPL中不需要Node参数，而VBA需要指定节点
+2. CAPL直接操作message对象，而VBA需要区分对象和ID两种方式
+3. 返回值类型和含义保持一致
+4. CAPL中DLC范围是0-8，VBA中需要确认是否相同
+5. CAPL中ID可以直接用16进制表示，VBA中可能需要转换
+
+##转换示例##
+1. CAPL原始代码：
+message msg;
+msg.dlc = 6;
+int result = setMessageDlc(msg, 8);
+
+2. 转换后的VBA代码：
+Dim msg As CANDBCMessage
+Dim result As Integer
+msg.dlc = 6
+result = setNodeMsgDlc(Node, msg, 8)
+
+3. 关键转换说明：
+- 移除message声明(在VBA中应为预定义对象)
+- 添加Node参数
+- 保持相同的DLC设置逻辑
+- 返回值处理方式相同

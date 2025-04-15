@@ -1,0 +1,59 @@
+##功能##
+该函数用于启动超时检查，监控指定信号或消息是否在预期时间内未出现或未更新。主要用于自动化测试中验证通信协议的实时性或设备响应能力，确保信号或消息在设定的时间范围内被接收或更新，否则触发测试失败或警告。
+
+##vba规范##
+函数名：chkStart_Timeout  
+参数：  
+1. signal_or_message：对象或字符串，需要监控的信号或消息对象，或信号/消息的名称。  
+2. timeout：数值，超时时间（单位：毫秒）。  
+返回值：无明确返回值，但会触发测试用例的状态更新（如失败或警告）。  
+依赖函数：testStepFail、testStepWarning。  
+
+##capl规范##
+函数名：timeout  
+参数：  
+1. message/signal：字符串或消息对象，需要监控的信号或消息名称。  
+2. timeout_ms：整数，超时时间（单位：毫秒）。  
+返回值：无明确返回值，但会触发测试用例的状态更新（如失败或警告）。  
+示例1：  
+```capl
+on message EngineSpeed
+{
+  timeout(this, 1000); // 监控EngineSpeed消息，超时时间为1000毫秒
+}
+```  
+示例2：  
+```capl
+on signal VehicleSpeed
+{
+  timeout(this, 500); // 监控VehicleSpeed信号，超时时间为500毫秒
+}
+```  
+
+##capl名##
+timeout
+
+##转换须知##
+1. 参数类型和数量的差异：CAPL使用`timeout`函数，参数顺序和名称与VBA略有不同。  
+2. 返回值类型的差异：两者均无返回值，但行为类似。  
+3. 函数行为的差异：CAPL的`timeout`通常在消息或信号事件中调用，而VBA可能在任意位置调用。  
+4. 特殊情况的处理方法：CAPL需要明确的事件触发（如`on message`或`on signal`），而VBA可能更灵活。  
+
+##转换示例##
+CAPL原始代码：  
+```capl
+on message EngineSpeed
+{
+  timeout(this, 1000);
+}
+```  
+转换后的VBA代码：  
+```vba
+Sub TestTimeout()  
+    chkStart_Timeout "EngineSpeed", 1000  
+End Sub  
+```  
+关键转换步骤说明：  
+1. CAPL的`on message`事件处理转换为VBA的直接函数调用。  
+2. CAPL的`timeout`函数参数`this`转换为VBA的信号名称字符串。  
+3. 超时时间参数保持不变（1000毫秒）。

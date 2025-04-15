@@ -1,0 +1,35 @@
+1. 函数名
+getMsgs
+
+2. 函数描述
+获取CANDBCMessage报文对象组
+
+3. 函数体
+getMsgs(*parms)
+
+4. 返回值
+名称       类型                    描述
+msgs       list[CANDBCMessage]    报文对象列表
+
+5. 参数
+情况1：获取指定网段下所有报文，get(network)
+名称      类型        描述
+network   Network    网段对象
+
+情况2：获取指定ECU节点下某类报文，get(node,type)
+名称      类型        描述
+node      ECUNode    ECU节点对象
+type      int        报文类型，0:节点下所有Tx报文，1:节点下所有的Rx报文，2:节点下所有报文
+
+6. 内置函数
+无
+
+7. 示例
+示例1：获取CAN1网段下所有报文
+msgs = getMsgs(CAN1)
+
+示例2：获取CAN1网段下ESP节点发送的所有报文
+msgs = getMsgs(CAN1.ESP, 0)
+
+8. 其他和函数或变量强相关的内容
+无

@@ -1,0 +1,31 @@
+1. 函数名  
+chkStart_SignalCycleTimeViolation  
+
+2. 函数描述  
+该函数用于启动信号周期时间违规检查，检测指定信号是否在预期周期时间内未更新或更新频率异常。  
+
+3. 函数体  
+函数属于自动化测试函数中的检查类函数，用于监控信号周期时间是否符合预设规则。通常与`chkCreate_SignalCycleTimeViolation`配合使用，先创建检查规则后启动监控。  
+
+4. 返回值  
+无明确返回值说明（需结合上下文或完整文档确认）。  
+
+5. 参数  
+（未在提供内容中明确列出参数，需参考关联函数或完整文档补充）  
+
+6. 内置函数  
+（未提及具体依赖的内置函数）  
+
+7. 示例  
+```vba
+' 示例功能：启动对信号"EngineSpeed"的周期时间检查  
+Sub Example()  
+    ' 假设已通过chkCreate_SignalCycleTimeViolation创建检查规则  
+    chkStart_SignalCycleTimeViolation "EngineSpeed"  
+    ' 后续可结合其他函数查询违规事件数（如chkQuery_NumEvents）  
+End Sub  
+```  
+
+8. 其他相关内容  
+- 需与`chkCreate_SignalCycleTimeViolation`配合使用，先定义检查规则再启动。  
+- 属于自动化测试模块，通常用于总线信号一致性验证场景。

@@ -1,0 +1,26 @@
+1. 函数名
+diagStopTesterPresent
+
+2. 函数描述
+停止诊断节点的3E诊断在线
+
+3. 函数体
+diagStopTesterPresent(diagNode)
+
+4. 返回值
+无
+
+5. 参数
+名称        类型        描述
+diagNode    DiagNode    诊断节点对象，DiagNode类
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：启动诊断节点EMS的3E诊断在线
+示例代码：diagStopTesterPresent(CAN1.DiagNodes.EMS)
+代码注释：调用diagStopTesterPresent函数停止EMS节点的3E诊断在线服务
+
+8. 其他
+该函数属于Diagnostic类函数，用于停止诊断节点的Tester Present服务（3E服务）。需要传入一个已配置的诊断节点对象作为参数。

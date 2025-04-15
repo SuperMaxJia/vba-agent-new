@@ -1,0 +1,78 @@
+##功能##
+检测信号或变量的值是否超出指定范围，若值在范围外则触发检测。用于自动化测试中验证信号值是否在预期范围内。
+
+##vba规范##
+函数名：chkCreate_MsgSignalValueInvalid  
+描述：创建信号值范围检测对象但不启动检测  
+返回值：int（检测对象ID，-1表示失败）  
+参数：  
+- object：VariableEntity/CANDBCSignal/LINDBCSignal（信号对象）  
+- aMinValue：Number（最小值）  
+- aMaxValue：Number（最大值，包含边界）  
+相关函数：  
+- chkControl_Start：启动检测  
+- testAddCondition：添加检测到报告  
+- testWaitForTimeout：等待检测  
+- testRemoveCondition：移除检测  
+
+##capl规范##
+函数名：checkValueOutOfRange  
+描述：创建信号值范围外检测  
+返回值：long（检测ID，-1表示失败）  
+参数：  
+- signal：message*或variable（信号/变量对象）  
+- min：float（最小值）  
+- max：float（最大值）  
+相关函数：  
+- checkControlStart：启动检测  
+- testStepAddCondition：添加检测条件  
+- testWaitForTimeout：等待检测  
+- testStepRemoveCondition：移除检测  
+
+示例1：  
+```capl
+long checkId;
+checkId = checkValueOutOfRange(CAN1::MSG::SignalToObserve, 2.5, 3.7);
+checkControlStart(checkId);
+testStepAddCondition(checkId);
+testWaitForTimeout(1000);
+testStepRemoveCondition(checkId);
+```
+
+示例2：  
+```capl
+long checkId;
+checkId = checkValueOutOfRange(sysvar::EngineRPM, 500, 6000);
+if(checkId != -1) {
+  checkControlStart(checkId);
+}
+```
+
+##capl名##
+checkValueOutOfRange
+
+##转换须知##
+1. 参数类型：CAPL使用message*/variable，VBA使用特定对象类型  
+2. 返回值：CAPL返回long，VBA返回int  
+3. 启动方式：CAPL需显式调用checkControlStart  
+4. 报告函数：CAPL使用testStep前缀，VBA使用test前缀  
+5. 边界处理：两者都包含边界值  
+
+##转换示例##
+CAPL原始代码：  
+```capl
+long id;
+id = checkValueOutOfRange(CAN1::MSG::Speed, 0, 120);
+checkControlStart(id);
+```
+
+转换后VBA代码：  
+```vba
+Dim checkId As Integer
+checkId = chkStart_MsgSignalValueInvalid(CAN1.MS.Speed, 0, 120)
+```
+
+关键转换：  
+1. 函数名改为chkStart_MsgSignalValueInvalid  
+2. 移除显式启动调用（VBA版本自动启动）  
+3. 返回值类型改为Integer

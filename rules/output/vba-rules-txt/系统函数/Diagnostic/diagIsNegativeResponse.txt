@@ -1,0 +1,33 @@
+1. 函数名
+diagIsNegativeResponse
+
+2. 函数描述
+判断诊断PDU是否是否定响应
+
+3. 函数体
+diagIsNegativeResponse(pdu)
+
+4. 返回值
+名称: ans
+类型: boolean
+描述: True 或者 False
+
+5. 参数
+名称      类型    描述
+pdu      List    诊断PDU数组列表
+
+6. 内置函数
+无
+
+7. 示例
+示例功能: 判断诊断PDU是否是否定响应
+示例代码:
+pdu = diagSendRequest(CAN1.DiagNodes.EMS.TesterPresent_Process, False, 0)
+diagIsNegativeResponse(pdu)
+
+代码注释:
+- 第一行通过diagSendRequest函数发送诊断请求并获取响应PDU
+- 第二行使用diagIsNegativeResponse函数判断该PDU是否为否定响应
+
+8. 其他
+该函数属于Diagnostic诊断功能类别，用于诊断协议中的否定响应判断。

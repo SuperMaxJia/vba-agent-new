@@ -1,0 +1,81 @@
+##功能##
+该函数用于监控一个系统变量在指定时间内是否发生变化，常用于需要等待变量状态更新的场景，如硬件信号检测或系统状态监控。
+
+##vba规范##
+函数定义：testWaitForVariable(variable, timeout)
+参数：
+- variable: object类型，表示要监控的变量对象
+- timeout: int类型，表示超时时间（毫秒）
+返回值：int类型，0表示超时，1表示事件发生
+
+##capl规范##
+CAPL中没有完全对应的内置函数，但可以通过组合函数实现类似功能：
+1. 使用@sysvar监控系统变量
+2. 使用waitForTimeout处理超时
+3. 使用on sysvar事件处理变量变化
+
+示例1：
+```capl
+on sysvar MyVar {
+  if (MyVar != oldValue) {
+    cancelWaitForTimeout();
+    return 1;
+  }
+}
+
+int waitForVarChange(int timeout) {
+  setWaitForTimeout(timeout);
+  return 0;
+}
+```
+
+示例2：
+```capl
+on sysvar Engine.RPM {
+  if (@this != @last) {
+    cancelWaitForTimeout();
+    return 1;
+  }
+}
+
+int monitorRPM(int ms) {
+  setWaitForTimeout(ms);
+  return 0;
+}
+```
+
+##capl名##
+waitForVarChange
+
+##转换须知##
+1. CAPL需要显式设置变量监控和超时处理，而VBA封装为单个函数
+2. CAPL通过事件处理机制检测变量变化，VBA可能是轮询或回调机制
+3. CAPL需要手动取消超时计时器，VBA自动处理
+4. CAPL中变量监控和超时处理需要分开实现
+
+##转换示例##
+CAPL原始代码：
+```capl
+on sysvar Vehicle.Speed {
+  if (@this != @last) {
+    cancelWaitForTimeout();
+    return 1;
+  }
+}
+
+int checkSpeedChange(int timeout) {
+  setWaitForTimeout(timeout);
+  return 0;
+}
+```
+
+转换后的VBA代码：
+```vba
+testWaitForVariable(Vehicle.Speed, 5000)
+```
+
+关键转换说明：
+1. 将CAPL的事件处理器和超时函数合并为单个VBA函数
+2. VBA直接传入变量对象和超时参数
+3. 移除了CAPL中显式的超时取消逻辑
+4. 保持了相同的返回值约定（0=超时，1=变化）

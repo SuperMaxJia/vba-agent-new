@@ -1,0 +1,50 @@
+##功能##
+该函数用于获取指定ECU节点名称或ID以及网段对象对应的以太网服务实例对象。主要用于在车载网络测试中访问和控制特定的以太网服务。
+
+##vba规范##
+Function getETHService(nameOrID As Variant, network As Network) As Object
+- 参数：
+  - nameOrID: Variant类型，可以是整数或字符串，表示ECU节点名称或ID
+  - network: Network对象，表示网段对象
+- 返回值：Object类型，返回找到的服务对象，未找到则返回None
+
+##capl规范##
+在CAPL中，可以使用ethGetService函数获取以太网服务：
+- 语法：ethGetService(nodeNameOrId, networkName)
+- 参数：
+  - nodeNameOrId: char[]或long，表示节点名称或ID
+  - networkName: char[]，表示网络名称
+- 返回值：dword，返回服务句柄，未找到返回0
+
+示例1：
+dword serviceHandle;
+serviceHandle = ethGetService("ECU1", "Ethernet1");
+
+示例2：
+dword serviceHandle;
+long nodeId = 1001;
+serviceHandle = ethGetService(nodeId, "Ethernet2");
+
+##capl名##
+ethGetService
+
+##转换须知##
+1. 参数类型差异：VBA使用Variant和Network对象，CAPL使用字符串/整数和字符串
+2. 返回值差异：VBA返回Object，CAPL返回dword句柄
+3. 行为差异：VBA返回None表示未找到，CAPL返回0
+4. 网络参数：VBA使用Network对象，CAPL使用网络名称字符串
+
+##转换示例##
+1. CAPL原始代码：
+dword serviceHandle;
+serviceHandle = ethGetService("ECU1", "Ethernet1");
+
+2. 转换后的VBA代码：
+Dim ethService As Object
+Set ethService = getETHService("ECU1", EthernetNetwork)
+
+3. 关键转换说明：
+- 将dword类型改为Object类型
+- 将网络名称字符串改为Network对象
+- 添加Set关键字处理对象赋值
+- 函数名从ethGetService改为getETHService

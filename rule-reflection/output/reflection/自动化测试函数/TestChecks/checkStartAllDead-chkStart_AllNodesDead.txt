@@ -1,0 +1,81 @@
+##功能##
+该函数用于启动对所有节点无通信活动状态的检查，验证总线系统中所有节点是否在规定时间内未发送任何报文，常用于检测通信故障或节点离线情况。适用于自动化测试场景，特别是在需要确认总线静默或节点故障的测试用例中。
+
+##vba规范##
+函数名：chkStart_AllNodesDead  
+函数描述：启动对所有节点死亡状态的检查  
+参数：无  
+返回值：无显式返回值，通过测试框架生成检查结果  
+依赖函数：chkQuery_NumEvents, testStepFail, testStepPass  
+相关控制函数：chkControl_Stop, chkControl_Reset  
+
+##capl规范##
+函数名：checkStartAllDead  
+函数描述：启动对所有节点无通信活动的检查  
+参数：无  
+返回值：无  
+依赖函数：testGetNumEvents, testStepFail, testStepPass  
+相关控制函数：checkStop, checkReset  
+
+示例1：  
+```capl
+on key 'a'  
+{  
+  checkStartAllDead();  
+  testWaitForTimeout(5000);  
+  if(testGetNumEvents("AllNodesDead") > 0) {  
+    testStepFail("Active nodes detected");  
+  }  
+  else {  
+    testStepPass("All nodes silent");  
+  }  
+}  
+```
+
+示例2：  
+```capl
+testcase VerifyBusSilence()  
+{  
+  checkStartAllDead();  
+  delay(10000);  
+  if(testGetNumEvents() == 0) {  
+    write("Bus silence verification passed");  
+  }  
+  checkStop();  
+}  
+```
+
+##capl名##
+checkStartAllDead
+
+##转换须知##
+1. 参数差异：VBA无参数，CAPL也无参数，直接对应  
+2. 返回值差异：两者都无返回值  
+3. 行为差异：VBA使用threadSleep等待，CAPL使用testWaitForTimeout或delay  
+4. 事件查询：VBA使用chkQuery_NumEvents，CAPL使用testGetNumEvents  
+5. 控制函数：VBA使用chkControl_Stop，CAPL使用checkStop  
+
+##转换示例##
+CAPL原始代码：  
+```capl
+checkStartAllDead();  
+testWaitForTimeout(3000);  
+if(testGetNumEvents() > 0) {  
+  testStepFail("Nodes still active");  
+}  
+```
+
+转换后的VBA代码：  
+```vba
+chkStart_AllNodesDead  
+threadSleep(3000)  
+If chkQuery_NumEvents("AllNodesDead") > 0 Then  
+    testStepFail("Nodes still active")  
+End If  
+```
+
+关键转换说明：  
+1. 将checkStartAllDead()转换为chkStart_AllNodesDead  
+2. testWaitForTimeout改为threadSleep  
+3. testGetNumEvents()改为chkQuery_NumEvents("AllNodesDead")  
+4. CAPL的if语句结构转换为VBA的If...Then结构

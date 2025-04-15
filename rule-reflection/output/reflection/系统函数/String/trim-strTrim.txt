@@ -1,0 +1,51 @@
+##功能##
+strTrim函数用于去除字符串两端的空白字符（包括空格、制表符、换行符等），返回处理后的新字符串。常用于数据清洗和用户输入处理，确保字符串比较和存储时的格式一致性。
+
+##vba规范##
+函数定义：Function strTrim(sourceStr As String) As String
+参数：sourceStr - String类型，需要处理的原始字符串
+返回值：String类型，去除两端空白后的新字符串
+内置函数：无
+示例：strTrim(" ABCdedf ") 返回 "ABCdedf"
+
+##capl规范##
+函数定义：char* trim(char str[])
+参数：str - char数组，需要处理的原始字符串
+返回值：char指针，指向去除两端空白后的新字符串
+内置函数：无
+示例1：
+char original[] = "  Hello  ";
+char* result = trim(original);
+write("Result: '%s'", result); // 输出 "Result: 'Hello'"
+
+示例2：
+char input[20] = "  CAPL Test  ";
+char* output = trim(input);
+write("Trimmed: [%s]", output); // 输出 "Trimmed: [CAPL Test]"
+
+##capl名##
+trim
+
+##转换须知##
+1. CAPL使用char数组而非String类型处理字符串
+2. CAPL的trim返回char指针而非String
+3. CAPL需要手动处理字符串缓冲区大小
+4. CAPL没有自动内存管理，需注意指针生命周期
+5. 空白字符定义在两种语言中可能略有不同
+
+##转换示例##
+CAPL原始代码：
+char testStr[] = "  Demo  ";
+char* trimmed = trim(testStr);
+write("'%s'", trimmed);
+
+转换后的VBA代码：
+Dim testStr As String
+testStr = "  Demo  "
+Debug.Print "'" & strTrim(testStr) & "'"
+
+关键转换步骤：
+1. 将char数组声明改为VBA的String类型
+2. 移除CAPL特有的指针操作
+3. 使用VBA的字符串连接(&)替代CAPL的格式化输出
+4. 保持核心trim功能不变

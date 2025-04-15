@@ -1,0 +1,39 @@
+1. 函数名
+sendPeriodMsg
+
+2. 函数描述
+设置向指定通道上周期发送报文
+
+3. 函数体
+sendPeriodMsg(msg, network, cycle_time)
+
+4. 返回值
+无
+
+5. 参数
+| 名称        | 类型         | 描述                                                                 |
+|-------------|--------------|----------------------------------------------------------------------|
+| msg         | CANMessage   | 获取方法1：通过CANMessage类创建。<br>获取方法2：来自DBC的报文对象CANDBCMessage。 |
+| network     | Network      | 网段对象                                                             |
+| cycle_time  | int          | 报文周期发送的时间，单位：ms。                                        |
+
+6. 内置函数
+无
+
+7. 示例
+示例1：通过CANMessage创建CAN报文属性，以10ms周期发送到CAN1。
+msg = CANMessage()
+msg.setId(0x10)
+msg.setDlc(2)
+msg.setData([0x10, 0x12])
+sendPeriodMsg(msg, CAN1, 10)
+
+示例2：通过createCANMsg创建CAN报文，以10ms周期发送到CAN1。
+msg = createCANMsg(0x10, 0, 2, [0x11, 0x22])
+sendPeriodMsg(msg, CAN1, 10)
+
+示例3：获取CAN1网段下某报文，以10ms周期发送到CAN1。
+sendPeriodMsg(CAN1.EMS.Message1, CAN1, 10)
+
+8. 其他
+无

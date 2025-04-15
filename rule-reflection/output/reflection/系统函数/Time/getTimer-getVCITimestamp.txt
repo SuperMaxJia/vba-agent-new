@@ -1,0 +1,47 @@
+##功能##
+获取VCI硬件的时间戳，用于测量和记录硬件事件发生的精确时间。常用于汽车总线通信测试中，需要精确时间同步的场景。
+
+##vba规范##
+函数名：getVCITimestamp
+参数：无
+返回值：int类型，成功返回硬件时间戳，失败返回0
+描述：需要VCI硬件正常运行才能获取有效时间戳
+
+##capl规范##
+函数名：getTimer
+参数：无
+返回值：dword类型，返回系统计时器值（毫秒）
+示例1：
+dword timestamp;
+timestamp = getTimer();
+write("Timestamp: %d", timestamp);
+
+示例2：
+if(getTimer() > 5000) {
+  write("Timeout reached");
+}
+
+##capl名##
+getTimer
+
+##转换须知##
+1. CAPL的getTimer返回dword类型，而VBA返回int类型
+2. CAPL的时间单位是毫秒，VCI硬件时间戳的单位可能不同
+3. CAPL不需要硬件支持，而VBA需要VCI硬件正常运行
+4. CAPL没有硬件未启动的特殊返回值0
+
+##转换示例##
+CAPL原始代码：
+dword vciTime;
+vciTime = getTimer();
+write("VCI Time: %d", vciTime);
+
+转换后的VBA代码：
+Dim vciTime As Integer
+vciTime = getVCITimestamp()
+Debug.Print "VCI Time: " & vciTime
+
+关键转换步骤说明：
+1. 将CAPL的dword类型改为VBA的Integer
+2. 函数名从getTimer改为getVCITimestamp
+3. 输出方式从write改为Debug.Print

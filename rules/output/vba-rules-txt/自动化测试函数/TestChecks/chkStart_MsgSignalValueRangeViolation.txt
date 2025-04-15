@@ -1,0 +1,45 @@
+1. 函数名  
+chkStart_MsgSignalValueRangeViolation  
+
+2. 函数描述  
+该函数用于启动信号值范围违规检查，监测指定信号是否超出预设的有效范围。  
+
+3. 函数体  
+函数启动后将持续监控目标信号，若信号值超出配置的阈值范围（如最小值/最大值），则触发违规事件并记录。  
+
+4. 返回值  
+无显式返回值，但会通过回调函数或测试报告输出违规事件信息。  
+
+5. 参数  
+| 名称               | 类型       | 描述                          |  
+|--------------------|------------|-----------------------------|  
+| signalName         | String     | 待监控的信号名称                 |  
+| minValue           | Number     | 信号有效范围的最小值              |  
+| maxValue           | Number     | 信号有效范围的最大值              |  
+| callbackFunction   | Function   | （可选）违规事件触发时的回调函数     |  
+
+6. 内置函数  
+| 函数名称                | 描述                          | 参数说明                     |  
+|-------------------------|-----------------------------|----------------------------|  
+| getSignalVal            | 获取当前信号值                | signalName: 信号名称         |  
+| writeWarningInfo        | 记录警告信息到日志            | message: 违规描述文本        |  
+
+7. 示例  
+**功能**：监控发动机转速信号是否在500-6000rpm范围内。  
+**代码**：  
+```vba
+Sub Example()  
+    chkStart_MsgSignalValueRangeViolation "EngineSpeed", 500, 6000, "OnRangeViolation"  
+End Sub  
+
+Sub OnRangeViolation(signalName, actualValue)  
+    writeWarningInfo signalName & "值超出范围！当前值：" & actualValue  
+End Sub  
+```  
+**注释**：  
+- `EngineSpeed`为信号名称，500和6000为合法范围阈值。  
+- 当值超限时，调用`OnRangeViolation`回调并记录警告日志。  
+
+8. 其他  
+- 需配合`chkCreate_MsgSignalValueRangeViolation`预先配置检查规则。  
+- 违规事件可通过自动化测试模块生成测试报告。

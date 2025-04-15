@@ -1,0 +1,46 @@
+1. 函数名
+DOIPPacket
+
+2. 函数描述
+用于创建一条DOIP以太网报文
+
+3. 函数体
+DOIPPacket()
+
+4. 返回值
+返回一个DOIPPacket对象
+
+5. 参数
+名称              类型      描述
+protocol_version  int      协议版本值，一个16位的无符号整数
+protocol_type     int      协议类型值，一个16位的无符号整数
+transport_packet  object   设置DOIP报文的传输层协议包（支持TCPPacket、UDPPacket、TCPMessage、UDPMessage）
+payload           list     以太网报文的数据payload，一个列表
+
+6. 内置函数
+函数名称              描述
+setProtocolVersion   设置协议版本
+setProtocolType      设置协议类型
+setTransportPacket   设置传输层协议包
+setPayload           设置报文数据负载
+
+7. 示例
+示例功能：创建一条DOIP以太网报文
+示例代码：
+doipPacket = DOIPPacket()
+doipPacket.setProtocolVersion(0x0001)
+doipPacket.setProtocolType(0x0000)
+doipPacket.setTransportPacket(TCPPacket/UDPPacket/TCPMessage/UDPMessage)
+doipPacket.setPayload([])
+
+代码注释：
+1. 创建DOIPPacket对象
+2. 设置协议版本为0x0001
+3. 设置协议类型为0x0000
+4. 设置传输层协议包（可以是TCPPacket、UDPPacket、TCPMessage或UDPMessage）
+5. 设置空的数据负载
+
+8. 其他说明
+- 该函数属于Ethernet类函数
+- 使用时需要先创建DOIPPacket对象，然后设置各项参数
+- 支持的传输层协议包类型包括TCPPacket、UDPPacket、TCPMessage和UDPMessage

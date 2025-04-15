@@ -1,0 +1,48 @@
+##功能##
+该函数用于更新DOIP连接的网关IP地址，通常在车辆诊断过程中需要更改通信网关时使用。主要应用场景包括切换测试环境、更改网络配置或故障诊断时重新路由诊断通信。
+
+##vba规范##
+函数定义：diagDOIPUpdateGatewayIp(connectHandle As Integer, gatewayIp As String)
+参数：
+- connectHandle: Integer类型，表示已建立的DOIP连接句柄
+- gatewayIp: String类型，表示要设置的网关IP地址
+返回值：无明确返回值
+注意事项：需要预先建立DOIP连接获取connectHandle
+
+##capl规范##
+函数定义：doipSetGateway(handle, ipAddress)
+参数：
+- handle: dword类型，DOIP连接句柄
+- ipAddress: char[]类型，网关IP地址字符串
+返回值：无
+示例1：
+doipSetGateway(doipHandle, "192.168.0.100");
+示例2：
+char newIp[16] = "10.10.10.1";
+doipSetGateway(currentHandle, newIp);
+
+##capl名##
+doipSetGateway
+
+##转换须知##
+1. 参数类型差异：VBA使用Integer而CAPL使用dword表示句柄
+2. IP地址参数在CAPL中通常使用字符数组而非字符串对象
+3. CAPL函数名更简洁直接
+4. 两者都无返回值
+5. 都需要预先建立DOIP连接
+
+##转换示例##
+CAPL原始代码：
+dword handle = 0x1234;
+doipSetGateway(handle, "172.16.1.1");
+
+转换后的VBA代码：
+Dim handle As Integer
+handle = &H1234
+diagDOIPUpdateGatewayIp handle, "172.16.1.1"
+
+关键转换步骤：
+1. 将dword类型改为Integer
+2. 函数名从doipSetGateway改为diagDOIPUpdateGatewayIp
+3. 参数传递方式从C风格改为VBA风格
+4. 保持IP地址字符串格式不变

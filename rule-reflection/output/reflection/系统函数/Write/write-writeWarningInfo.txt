@@ -1,0 +1,41 @@
+##功能##
+该函数用于向控制台输出警告信息，主要用于调试或记录程序运行时的警告状态。在实际应用中，常用于监控系统运行状态或调试代码时输出关键警告信息。
+
+##vba规范##
+函数名：writeWarningInfo
+参数：info (String类型) - 需要打印的警告信息
+返回值：无
+功能：向控制台打印传入的字符串警告信息
+
+##capl规范##
+CAPL中对应的功能可以使用write函数实现：
+- 函数定义：write(string message)
+- 参数：message (char[]类型) - 要输出的消息
+- 返回值：无
+- 示例1：
+  write("Warning: Sensor value out of range");
+- 示例2：
+  char msg[100];
+  snprintf(msg, 100, "Warning: %s", "Low battery voltage");
+  write(msg);
+
+##capl名##
+write
+
+##转换须知##
+1. CAPL的write函数直接输出到CANoe/CANalyzer的Write窗口，而VBA是输出到控制台
+2. CAPL需要手动添加"Warning:"前缀，而VBA函数名已包含警告语义
+3. CAPL使用char数组而非String类型
+4. CAPL中需要特别注意字符串缓冲区的大小
+
+##转换示例##
+1. CAPL原始代码：
+   write("Warning: Invalid parameter received");
+
+2. 转换后的VBA代码：
+   writeWarningInfo("Invalid parameter received")
+
+3. 关键转换步骤说明：
+   - 将CAPL的write函数替换为VBA的writeWarningInfo
+   - 移除CAPL代码中手动添加的"Warning:"前缀
+   - 保持消息内容不变

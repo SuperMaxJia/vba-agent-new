@@ -1,0 +1,80 @@
+##功能##
+该函数用于检测指定网段内所有节点是否在指定时间间隔内至少发送一条Tx消息。如果没有，则触发事件并生成测试报告。主要用于监控网络节点的活跃状态，确保网络通信正常。
+
+##vba规范##
+函数名：chkStart_AllNodesDead  
+参数：  
+- network：Network类型，表示要监控的网段对象  
+- aMaxQuietTime：int类型，表示最大静默时间（ms）  
+返回值：int类型，返回检测对象ID，-1表示创建失败  
+关联函数：  
+- chkControl_Start：启动检测对象  
+- testAddCondition：将统计信息加入测试报告  
+- testWaitForTimeout：等待指定时间  
+- testRemoveCondition：结束统计  
+
+##capl规范##
+函数名：checkStart  
+参数：  
+- busName：char[]类型，表示总线名称（如"CAN1"）  
+- timeout：int类型，表示超时时间（ms）  
+返回值：int类型，返回检测对象ID，-1表示创建失败  
+关联函数：  
+- testWaitForTimeout：等待指定时间  
+- testCaseAddCondition：将条件加入测试用例  
+- testCaseRemoveCondition：移除测试条件  
+
+示例1：  
+```capl
+int checkId;
+checkId = checkStart("CAN1", 110);
+testCaseAddCondition(checkId);
+testWaitForTimeout(1000);
+testCaseRemoveCondition(checkId);
+```
+
+示例2：  
+```capl
+int monitorNodes() {
+  int id = checkStart("CAN2", 200);
+  if(id == -1) {
+    write("Monitor creation failed");
+    return -1;
+  }
+  return id;
+}
+```
+
+##capl名##
+checkStart
+
+##转换须知##
+1. 参数差异：VBA使用Network对象，CAPL直接使用总线名称字符串  
+2. 返回值：两者都返回int类型ID，但CAPL需要手动检查返回值  
+3. 关联函数命名不同：  
+   - testAddCondition → testCaseAddCondition  
+   - testRemoveCondition → testCaseRemoveCondition  
+4. CAPL需要显式错误处理，VBA可能内置异常处理  
+
+##转换示例##
+CAPL原始代码：  
+```capl
+int checkId = checkStart("CAN1", 110);
+testCaseAddCondition(checkId);
+testWaitForTimeout(1000);
+testCaseRemoveCondition(checkId);
+```
+
+转换后的VBA代码：  
+```vba
+checkId = chkStart_AllNodesDead(CAN1, 110)
+testAddCondition(checkId)
+testWaitForTimeout(1000)
+testRemoveCondition(checkId)
+```
+
+关键转换步骤：  
+1. 将checkStart改为chkStart_AllNodesDead  
+2. 总线名称"CAN1"改为CAN1对象  
+3. 关联函数名改为VBA对应名称  
+4. 保持相同的参数顺序和超时值

@@ -1,0 +1,60 @@
+##功能##
+该函数用于在测试过程中移除一个已添加的检测条件，并输出该条件在移除前的统计结果到测试报告。常用于在特定时间段内收集和报告检测结果后，清理检测条件。
+
+##vba规范##
+函数名：testRemoveCondition
+参数：object（事件对象）
+返回值：int（0表示成功，-1表示失败）
+功能：移除事件对象或事件文本的检测条件
+
+##capl规范##
+函数名：testControl
+参数：long checkId（检测ID），int operation（操作类型）
+返回值：int（0表示成功，-1表示失败）
+操作类型：TEST_REMOVE_CONDITION（值为2）表示移除检测条件
+
+示例1：
+// 开始错误帧检测
+long checkId = chkStart_ErrorFramesOccured();
+// 添加检测条件
+testControl(checkId, TEST_ADD_CONDITION);
+// 等待1秒
+testWaitForTimeout(1000);
+// 移除检测条件
+testControl(checkId, TEST_REMOVE_CONDITION);
+
+示例2：
+// 开始信号检测
+long sigCheck = chkStart_SignalValue(EngineRPM, 3000, 5000);
+// 添加并立即移除检测
+testControl(sigCheck, TEST_ADD_CONDITION);
+testControl(sigCheck, TEST_REMOVE_CONDITION);
+
+##capl名##
+testControl
+
+##转换须知##
+1. CAPL使用testControl函数配合操作类型参数实现移除功能，而VBA直接使用testRemoveCondition
+2. CAPL需要明确指定操作类型TEST_REMOVE_CONDITION(2)，VBA无需此参数
+3. 返回值类型相同，都是int表示操作结果
+4. CAPL中检测ID为long类型，VBA中为object类型
+
+##转换示例##
+1. CAPL原始代码：
+long checkId = chkStart_ErrorFramesOccured();
+testControl(checkId, TEST_ADD_CONDITION);
+testWaitForTimeout(1000);
+int result = testControl(checkId, TEST_REMOVE_CONDITION);
+
+2. 转换后的VBA代码：
+Dim checkId As Object
+Set checkId = chkStart_ErrorFramesOccured()
+testAddCondition checkId
+testWaitForTimeout 1000
+Dim result As Integer
+result = testRemoveCondition(checkId)
+
+3. 关键转换说明：
+- CAPL的testControl调用被拆分为VBA的testAddCondition和testRemoveCondition
+- TEST_REMOVE_CONDITION操作直接对应testRemoveCondition函数
+- 返回值处理方式保持一致

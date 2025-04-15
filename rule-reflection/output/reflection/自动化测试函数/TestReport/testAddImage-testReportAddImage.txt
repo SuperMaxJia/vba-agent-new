@@ -1,0 +1,43 @@
+##功能##
+该函数用于在测试报告中插入图片，通常用于添加测试过程中捕获的屏幕截图、示波器波形等可视化信息，以增强测试报告的可读性和完整性。
+
+##vba规范##
+函数定义：testReportAddImage(description As String, filepath As String, Optional width As String = "", Optional height As String = "")
+参数：
+- description：图片描述文本
+- filepath：图片文件的完整路径
+- width：可选，图片显示宽度（字符串格式，如"400px"）
+- height：可选，图片显示高度（字符串格式）
+返回值：无返回值或布尔型成功状态（根据实现可能不同）
+
+##capl规范##
+在CAPL中，可以使用testAddImage函数实现类似功能：
+void testAddImage(char description[], char filepath[], char width[] = "", char height[] = "");
+
+示例1：
+testAddImage("ECU Signal", "C:\\temp\\signal.png", "500px", "300px");
+
+示例2：
+testAddImage("Error Screenshot", "D:\\captures\\error.bmp");
+
+##capl名##
+testAddImage
+
+##转换须知##
+1. CAPL使用双反斜杠或单斜杠作为路径分隔符，而VBA需要双反斜杠
+2. CAPL的width/height参数单位可能需要显式指定（如"px"），而VBA可能支持无单位数值
+3. CAPL函数无返回值，而VBA实现可能有布尔返回值
+4. 路径字符串处理方式不同，CAPL更接近C语言风格
+
+##转换示例##
+CAPL原始代码：
+testAddImage("CAN Bus Traffic", "C:/data/can_log.png", "600px", "");
+
+转换后的VBA代码：
+testReportAddImage "CAN Bus Traffic", "C:\\data\\can_log.png", "600px", ""
+
+关键转换说明：
+1. 函数名从testAddImage改为testReportAddImage
+2. 路径分隔符从正斜杠改为双反斜杠
+3. 保持相同的参数顺序和可选参数处理方式
+4. 移除CAPL中的分号结尾符

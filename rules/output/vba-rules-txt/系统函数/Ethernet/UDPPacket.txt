@@ -1,0 +1,45 @@
+1. 函数名
+UDPPacket
+
+2. 函数描述
+用于创建一条UDP报文
+
+3. 函数体
+UDPPacket()
+
+4. 返回值
+返回一个UDPPacket对象实例
+
+5. 参数
+名称            类型            描述
+source_port      int            源端口值，一个16位的无符号整数（0 - 65535）
+destination_port int            目的端口值，一个16位的无符号整数（0 - 65535）
+internet_packet  IPv4Packet     IPv4Packet实例，表示要封装的IPv4报文
+payload          list           以太网报文的数据payload，一个列表
+checksum         int            校验和值，一个16位的无符号整数（0x0000 - 0xFFFF），如果设置为-1则校验和自动计算
+packet_id        str            uuid.uuid4()作为该对象的唯一标识
+timestamp        float          获取报文的时间戳，返回值是浮点类型
+
+6. 内置函数
+函数名称            函数描述
+setSourcePort       设置源端口
+setDestinationPort  设置目的端口
+setInternetPacket   设置IPv4报文
+setPayload          设置数据payload
+setChecksum         设置校验和
+
+7. 示例
+示例功能：创建一个UDPPacket实例并设置各项参数
+
+示例代码：
+udpPacket = UDPPacket()
+udpPacket.setSourcePort(7000)
+udpPacket.setDestinationPort(8000)
+udpPacket.setInternetPacket(IPv4Packet)
+udpPacket.setPayload([])
+udpPacket.setChecksum(0x7695)  // 如果设置为-1，则会自动计算。默认此行不显示，默认值是-1
+
+8. 其他说明
+- 校验和参数默认值为-1，表示自动计算
+- 每个UDPPacket对象都有一个唯一的packet_id标识
+- 包含时间戳功能，可以获取报文创建时间

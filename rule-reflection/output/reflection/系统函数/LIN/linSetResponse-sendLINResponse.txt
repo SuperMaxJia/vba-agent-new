@@ -1,0 +1,56 @@
+##功能##
+该函数用于配置LIN网络的响应报文，可以传入单个LIN报文或LIN报文列表。主要用于LIN网络仿真中设置从节点的响应报文，模拟真实LIN网络中的从节点行为。
+
+##vba规范##
+函数名：sendLINResponse
+参数：
+1. lin_responses: 可以是单个LINMsg/LINDBCMessage对象，或这些对象的列表
+2. lin_network: NetworkI类型的LIN网段对象
+返回值：无
+功能：设置指定LIN网段的响应报文
+
+##capl规范##
+在CAPL中，设置LIN响应报文通常使用linSetResponse函数。该函数可以设置单个LIN帧的响应数据。
+参数：
+1. frameId: LIN帧ID
+2. data: 字节数组形式的响应数据
+3. dlc: 数据长度
+返回值：无
+
+示例1：
+// 设置帧ID为0x10的响应数据
+byte data[8] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
+linSetResponse(0x10, data, 8);
+
+示例2：
+// 设置多个LIN帧的响应
+byte data1[2] = {0xAA, 0xBB};
+byte data2[4] = {0x11, 0x22, 0x33, 0x44};
+linSetResponse(0x11, data1, 2);
+linSetResponse(0x12, data2, 4);
+
+##capl名##
+linSetResponse
+
+##转换须知##
+1. CAPL的linSetResponse需要逐个设置每个LIN帧的响应，而VBA可以批量设置
+2. CAPL使用帧ID和原始数据设置响应，VBA使用LIN报文对象
+3. CAPL需要明确指定数据长度，VBA从报文对象中获取
+4. 在转换时，需要将VBA的LIN报文对象拆解为CAPL需要的帧ID和数据
+
+##转换示例##
+CAPL原始代码：
+byte response1[2] = {0xAA, 0xBB};
+byte response2[4] = {0x11, 0x22, 0x33, 0x44};
+linSetResponse(0x11, response1, 2);
+linSetResponse(0x12, response2, 4);
+
+转换后的VBA代码：
+linframer1 = LIN1.BLIN_BCM
+linframer2 = LIN1.BLIN_CLS
+sendLINResponse([linframer1, linframer2], LIN1)
+
+关键转换步骤说明：
+1. 将CAPL中的帧ID和响应数据转换为VBA中的LIN报文对象
+2. 将多个linSetResponse调用合并为一个sendLINResponse调用
+3. 将硬编码的数据转换为从LDF中获取的报文定义

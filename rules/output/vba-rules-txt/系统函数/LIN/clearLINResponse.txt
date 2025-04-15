@@ -1,0 +1,28 @@
+1. 函数名
+clearLINResponse
+
+2. 函数描述
+清除LIN响应报文
+
+3. 函数体
+clearLINResponse(lin_responses, lin_network)
+
+4. 返回值
+无
+
+5. 参数
+名称            类型                    描述
+lin_responses   List,LINMsg,LINDBCMessage  LIN响应报文或者LIN的响应报文列表
+lin_network     Network                   LIN网段对象
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：清除指定网段上指定的LIN响应报文
+示例代码：
+clearLINResponse([0x10], LIN1)
+clearLINResponse(LIN1.BLIN_BCM, LIN1)
+
+8. 其他和函数或变量强相关的内容
+无

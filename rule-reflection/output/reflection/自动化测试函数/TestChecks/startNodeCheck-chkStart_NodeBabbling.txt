@@ -1,0 +1,53 @@
+##功能##
+该函数用于启动对指定节点的消息发送行为监控，检测其在总线上是否发送异常或冗余消息，主要用于自动化测试场景中验证节点通信是否符合预期规则。
+
+##vba规范##
+函数名：chkStart_NodeBabbling
+参数：
+- nodeName (String): 待监控的节点名称
+- timeout (Integer): 检测超时时间（毫秒），可选参数
+返回值：无明确返回值（可能返回操作状态）
+依赖函数：chkControl_Start, chkQuery_NumEvents
+
+##capl规范##
+函数定义：void startNodeCheck(char nodeName[], dword timeout)
+参数：
+- nodeName (char[]): 待监控的节点名称
+- timeout (dword): 检测超时时间（毫秒）
+返回值：void
+示例1：
+```capl
+startNodeCheck("ECU1", 5000);
+```
+示例2：
+```capl
+on start
+{
+  startNodeCheck("TCU", 3000);
+}
+```
+
+##capl名##
+startNodeCheck
+
+##转换须知##
+1. CAPL使用char[]表示字符串，而VBA使用String
+2. CAPL的dword对应VBA的Integer
+3. CAPL函数无返回值，VBA函数可能返回操作状态
+4. CAPL需要显式调用函数，VBA使用Call语法
+
+##转换示例##
+CAPL原始代码：
+```capl
+startNodeCheck("ECU1", 5000);
+```
+
+转换后的VBA代码：
+```vba
+Call chkStart_NodeBabbling("ECU1", 5000)
+```
+
+关键转换步骤：
+1. 将CAPL函数名startNodeCheck改为VBA函数名chkStart_NodeBabbling
+2. 将CAPL的分号结尾改为VBA的Call语法
+3. 保持参数类型和顺序一致

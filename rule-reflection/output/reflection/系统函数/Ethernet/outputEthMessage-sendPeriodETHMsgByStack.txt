@@ -1,0 +1,54 @@
+##功能##
+该函数用于通过TCP/IP协议栈周期性地发送传输层及以上协议的以太网报文，并使用taskid进行任务管理。适用于需要定时发送UDP/TCP/SOMEIP/DOIP/DBC等协议报文的场景，如车载网络通信测试。
+
+##vba规范##
+函数定义：sendPeriodETHMsgByStack(network, tcpipstack, message, cycleTime)
+参数：
+- network: Network类型，表示目标网段
+- tcpipstack: TCPIPStack类型，表示TCP/IP协议栈
+- message: 多种消息类型(UDPMessage/TCPMessage/SOMEIPPacket/DOIPPacket/ETHDBCCommand/ETHDBCPDU)
+- cycleTime: int类型，发送周期(ms)，0表示停止发送
+返回值：int类型的taskid，负数表示失败
+
+##capl规范##
+函数定义：outputEthMessage(ethPort, message, cycleTime)
+参数：
+- ethPort: int类型，以太网端口号
+- message: byte数组或预定义消息结构
+- cycleTime: long类型，发送周期(ms)
+返回值：long类型的timerId，0表示失败
+
+示例1：
+// 周期发送UDP报文
+byte udpMsg[100] = {...};
+timerId = outputEthMessage(1, udpMsg, 100);
+
+示例2：
+// 停止发送
+outputEthMessage(1, udpMsg, 0);
+
+##capl名##
+outputEthMessage
+
+##转换须知##
+1. CAPL使用端口号而非网络对象
+2. CAPL的消息是原始字节数组或预定义结构
+3. CAPL的timerId从1开始，0表示失败
+4. 周期时间在CAPL中是long类型
+5. CAPL没有TCP/IP协议栈对象参数
+
+##转换示例##
+1. CAPL原始代码：
+byte dbcMsg[8] = {0x01,0x02,0x03,0x04};
+timerId = outputEthMessage(2, dbcMsg, 200);
+
+2. 转换后的VBA代码：
+Dim dbcMsg As ETHDBCCommand
+' 填充dbcMsg内容
+taskid = sendPeriodETHMsgByStack(network, tcpipstack, dbcMsg, 200)
+
+3. 关键转换说明：
+- 将CAPL的字节数组转换为VBA的消息对象
+- 端口号2对应到具体network对象
+- 添加了VBA必需的tcpipstack参数
+- 返回值类型从timerId改为taskid

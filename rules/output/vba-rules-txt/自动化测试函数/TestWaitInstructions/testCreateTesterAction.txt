@@ -1,0 +1,74 @@
+1. 函数名
+testCreateTesterAction
+
+2. 函数描述
+用于创建一个测试动作
+
+3. 函数体
+testCreateTesterAction(actionText, heading, callback)
+
+4. 返回值
+名称      类型    描述
+action    object  action对象
+
+5. 参数
+名称       类型    描述
+actionText str     测试动作的描述
+heading    str     测试动作的题目
+callback   object  测试回调的函数
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：创建一个测试触发，当条件被触发时调用回调函数
+
+示例代码：
+gTriggerCycle = -1
+gTriggerSig = -1
+gTriggerSV = -1
+
+def CallbackTesterAction(trigger):
+    if (trigger == gTriggerCycle):
+        testStep("", "Triggered by cycle time");
+    elif (trigger == gTriggerSig):
+        testStep("", "Triggered by signal");
+    elif (trigger == gTriggerSV):
+        testStep("", "Triggered by system variable");
+    elif (trigger == gTriggerEV):
+        testStep("", "Triggered by environment variable");
+    else:
+        testStep("", "Triggered before opening dialog or before closing dialog after timeout");
+    
+    if (sysVarEngineStarted == 1):
+        return 1;
+    return 0;
+
+@testcase
+def TCTesterAction():
+    global gTriggerCycle, gTriggerSig, gTriggerSV
+    
+    # 创建一个handle，并绑定action对应的触发函数
+    handle = testCreateTesterAction('This is the tester action text', 'Tester action heading', CallbackTesterAction);
+    
+    # 创建一个周期触发方式
+    gTriggerCycle = TestAddTriggerTesterAction(handle, 1000);
+    
+    # 创建一个信号触发方式
+    gTriggerSig = TestAddTriggerTesterAction(handle, CAN.MW.SigSigned16);
+    
+    # 创建一个变量触发方式
+    gTriggerSV = TestAddTriggerTesterAction(handle, sysvar.sysInt);
+    
+    # 运行该函数后将打开一个弹窗
+    testValidateTesterAction(handle, 10000, 1);
+
+代码注释：
+- 创建了三种触发方式：周期触发、信号触发和变量触发
+- 当任一触发条件满足时，会调用回调函数并关闭弹窗
+- 弹窗也可在超时或手动关闭，并将内容输出到测试报告
+
+8. 其他
+- 该函数通常与TestAddTriggerTesterAction和testValidateTesterAction配合使用
+- 回调函数的入参固定为触发源
+- 回调函数返回1表示条件满足，0表示不满足

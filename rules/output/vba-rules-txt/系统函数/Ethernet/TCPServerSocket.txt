@@ -1,0 +1,42 @@
+1. 函数名
+TCPServerSocket
+
+2. 函数描述
+创建TCP服务端
+
+3. 函数体
+TCPServerSocket(ipType=0, host='127.0.0.0', port=3434)
+
+4. 返回值
+名称       类型              描述
+tcpServer  TCPServerSocket  返回TCP服务端
+
+5. 参数
+名称    类型    描述
+ipType  int     类型，0代表ipv4,1代表ipv6
+host    String  服务器IP地址
+port    int     服务器端口
+
+6. 内置函数
+函数名称          描述
+start()          启动TCP服务器
+getConnects()    获取已经建立的TCP连接字典
+stop()           关闭TCP服务器
+sendTCPMsg()     向指定的连接的客户端发送TCP报文
+recvTCPMsg()     接收指定的连接的客户端发送的TCP报文
+
+7. 示例
+示例功能：创建TCP服务器，并将其发建立连接的客户端发送数据
+示例代码：
+@onKey('m')
+tcpServer = TCPServerSocket(ipType=0, host='192.168.7.5', port=8890)
+threadSleep(4000)
+@onKey('m')
+for key in tcpServer.getConnects().keys():
+    if '192.168.7.2' in key:
+        tcpServer.sendTCPMsg(tcpServer.getConnects()[key], bytes([0x1, 0x2]))
+
+8. 其他
+- 需要配合onKey事件使用
+- 可以获取已建立的TCP连接
+- 支持IPv4和IPv6

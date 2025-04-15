@@ -1,0 +1,60 @@
+##功能##
+判断报文数据是否是诊断中定义的连续帧。该函数用于诊断通信中识别连续帧，确保数据按正确顺序接收和处理。
+
+##vba规范##
+函数名：diagIsConsecutiveFrame
+参数：
+- data: List类型，表示数据场列表
+返回值：
+- ans: boolean类型，True表示是连续帧，False表示不是
+
+##capl规范##
+函数定义：int isConsecutiveFrame(byte data[])
+参数：
+- data: byte数组，表示CAN报文数据
+返回值：
+- int类型，1表示是连续帧，0表示不是
+
+使用示例1：
+```
+byte msgData[8] = {0x20, 0x55, 0x66, 0x02, 0x23, 0x45, 0x34, 0x52};
+int result = isConsecutiveFrame(msgData);
+```
+
+使用示例2：
+```
+on message CAN1.0x123
+{
+  if(isConsecutiveFrame(this.byte(0)))
+  {
+    write("Received consecutive frame");
+  }
+}
+```
+
+##capl名##
+isConsecutiveFrame
+
+##转换须知##
+1. 参数类型差异：VBA使用List，CAPL使用byte数组
+2. 返回值差异：VBA返回boolean，CAPL返回int(1/0)
+3. 数组索引：VBA列表从0开始，CAPL数组也从0开始
+4. 数据长度：CAPL需要预定义数组长度，VBA列表长度可变
+
+##转换示例##
+CAPL原始代码：
+```
+byte data[8] = {0x30, 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE};
+int frameType = isConsecutiveFrame(data);
+```
+
+转换后的VBA代码：
+```
+data = Array(&H30, &H12, &H34, &H56, &H78, &H9A, &HBC, &HDE)
+frameType = diagIsConsecutiveFrame(data)
+```
+
+关键转换步骤：
+1. 将CAPL的byte数组转换为VBA的Array
+2. 将CAPL的int返回值转换为VBA的boolean
+3. 保持相同的判断逻辑

@@ -1,0 +1,79 @@
+##功能##
+TCPServerSocket函数用于创建TCP服务器端，支持IPv4和IPv6协议。它允许指定服务器IP地址和端口号，并提供启动服务器、获取连接、发送和接收TCP报文等功能。典型应用场景包括车载网络测试中模拟ECU作为TCP服务器，与其他测试设备或ECU建立通信。
+
+##vba规范##
+函数定义：TCPServerSocket(ipType=0, host='127.0.0.0', port=3434)
+参数：
+- ipType: Integer类型，0表示IPv4，1表示IPv6
+- host: String类型，服务器IP地址
+- port: Integer类型，服务器端口号
+返回值：TCPServerSocket对象
+内置方法：
+- start(): 启动TCP服务器
+- getConnects(): 返回已建立的TCP连接字典
+- stop(): 关闭TCP服务器
+- sendTCPMsg(connection, data): 向指定连接发送TCP数据
+- recvTCPMsg(connection): 从指定连接接收TCP数据
+
+##capl规范##
+CAPL中使用tcpServer函数创建TCP服务器：
+- 定义：tcpServer(ipVersion, localAddress, localPort)
+- 参数：
+  - ipVersion: 字符串，"IPV4"或"IPV6"
+  - localAddress: 字符串，本地IP地址
+  - localPort: 整数，本地端口号
+- 返回值：TCP服务器句柄
+
+示例1：
+variables {
+  dword tcpHandle;
+}
+on start {
+  tcpHandle = tcpServer("IPV4", "192.168.1.100", 8080);
+  write("TCP Server started on port 8080");
+}
+
+示例2：
+on tcpConnect {
+  if(this.tcpHandle == tcpHandle) {
+    write("New client connected: %s", tcpGetRemoteAddress(this.tcpHandle));
+  }
+}
+
+##capl名##
+tcpServer
+
+##转换须知##
+1. CAPL使用字符串指定IP版本("IPV4"/"IPV6")，而VBA使用整数(0/1)
+2. CAPL没有直接的getConnects方法，需要通过tcpConnect事件处理连接
+3. CAPL中发送数据使用tcpSend函数，而非对象方法
+4. CAPL需要显式处理TCP事件(on tcpConnect, on tcpDisconnect等)
+5. CAPL的TCP函数返回的是句柄而非对象
+
+##转换示例##
+CAPL原始代码：
+variables {
+  dword serverHandle;
+}
+on start {
+  serverHandle = tcpServer("IPV4", "192.168.1.100", 8080);
+}
+on tcpConnect {
+  if(this.tcpHandle == serverHandle) {
+    byte data[2] = {0x01, 0x02};
+    tcpSend(this.tcpHandle, data, elCount(data));
+  }
+}
+
+转换后的VBA代码：
+@onKey('m')
+tcpServer = TCPServerSocket(ipType=0, host='192.168.1.100', port=8080)
+@onKey('m')
+for key in tcpServer.getConnects().keys():
+    tcpServer.sendTCPMsg(tcpServer.getConnects()[key], bytes([0x1, 0x2]))
+
+关键转换步骤：
+1. 将CAPL的tcpServer调用转换为TCPServerSocket构造函数
+2. 将CAPL的事件处理转换为VBA的按键触发
+3. 将tcpSend函数调用转换为sendTCPMsg方法调用
+4. 在VBA中自动处理连接管理，无需显式事件处理

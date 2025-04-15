@@ -1,0 +1,40 @@
+1. 函数名
+onMessageEvent
+
+2. 函数描述
+该函数用于处理来自CAN1通道的报文，并将其转发到CAN3网段上。这是一个事件触发函数，当CAN1通道上接收到报文时自动调用。
+
+3. 函数体
+def onMessageEvent(canMsg):
+    sendMsg(canMsg, CAN3)
+
+4. 返回值
+无显式返回值
+
+5. 参数
+名称     类型      描述
+canMsg   CAN消息   从CAN1通道接收到的报文对象
+
+6. 内置函数
+函数名称      函数描述
+sendMsg       发送CAN报文到指定通道
+@onMessage    事件触发器，当指定通道收到报文时调用
+
+7. 示例
+示例功能：实现CAN1到CAN3的报文转发功能
+
+示例代码：
+@onMessage('*', CAN1)
+def onMessageEvent(canMsg):
+    sendMsg(canMsg, CAN3)
+
+代码注释：
+- @onMessage('*', CAN1) 表示监听CAN1通道上的所有报文
+- canMsg参数包含接收到的报文信息
+- sendMsg(canMsg, CAN3) 将接收到的报文转发到CAN3通道
+
+8. 其他说明
+- 这是一个典型的事件驱动型函数
+- 使用@onMessage装饰器来注册事件处理函数
+- 可以指定特定ID或ID范围来过滤需要处理的报文
+- 默认隐藏了网段参数，简化了使用方式

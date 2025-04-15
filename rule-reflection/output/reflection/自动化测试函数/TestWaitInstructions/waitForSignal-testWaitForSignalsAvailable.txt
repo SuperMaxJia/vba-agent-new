@@ -1,0 +1,48 @@
+##功能##
+该函数用于等待指定节点的所有发送信号在指定时间内出现。主要用于测试环境中，确保在继续执行前所需的信号已经可用，避免因信号未就绪导致的测试失败。
+
+##vba规范##
+函数定义：testWaitForSignalsAvailable(Node, timeout=1000)
+参数：
+- Node: object类型，表示要监视的节点对象
+- timeout: int类型，超时时间(毫秒)，0表示无限等待
+返回值：int类型，0表示超时，1表示信号可用，-1表示错误
+
+##capl规范##
+函数定义：waitForSignal(nodeName, timeout)
+参数：
+- nodeName: char[]类型，表示节点名称字符串
+- timeout: int类型，超时时间(毫秒)
+返回值：int类型，0表示超时，1表示信号可用，-1表示错误
+
+示例1：
+int result;
+result = waitForSignal("ECU1", 1000);  // 等待ECU1节点信号1秒
+
+示例2：
+if(waitForSignal("BCM", 0) == 1) {  // 无限等待BCM节点信号
+    write("Signals available");
+}
+
+##capl名##
+waitForSignal
+
+##转换须知##
+1. 参数差异：VBA使用Node对象，CAPL使用节点名称字符串
+2. 返回值相同：都是int类型且含义一致
+3. 行为差异：CAPL版本直接操作节点名称而非对象
+4. 特殊情况：CAPL中节点名称需确保与数据库一致
+
+##转换示例##
+CAPL原始代码：
+int res = waitForSignal("EngineControl", 500);
+
+转换后的VBA代码：
+Dim res As Integer
+Set Node = GetNode("EngineControl")
+res = testWaitForSignalsAvailable(Node, 500)
+
+关键转换步骤：
+1. 将CAPL的字符串节点名转换为VBA的Node对象
+2. 保持相同的超时值和返回值处理
+3. 函数名从waitForSignal改为testWaitForSignalsAvailable

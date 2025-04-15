@@ -1,0 +1,32 @@
+1. 函数名
+readArrayValueByIndex
+
+2. 函数描述
+读取数组变量指定x、y索引处的测量值
+
+3. 函数体
+readArrayValueByIndex(calNode, variable, columnIndex, rowIndex, isMeasurement)
+
+4. 返回值
+名称      类型        描述
+ans       ResultInfo  errorInfo为读取失败时返回的错误信息，backPhyValue为读取成功时获取的测量值
+
+5. 参数
+名称          类型            描述
+calNode       CalNode         标定节点对象
+variable      str/CalVariable 读取的变量，可以是变量名称或者变量对象
+columnIndex   int             列索引（x方向索引）
+rowIndex      int             行索引（y方向索引）
+isMeasurement bool            是否为测量量，True为测量量，False为标定量
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：读取数组变量指定x、y索引处的测量值
+示例代码：
+ans = readArrayValueByIndex(calNode, variable, columnIndex, rowIndex, isMeasurement)
+writeInfo(ans.value)
+
+8. 其他
+无其他相关信息

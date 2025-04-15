@@ -1,0 +1,34 @@
+1. 函数名
+diagDOIPRefreshVehicleAddress
+
+2. 函数描述
+刷新当前连接存在的以太网节点信息，每次调用会重新进行识别，返回节点信息为二维数组的形式。节点数表示为列的数量，每行元素分别为逻辑地址、IP地址、VID车辆识别号、GID通用识别号、EID实体识别号。若当前连接上次未保存以太网信息则返回空数组。
+
+3. 函数体
+diagDOIPRefreshVehicleAddress(connectHandle)
+
+4. 返回值
+名称：array
+类型：[ ]
+描述：刷新当前连接存在的以太网节点信息，每次调用会重新进行识别，返回节点信息为二维数组的形式，每行元素分别为逻辑地址、IP地址、VID车辆识别号、GID通用识别号、EID实体识别号，若当前链接未保存以太网信息则返回空数组。
+
+5. 参数
+名称          类型  描述
+connectHandle int   DOIP连接句柄
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：识别当前连接存在的以太网节点信息，返回节点信息。
+示例代码：
+diagDOIPRefreshVehicleAddress(connectHandle)
+[
+    [node1.LogicalAddr, node1.IP, node1.VID, node1.GID, node1.EID],
+    [node2.LogicalAddr, node2.IP, node2.VID, node2.GID, node2.EID],
+    [node3.LogicalAddr, node3.IP, node3.VID, node3.GID, node3.EID]
+]
+代码注释：调用函数后返回一个二维数组，包含当前连接的以太网节点信息，每行对应一个节点的逻辑地址、IP地址、VID、GID和EID。
+
+8. 其他和函数或变量强相关的内容
+无

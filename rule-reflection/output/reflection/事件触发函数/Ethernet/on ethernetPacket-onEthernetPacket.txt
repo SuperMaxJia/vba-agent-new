@@ -1,0 +1,64 @@
+##功能##
+用于当接收到符合触发条件的以太网报文时触发回调函数，支持通配符或字节列表匹配，常用于以太网通信监控和数据分析。
+
+##vba规范##
+函数名：onEthernetPacket  
+参数：  
+- bytes：支持通配符'*'或字节列表格式[[startbyte,0x80,0x01],[startbyte,0x80,0x01]]  
+- network：可选网段对象  
+返回值：无，触发后执行绑定的回调函数  
+回调函数参数：ethFrame对象，可操作报文数据  
+
+##capl规范##
+函数名：on ethernetPacket  
+参数：  
+- filter：支持通配符'*'或字节数组格式{0x80,0x01}  
+- channel：可选通道号  
+返回值：无，触发事件处理程序  
+事件处理程序参数：以太网帧对象  
+
+示例1：监听所有以太网报文  
+```capl
+on ethernetPacket *
+{
+  write("Timestamp: %f", this.time);
+}
+```
+
+示例2：监听特定字节模式的报文  
+```capl
+on ethernetPacket {0x80,0x01}
+{
+  write("Matched frame received");
+}
+```
+
+##capl名##
+on ethernetPacket
+
+##转换须知##
+1. CAPL使用花括号{}表示字节数组，而VBA使用列表格式[]  
+2. CAPL通过this关键字访问当前帧，VBA通过回调参数ethFrame  
+3. CAPL的通道号对应VBA的network参数  
+4. CAPL时间戳通过this.time访问，VBA通过getTimestamp()方法  
+
+##转换示例##
+CAPL原始代码：
+```capl
+on ethernetPacket {0x80,0x01}
+{
+  write("ID: %x", this.id);
+}
+```
+
+转换后的VBA代码：
+```vba
+@onEthernetPacket([[0,0x80,0x01]]) 
+def onEthernetPacketEvent(ethFrame):
+    print("ID: %x" % ethFrame.id)
+```
+
+关键转换步骤：
+1. 将CAPL字节数组{0x80,0x01}转换为VBA格式[[0,0x80,0x01]]  
+2. CAPL的this关键字替换为VBA的ethFrame参数  
+3. CAPL的write函数改为VBA的print

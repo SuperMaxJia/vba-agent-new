@@ -1,0 +1,49 @@
+1. 函数名
+writeMapValue
+
+2. 函数描述
+写入Map变量值信息
+
+3. 函数体
+writeMapValue(calNode, variable, mapValueInfo)
+
+4. 返回值
+名称      类型          描述
+ans       MapValueInfo  返回值对象，包含以下属性：
+                        - ans.columnNumber: Map变量列数（X轴轴点个数）
+                        - ans.xAxisValue: Map变量X轴区域数值列表（个数=columnNumber）
+                        - ans.rowNumber: Map变量行数（Y轴轴点个数）
+                        - ans.yAxisValue: Map变量Y轴区域数值列表（个数=rowNumber）
+                        - ans.value: Map变量数值列表（按行排列，总个数=columnNumber*rowNumber）
+                        - ans.info: 接口执行失败的原因
+
+5. 参数
+名称          类型              描述
+calNode      CalNode           标定节点对象
+variable     str/CalVariable   读取的变量，可以是变量名称或者变量对象
+mapValueInfo MapValueInfo      Map变量对象信息
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：标定CAN1网段下calNode1标定节点中名称为"NewMap"的标定量信息
+
+示例代码：
+mapValueInfo = MapValueInfo()
+mapValueInfo.setColumnNumber(2)  # 设置Map变量列数（X轴轴点个数）
+mapValueInfo.setRowNumber(2)    # 设置Map变量行数（Y轴轴点个数）
+mapValueInfo.setXAxisValue([1.0, 1.0, 1.0, 1.0])  # 设置Map X轴区域数值列表
+mapValueInfo.setYAxisValue([1.0, 1.0, 1.0, 1.0])  # 设置Map Y轴区域数值列表
+mapValueInfo.setValue([3.0, 4.0, 5.0, 6.0])      # 设置Map值区域数值列表
+
+ans = writeMapValue(CAN1.Calibrations.calNode1, "NewMap", mapValueInfo)
+# 或者使用变量对象方式：
+# ans = writeMapValue(CAN1.Calibrations.calNode1, CAN1.Calibrations.calNode1.characteristics.NewMap, mapValueInfo)
+
+writeInfo(vars(ans))
+
+8. 其他说明
+- 需要先创建MapValueInfo对象并设置相关参数
+- 可以通过变量名或变量对象两种方式指定要写入的变量
+- 返回值ans包含完整的Map变量信息，可用于验证写入结果

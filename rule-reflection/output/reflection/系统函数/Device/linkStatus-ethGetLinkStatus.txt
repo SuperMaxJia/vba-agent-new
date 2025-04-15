@@ -1,0 +1,50 @@
+##功能##
+该函数用于获取指定网络通道的Link状态，返回0表示未连接，1表示已连接，-1表示获取失败。常用于网络通信状态监测和诊断。
+
+##vba规范##
+函数定义：ethGetLinkStatus(network)
+参数：
+  network: Network类型，表示要检查的网络通道对象
+返回值：
+  res: int类型，0-未连接，1-已连接，-1-获取失败
+
+##capl规范##
+函数定义：linkStatus(channel)
+参数：
+  channel: 整数类型，表示CAN通道号
+返回值：
+  整数类型，0-未连接，1-已连接，-1-获取失败
+
+示例1：
+int status;
+status = linkStatus(1);
+write("Channel 1 Link Status: %d", status);
+
+示例2：
+if(linkStatus(can1.channel) == 1) {
+  write("CAN1 is linked");
+} else {
+  write("CAN1 is not linked");
+}
+
+##capl名##
+linkStatus
+
+##转换须知##
+1. 参数差异：VBA使用Network对象，CAPL使用整数通道号
+2. 返回值含义一致
+3. 错误处理方式相同
+4. 在CAPL中需要明确指定通道号，而VBA使用网络对象
+
+##转换示例##
+1. CAPL原始代码：
+int result = linkStatus(1);
+
+2. 转换后的VBA代码：
+Dim result As Integer
+result = ethGetLinkStatus(network)
+
+3. 关键转换说明：
+- 将CAPL的通道号1转换为VBA的network对象
+- 保持相同的返回值处理逻辑
+- 函数名从linkStatus改为ethGetLinkStatus

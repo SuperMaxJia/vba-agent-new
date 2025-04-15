@@ -1,0 +1,52 @@
+##功能##
+该函数用于客户端主动断开TCP连接，通常在网络通信结束时调用，以释放socket资源并终止连接。适用于需要管理多个TCP连接的场景，如车载网络测试中的客户端断开操作。
+
+##vba规范##
+函数定义：ethCloseTCPClientLink(network, socketid)
+参数：
+- network: Network类型，表示目标网段信息
+- socketid: int类型，表示要关闭的连接对应的socket标识符
+返回值：int类型的close_flag，表示关闭操作的状态
+
+##capl规范##
+函数定义：tcpClose(socket)
+参数：
+- socket: dword类型，表示要关闭的TCP连接句柄
+返回值：long类型，返回0表示成功，负数表示错误
+示例1：
+dword sock;
+//...建立连接...
+long result = tcpClose(sock);  // 关闭TCP连接
+
+示例2：
+on key 'a'
+{
+  if(tcpClose(activeSocket) == 0)
+  {
+    write("TCP connection closed successfully");
+  }
+}
+
+##capl名##
+tcpClose
+
+##转换须知##
+1. CAPL使用单个socket参数，而VBA需要network和socketid两个参数
+2. CAPL返回值是long类型状态码，VBA返回int类型标志
+3. CAPL中socket是dword类型，VBA中socketid是int类型
+4. 在CAPL中不需要指定network参数，连接管理基于socket句柄
+
+##转换示例##
+1. CAPL原始代码：
+dword clientSocket = 5;
+long status = tcpClose(clientSocket);
+
+2. 转换后的VBA代码：
+Dim closeFlag As Integer
+closeFlag = ethCloseTCPClientLink(network, 5)
+
+3. 关键转换说明：
+- 将CAPL的dword类型socket转换为VBA的int类型socketid
+- 在VBA中需要额外提供network参数
+- 将CAPL的long返回值转换为VBA的int返回值
+- 功能上都是关闭指定socket的TCP连接

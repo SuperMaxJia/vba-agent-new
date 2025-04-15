@@ -1,0 +1,38 @@
+##功能##
+该函数用于向控制台输出错误信息，主要用于调试和错误处理场景，帮助开发者快速定位问题。
+
+##vba规范##
+函数名：writeErrorInfo
+参数：info（String类型），表示要输出的错误信息
+返回值：无
+功能：将字符串信息输出到控制台
+示例：writeErrorInfo("打印错误消息")
+
+##capl规范##
+CAPL中使用write函数输出信息到控制台，参数为字符串类型，无返回值。
+示例1：
+write("Error: Sensor not responding");
+示例2：
+char errorMsg[50] = "Invalid parameter";
+write(errorMsg);
+
+##capl名##
+write
+
+##转换须知##
+1. CAPL的write函数直接输出字符串，而VBA需要自定义函数
+2. CAPL不需要显式声明字符串变量类型
+3. CAPL中字符串可以直接用双引号表示，与VBA相同
+4. CAPL没有返回值，与VBA函数一致
+
+##转换示例##
+1. CAPL原始代码：
+write("Connection timeout");
+2. 转换后的VBA代码：
+Sub writeErrorInfo(info As String)
+    Debug.Print info
+End Sub
+3. 关键转换说明：
+- 将CAPL的write直接调用转换为VBA的Sub过程
+- 使用Debug.Print替代write的输出功能
+- 保持参数和功能的一致性

@@ -1,0 +1,47 @@
+1. 函数名  
+chkCreate_MsgOccurrenceCount  
+
+2. 函数描述  
+检查总线上是否没有指定的报文。如果发送的指定报文超过maxCount，则创建一个事件，仅触发一次。  
+
+3. 函数体  
+所有检测函数都有对应的chkStart_xxxx()和chkCreate_xxxx()。  
+chkCreate_xxxx()仅创建检测对象但不开始检测，需要调用chkControl_Start()启动检测；  
+chkStart_xxxx()创建检测对象并直接开始检测。  
+
+4. 返回值  
+名称 | 类型 | 描述  
+------|------|------  
+res   | int  | 代表创建的对象，-1表示创建失败  
+
+5. 参数  
+名称 | 类型 | 描述  
+------|------|------  
+netWork | Network对象 | 网段对象  
+messageOrId | object/int/str | 报文对象或报文ID（标准帧可输入数字，扩展帧输入字符串）  
+maxCount | int | 最大允许出现次数  
+
+6. 内置函数  
+函数名称 | 函数描述 | 参数说明  
+------|------|------  
+chkControl_Start | 启动检测 | 需配合chkCreate_xxxx()使用  
+testAddCondition | 将统计信息加入测试报告 | checkId为检测对象ID  
+testWaitForTimeout | 设置统计时长 | 参数为毫秒值  
+testRemoveCondition | 结束统计 | checkId为检测对象ID  
+
+7. 示例  
+功能：检测指定报文出现次数是否超过2次，并生成测试报告。  
+代码：  
+```vba  
+checkId = chkStart_MsgOccurrenceCount(CAN, CAN.MSG, 2)  
+testAddCondition(checkId)  
+testWaitForTimeout(1000)  '统计持续1000ms  
+testRemoveCondition(checkId)  
+```  
+注释：  
+- `CAN.MSG`为目标报文对象  
+- `1000`表示检测时长为1秒  
+
+8. 其他说明  
+- 需与自动化测试函数（如testAddCondition）配合使用  
+- 扩展帧ID需以字符串形式传入（如"0x1A3"）

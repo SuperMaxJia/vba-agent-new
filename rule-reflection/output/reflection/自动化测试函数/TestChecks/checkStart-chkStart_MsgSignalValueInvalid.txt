@@ -1,0 +1,86 @@
+##功能##
+用于启动对消息信号值无效的检查，监控信号值是否在预期范围内或符合预定义规则，属于自动化测试中的检查控制类函数。
+
+##vba规范##
+函数名：chkStart_MsgSignalValueInvalid
+参数：checkID（整数型，检查唯一标识符），callback（字符串型，回调函数名称）
+返回值：未明确，可能为布尔值或整数状态码
+相关函数：chkControl_Start，chkControl_Stop
+
+##capl规范##
+函数定义：void checkStart(long checkId, char callback[])
+参数：checkId（长整型），callback（字符数组）
+返回值：无
+示例1：
+```capl
+on start
+{
+  long checkId = 1;
+  checkStart(checkId, "callbackFunc");
+}
+
+void callbackFunc(long id, int status)
+{
+  write("Check %d status: %d", id, status);
+}
+```
+示例2：
+```capl
+variables
+{
+  long gCheckId = 100;
+}
+
+on key 'a'
+{
+  checkStart(gCheckId, "onCheckComplete");
+}
+
+void onCheckComplete(long id, int result)
+{
+  if(result)
+    write("Check started successfully");
+  else
+    write("Check failed to start");
+}
+```
+
+##capl名##
+checkStart
+
+##转换须知##
+1. CAPL使用void返回类型而VBA可能返回状态值
+2. CAPL使用字符数组而非VBA的字符串类型
+3. CAPL回调函数参数顺序可能与VBA不同
+4. CAPL需要显式声明回调函数而VBA使用字符串指定
+
+##转换示例##
+CAPL原始代码：
+```capl
+on start
+{
+  checkStart(5, "handleCheck");
+}
+
+void handleCheck(long id, int status)
+{
+  if(status)
+    write("Check OK");
+}
+```
+转换后的VBA代码：
+```vba
+Sub Main()
+    Call chkStart_MsgSignalValueInvalid(5, "HandleCheck")
+End Sub
+
+Sub HandleCheck(checkID As Integer, status As Boolean)
+    If status Then
+        MsgBox "Check OK"
+    End If
+End Sub
+```
+关键转换步骤：
+1. 将CAPL的on start改为VBA的Sub Main
+2. 转换回调函数参数类型（long→Integer，int→Boolean）
+3. 保持相同的功能逻辑但使用VBA语法

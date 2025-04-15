@@ -1,0 +1,63 @@
+##功能##
+该函数用于在指定的系统变量值发生改变时触发事件处理函数，主要用于监控系统变量的变化并执行相应操作。典型应用场景包括车辆速度监控、系统状态检测等需要实时响应变量变化的场合。
+
+##vba规范##
+函数定义：@onVariable装饰器定义监听变量，def定义事件处理函数
+参数类型：
+- onvariable: VariableEntity类型，格式为"变量组.变量名"
+- variable: VariableEntity对象，包含oldVal/newVal/initVal属性和getXxx()方法
+返回值类型：无
+函数行为：异步事件触发，变量变化时自动调用
+
+##capl规范##
+在CAPL中对应的是on sysvar事件处理：
+on sysvar <变量名>
+{
+  // 处理代码
+}
+
+示例1：
+on sysvar VehicleGroup::VehicleSpeed
+{
+  write("Old: %f", @sysvar::VehicleGroup::VehicleSpeed.oldValue);
+  write("New: %f", @sysvar::VehicleGroup::VehicleSpeed);
+}
+
+示例2：
+on sysvar Engine::RPM 
+{
+  if (@sysvar::Engine::RPM > 3000) {
+    write("RPM超过阈值！");
+  }
+}
+
+##capl名##
+on sysvar
+
+##转换须知##
+1. CAPL使用::作为命名空间分隔符，VBA使用.
+2. CAPL直接通过@sysvar访问当前值，VBA需要getNewVal()
+3. CAPL通过.oldValue访问旧值，VBA通过getOldVal()
+4. CAPL不需要装饰器语法，直接使用on sysvar声明
+5. CAPL变量名区分大小写
+
+##转换示例##
+CAPL原始代码：
+on sysvar VehicleGroup::VehicleSpeed 
+{
+  write("Speed changed from %f to %f", 
+    @sysvar::VehicleGroup::VehicleSpeed.oldValue,
+    @sysvar::VehicleGroup::VehicleSpeed);
+}
+
+转换后的VBA代码：
+@onVariable(VehicleGroup.VehicleSpeed)
+def onSpeedChange(variable):
+    writeInfo("Speed changed from " + str(variable.getOldVal()) + 
+             " to " + str(variable.getNewVal()))
+
+关键转换说明：
+1. 将CAPL的::替换为VBA的.
+2. 将@sysvar访问改为variable对象方法调用
+3. CAPL的write改为VBA的writeInfo
+4. 添加VBA所需的装饰器语法

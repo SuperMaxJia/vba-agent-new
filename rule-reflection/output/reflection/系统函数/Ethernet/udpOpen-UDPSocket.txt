@@ -1,0 +1,64 @@
+##功能##
+该函数用于创建UDP套接字对象，支持IPv4和IPv6协议，可指定主机IP和端口号。主要用于网络通信中发送和接收UDP数据包，适用于测试ECU网络通信、诊断报文传输等场景。
+
+##vba规范##
+函数定义：UDPSocket(ipType=0, host='127.0.0.0', port=3434)
+参数：
+- ipType: Integer，0=IPv4，1=IPv6
+- host: String，服务器IP地址
+- port: Integer，服务器端口号
+返回值：UDPSocket对象
+方法：
+- sendUDPMsg(data, ip, port)
+- recvUDPMsg(bufsize)
+- stop()
+
+##capl规范##
+CAPL使用内置UDP函数：
+1. udpOpen(port, ipVersion)
+2. udpSend(destinationIp, destinationPort, data)
+3. udpReceive(buffer, bufferSize)
+4. udpClose()
+
+示例1：
+// 创建IPv4 UDP套接字
+dword handle;
+byte data[5] = {1,2,3,4,5};
+handle = udpOpen(8890, 0);
+udpSend("192.168.7.2", 65535, data);
+
+示例2：
+// 接收UDP数据
+byte buffer[100];
+dword receivedSize;
+receivedSize = udpReceive(buffer, elcount(buffer));
+
+##capl名##
+udpOpen
+
+##转换须知##
+1. CAPL需要显式调用udpOpen/udpClose，而VBA封装在对象中
+2. CAPL的udpReceive是同步操作，VBA可能是异步
+3. CAPL使用dword返回句柄，VBA返回对象
+4. CAPL需要手动管理缓冲区，VBA自动处理
+5. IP版本参数顺序不同（CAPL端口在前）
+
+##转换示例##
+CAPL原始代码：
+dword handle;
+byte data[3] = {0x12,0x34,0x56};
+handle = udpOpen(8080, 0);
+udpSend("192.168.1.100", 9090, data);
+udpClose(handle);
+
+转换后的VBA代码：
+Dim udpSocket As Object
+Set udpSocket = UDPSocket(ipType:=0, host:="192.168.1.1", port:=8080)
+udpSocket.sendUDPMsg Array(&H12,&H34,&H56), "192.168.1.100", 9090
+udpSocket.stop
+
+关键转换说明：
+1. udpOpen转换为UDPSocket构造函数
+2. byte数组转换为VBA Array
+3. udpSend转换为sendUDPMsg方法
+4. 显式close调用转换为stop方法

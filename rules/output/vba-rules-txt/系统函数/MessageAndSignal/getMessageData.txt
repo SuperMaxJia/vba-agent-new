@@ -1,0 +1,36 @@
+1. 函数名
+getMessageData
+
+2. 函数描述
+获取最新收到的报文的数据场
+
+3. 函数体
+getMessageData(id, extend, network)
+
+4. 返回值
+正确情况：
+data | list[byte] | 报文数据场
+
+错误情况：
+info | String | 错误信息：'Unresolved Message':未解析到报文
+
+5. 参数
+名称     类型      描述
+id       int      报文ID
+extend   boolean  扩展帧标识，1:扩展帧，0:标准帧（lin相关该参数置0）
+network  Network  网段对象
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：获取ID为0x12的标准帧报文数据
+示例代码：
+value = getMessageData(0x12, 0, CAN1)
+代码注释：
+- 0x12：报文ID
+- 0：标准帧标识
+- CAN1：网段对象
+
+8. 其他
+无其他相关信息

@@ -1,0 +1,30 @@
+1. 函数名
+strReplaceAll
+
+2. 函数描述
+从字符串sourceStr中替换所有的old字符串为new的新字符串
+
+3. 函数体
+strReplaceAll(sourceStr, old, new)
+
+4. 返回值
+名称: str
+类型: String
+描述: 返回替换后的字符串
+
+5. 参数
+名称       类型     描述
+sourceStr  String  字符串
+old        String  被替换的字符串
+new        String  替换的字符串
+
+6. 内置函数
+(本函数未涉及其他内置函数)
+
+7. 示例
+示例功能: 替换字符串'abcdedf'中的d为k,返回'abckekf'
+示例代码: strReplaceAll('abcdedf', 'd', 'k')
+代码注释: 将字符串中所有'd'替换为'k'
+
+8. 其他
+无其他相关说明

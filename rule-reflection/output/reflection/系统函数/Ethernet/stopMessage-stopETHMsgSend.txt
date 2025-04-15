@@ -1,0 +1,53 @@
+##功能##
+该函数用于停止通过以太网周期性发送的报文。在实际应用中，常用于CANoe测试环境中控制以太网通信的启停，例如在测试用例执行完毕后停止特定的报文发送。
+
+##vba规范##
+函数名：stopETHMsgSend
+参数：
+- taskid (int): 以太网周期发送函数的返回值，作为发送报文的唯一标识
+返回值：
+- res (int): 1表示停止成功，0表示停止失败
+
+##capl规范##
+函数定义：void stopMessage(long taskid)
+参数：
+- taskid (long): 由outputMessageStart函数返回的任务ID
+返回值：无
+示例1：
+// 停止周期发送的以太网报文
+long taskId = 12345;
+stopMessage(taskId);
+
+示例2：
+// 在事件处理中停止发送
+on key 's'
+{
+  stopMessage(gCurrentTaskId);
+}
+
+##capl名##
+stopMessage
+
+##转换须知##
+1. 参数类型差异：VBA使用int类型，CAPL使用long类型
+2. 返回值差异：VBA返回状态值，CAPL无返回值
+3. 函数行为：功能相同但实现方式不同
+4. 特殊情况：CAPL中需要确保taskid有效
+
+##转换示例##
+1. CAPL原始代码：
+long taskId = outputMessageStart(msg1, 100);
+//...测试代码...
+stopMessage(taskId);
+
+2. 转换后的VBA代码：
+Dim taskid As Integer
+taskid = startETHMsgSend(msg1, 100)
+'...测试代码...
+Dim res As Integer
+res = stopETHMsgSend(taskid)
+
+3. 关键转换说明：
+- 将CAPL的outputMessageStart改为VBA的startETHMsgSend
+- CAPL的stopMessage改为VBA的stopETHMsgSend
+- 添加VBA的返回值处理

@@ -1,0 +1,52 @@
+##功能##
+该函数用于在指定延时时间后执行另一个函数，支持阻塞和非阻塞两种模式。在实际应用中常用于定时任务调度、延时触发操作等场景。
+
+##vba规范##
+函数定义：Sub delayFunction(delaytime As Integer, mode As Integer, func As String, ParamArray parm() As Variant)
+参数：
+- delaytime: Integer类型，延时时间(毫秒)
+- mode: Integer类型(0=阻塞模式，1=非阻塞模式)
+- func: String类型，要执行的函数名
+- parm: 可变参数数组，传递给目标函数的参数
+返回值：无
+
+##capl规范##
+函数定义：void timerFunction(int delaytime, int mode, char func[], ...)
+参数：
+- delaytime: int类型，延时时间(毫秒)
+- mode: int类型(0=阻塞模式，1=非阻塞模式)
+- func: char[]类型，要执行的函数名
+- ...: 可变参数，传递给目标函数的参数
+返回值：无
+
+示例1：
+// 阻塞模式延时后执行
+timerFunction(100, 0, "demoFunction", 1, 2);
+
+示例2：
+// 非阻塞模式延时后执行
+timerFunction(200, 1, "anotherFunction", "param1", 3.14);
+
+##capl名##
+timerFunction
+
+##转换须知##
+1. CAPL使用char[]表示函数名而非function类型
+2. CAPL的可变参数语法与VBA不同
+3. CAPL没有ParamArray关键字，使用...表示可变参数
+4. 函数调用方式不同，CAPL需要显式传递函数名作为字符串
+5. 阻塞/阻塞模式实现机制可能不同
+
+##转换示例##
+1. CAPL原始代码：
+timerFunction(150, 0, "testFunc", 10, 20);
+
+2. 转换后的VBA代码：
+delayFunction 150, 0, "testFunc", 10, 20
+
+3. 关键转换说明：
+- 函数名从timerFunction改为delayFunction
+- 移除了参数类型声明
+- 函数名参数从char[]改为String
+- 可变参数语法从...改为ParamArray
+- 分号改为换行作为语句结束

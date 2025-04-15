@@ -1,0 +1,58 @@
+##功能##
+将数值或其他类型转换为字符串类型。常用于需要将数字转换为文本进行显示、拼接或处理的场景。
+
+##vba规范##
+函数名：str
+参数：object（任意类型，通常为数值）
+返回值：String类型
+功能：将输入对象转换为字符串表示形式
+
+##capl规范##
+函数名：format
+参数：数值或变量
+返回值：char数组（字符串）
+功能：将输入格式化为字符串
+
+示例1：
+```capl
+int num = 50;
+char str[10];
+sprintf(str, "%d", num);  // 将整数50转换为字符串"50"
+```
+
+示例2：
+```capl
+float value = 3.14;
+char str[20];
+sprintf(str, "%.2f", value);  // 将浮点数3.14转换为字符串"3.14"
+```
+
+##capl名##
+sprintf
+
+##转换须知##
+1. CAPL使用sprintf函数需要预先分配字符数组缓冲区
+2. VBA的str自动处理转换，而CAPL需要指定格式说明符（如%d，%f）
+3. CAPL中的字符串实际上是字符数组，与VBA的String类型不同
+4. CAPL需要手动管理字符串缓冲区大小
+
+##转换示例##
+1. CAPL原始代码：
+```capl
+int temperature = 25;
+char tempStr[10];
+sprintf(tempStr, "%d", temperature);
+```
+
+2. 转换后的VBA代码：
+```vba
+Dim temperature As Integer
+temperature = 25
+Dim tempStr As String
+tempStr = Str(temperature)
+```
+
+3. 关键转换说明：
+- 将CAPL的sprintf调用替换为VBA的Str函数
+- 移除CAPL中的显式缓冲区声明
+- 保持相同的变量命名和逻辑流程

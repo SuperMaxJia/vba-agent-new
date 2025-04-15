@@ -1,0 +1,62 @@
+1. 函数名  
+chkStart_SignalValueChange  
+
+2. 函数描述  
+该函数用于启动信号值变化的自动化测试检查。当信号值发生变化时，触发相应的测试逻辑，通常用于监控信号值的实时变化是否符合预期。  
+
+3. 函数体  
+函数的具体实现逻辑未在提供的文档中详细描述，但通常包括以下步骤：  
+- 初始化信号监控  
+- 设置信号值变化的回调或触发条件  
+- 启动监控过程  
+
+4. 返回值  
+未明确说明返回值，但可能返回一个布尔值表示启动是否成功，或返回一个状态码。  
+
+5. 参数  
+未在提供的文档中明确列出参数，但可能包括以下参数：  
+
+| 名称               | 类型       | 描述                          |  
+|--------------------|------------|-------------------------------|  
+| signalName         | String     | 需要监控的信号名称             |  
+| callbackFunction   | Function   | 信号值变化时触发的回调函数      |  
+
+6. 内置函数  
+未明确列出内置函数，但可能涉及以下相关函数：  
+
+| 函数名称                | 函数描述                          |  
+|-------------------------|-----------------------------------|  
+| getSignalVal           | 获取信号当前值                    |  
+| setSignalVal           | 设置信号值                        |  
+| chkCreate_SignalValueChange | 创建信号值变化的检查实例         |  
+
+7. 示例  
+示例功能：监控信号“EngineSpeed”的值变化，并在值变化时打印新值。  
+
+示例代码：  
+```vba  
+Sub Example_chkStart_SignalValueChange()  
+    ' 启动信号值变化监控  
+    Dim result As Boolean  
+    result = chkStart_SignalValueChange("EngineSpeed", AddressOf OnEngineSpeedChange)  
+
+    If result Then  
+        WriteInfo "信号监控启动成功"  
+    Else  
+        WriteWarningInfo "信号监控启动失败"  
+    End If  
+End Sub  
+
+' 回调函数  
+Sub OnEngineSpeedChange(signalName As String, newValue As Variant)  
+    WriteInfo "信号 " & signalName & " 的值变为: " & newValue  
+End Sub  
+```  
+
+代码注释：  
+- `chkStart_SignalValueChange` 启动对信号“EngineSpeed”的监控，并指定回调函数 `OnEngineSpeedChange`。  
+- 回调函数在信号值变化时被调用，打印信号名称和新值。  
+
+8. 其他和函数或变量强相关的内容  
+- 该函数通常与 `chkCreate_SignalValueChange` 配合使用，后者用于创建信号值变化的检查实例。  
+- 适用于自动化测试场景，特别是需要实时监控信号变化的测试用例。

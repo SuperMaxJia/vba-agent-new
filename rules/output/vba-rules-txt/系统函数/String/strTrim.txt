@@ -1,0 +1,27 @@
+1. 函数名
+strTrim
+
+2. 函数描述
+将字符串sourceStr两边的空字符去掉，并返回去掉空字符后的新字符串。
+
+3. 函数体
+strTrim(sourceStr)
+
+4. 返回值
+名称 | 类型 | 描述
+str | String | 返回处理后的字符串
+
+5. 参数
+名称 | 类型 | 描述
+sourceStr | String | 字符串
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：将字符串‘ ABCdedf ’中空字符去掉，返回‘ABCdedf’
+示例代码：strTrim('ABCdedf')
+代码注释：无
+
+8. 其他和函数或变量强相关的内容
+无

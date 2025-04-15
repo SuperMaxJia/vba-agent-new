@@ -1,0 +1,29 @@
+1. 函数名
+strIntercept
+
+2. 函数描述
+从字符串sourceStr截取的指定位置字符串
+
+3. 函数体
+strIntercept(sourceStr, start, end)
+
+4. 返回值
+名称 | 类型 | 描述
+str | String | 返回截取的字符串
+
+5. 参数
+名称 | 类型 | 描述
+sourceStr | String | 被截取的字符串
+start | int | 截取的起始索引
+end | int | 截取的结束索引
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：截取字符串'abcdef'的前3个字符
+示例代码：strIntercept('abcdef', 0, 3)
+代码注释：从索引0开始截取到索引3（不包括3），返回'abc'
+
+8. 其他
+无其他相关信息

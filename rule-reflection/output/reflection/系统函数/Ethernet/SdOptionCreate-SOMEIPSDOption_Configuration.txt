@@ -1,0 +1,58 @@
+##功能##
+该函数用于创建并配置一个SOMEIP SD Option对象，主要用于设置SOMEIP服务发现协议中的配置选项。在实际应用中，它常用于车载网络通信中配置SOMEIP服务发现的相关参数。
+
+##vba规范##
+函数名：SOMEIPSDOption_Configuration
+参数：config_option（list类型），用于设置SOMEIP SD Option的配置选项
+返回值：返回一个SOMEIPSDOption_Configuration对象实例
+函数体：无参数构造函数，通过setConfigOption方法设置配置选项
+
+##capl规范##
+在CAPL中，可以使用SdOptionCreate函数创建SOMEIP SD Option对象，并通过SdOptionConfig设置配置参数。
+返回值：返回一个SOMEIP SD Option句柄
+参数：无参数构造函数，通过配置函数设置选项
+
+示例1：
+```
+SdOptionHandle option;
+option = SdOptionCreate();
+SdOptionConfig(option, 0x00);
+```
+
+示例2：
+```
+SdOptionHandle opt;
+byte config[1] = {0x01};
+opt = SdOptionCreate();
+SdOptionConfig(opt, config);
+```
+
+##capl名##
+SdOptionCreate
+
+##转换须知##
+1. CAPL使用句柄管理SOMEIP SD Option对象，而VBA使用对象实例
+2. CAPL需要显式调用配置函数，而VBA使用方法调用
+3. CAPL中配置参数可以直接传递值或数组，VBA需要列表形式
+4. CAPL没有内置的列表类型，需要使用数组
+
+##转换示例##
+1. CAPL原始代码：
+```
+SdOptionHandle option;
+byte config[1] = {0x02};
+option = SdOptionCreate();
+SdOptionConfig(option, config);
+```
+
+2. 转换后的VBA代码：
+```vba
+Dim someipSDoption As Object
+Set someipSDoption = SOMEIPSDOption_Configuration()
+someipSDoption.setConfigOption([0x02])
+```
+
+3. 关键转换说明：
+- 将CAPL的SdOptionCreate转换为VBA的SOMEIPSDOption_Configuration构造函数
+- 将CAPL的数组参数转换为VBA的列表形式
+- 将CAPL的SdOptionConfig函数调用转换为VBA的setConfigOption方法调用

@@ -1,0 +1,65 @@
+1. 函数名  
+DHCPPacket  
+
+2. 函数描述  
+用于创建一条DHCP以太网报文。  
+
+3. 函数体  
+```vba
+DHCPPacket()
+```  
+
+4. 返回值  
+返回一个DHCPPacket对象，用于配置DHCP报文参数。  
+
+5. 参数  
+| 名称                     | 类型   | 描述                                                                 |
+|--------------------------|--------|----------------------------------------------------------------------|
+| xid                      | int    | XID值，一个32位的无符号整数                                          |
+| seconds                  | int    | 秒数，一个16位的无符号整数                                           |
+| flags                    | int    | 标志位值，一个16位的无符号整数（0x0000表示单播，0x8000表示广播）     |
+| client_ip_address        | str    | 客户端IP地址，格式为字符串                                           |
+| your_ip_address          | str    | Your IP地址，格式为字符串                                            |
+| server_ip_address        | str    | 服务器IP地址，格式为字符串                                           |
+| agent_ip_address         | str    | 代理IP地址，格式为字符串                                             |
+| client_hw_address        | str    | 客户端硬件地址，格式为字符串                                         |
+| client_hw_address_padding | str    | 客户端硬件地址填充，格式为字符串                                     |
+| magic_cookie             | int    | Magic Cookie值，一个32位的无符号整数                                 |
+| transportPacket          | object | DHCP的传输层协议，仅支持UDP                                          |
+
+6. 内置函数  
+无  
+
+7. 示例  
+**示例功能**：创建一条DHCP以太网报文并配置其参数。  
+**示例代码**：  
+```vba
+dhcpPacket = DHCPPacket()
+dhcpPacket.setXID(0x00000000)
+dhcpPacket.setSeconds(0x0000)
+dhcpPacket.setFlags(0x0000)  ' 0x0000 Unicast, 0x8000 Broadcast
+dhcpPacket.setClientIPAddress("0.0.0.0")
+dhcpPacket.setYourIPAddress("0.0.0.0")
+dhcpPacket.setServerIPAddress("0.0.0.0")
+dhcpPacket.setAgentIPAddress("0.0.0.0")
+dhcpPacket.setClientHWIPAddress("20:00:00:00:00:01")
+dhcpPacket.setClientHWIPAddressPadding("20:00:00:00:00:01:00:00:00:01")
+dhcpPacket.setMagicCookie(0x3F52353F)
+dhcpPacket.setTransportPacket(UDPPacket)  ' 仅支持UDP，传入TCP会校验错误
+```  
+**代码注释**：  
+- `setXID`：设置DHCP报文的XID值。  
+- `setSeconds`：设置DHCP报文的秒数。  
+- `setFlags`：设置DHCP报文的标志位（单播或广播）。  
+- `setClientIPAddress`：设置客户端IP地址。  
+- `setYourIPAddress`：设置Your IP地址。  
+- `setServerIPAddress`：设置服务器IP地址。  
+- `setAgentIPAddress`：设置代理IP地址。  
+- `setClientHWIPAddress`：设置客户端硬件地址。  
+- `setClientHWIPAddressPadding`：设置客户端硬件地址填充。  
+- `setMagicCookie`：设置Magic Cookie值。  
+- `setTransportPacket`：设置传输层协议（仅支持UDP）。  
+
+8. 其他说明  
+- 传输层协议仅支持UDP，传入TCP会导致校验错误。  
+- 所有参数均可通过相应的方法进行设置。

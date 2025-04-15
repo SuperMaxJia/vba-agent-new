@@ -1,0 +1,61 @@
+1. 函数名
+diagDOIPSendPDU
+
+2. 函数描述
+发送PDU，并返回响应报文数据场
+
+3. 函数体
+diagDOIPSendPDU(doipConfig, connectHandle, pdu)
+
+4. 返回值
+情况1：正确读值
+名称       类型   描述
+temp_data  List  成功时返回响应报文数据场
+
+情况2：异常情况
+名称 类型 描述
+res  int  返回0，代表诊断通道激活失败
+
+情况3：异常情况
+名称 类型 描述
+res  int  返回1，代表服务执行失败（其他情况）
+
+情况4：异常情况
+名称 类型 描述
+res  int  返回2，代表服务发送失败
+
+情况5：异常情况
+名称 类型 描述
+res  int  返回3，代表服务响应超时
+
+情况6：异常情况
+名称 类型 描述
+res  int  返回4，代表响应PDU解析失败
+
+5. 参数
+名称          类型        描述
+doipConfig    DOIPConfig  DOIPConfig对象
+connectHandle int         DOIP连接句柄
+pdu           []          要发送的数据
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：创建一套自定义的DOIP诊断配置对象，并基于此配置参数发送诊断PDU
+
+示例代码：
+doipConfig = DOIPConfig()
+doipConfig.setSrcAddr(0x0E80)  # 设置源地址0-0xFFFF，默认两字节
+doipConfig.setDestAddr(0x700)  # 设置目标地址0-0xFFFF，默认两字节
+doipConfig.setFuncAddr(0x7DF)  # 设置功能地址0-0xFFFF，默认两字节
+doipConfig.setP6Timeout(100)   # 设置P6超时时间，0-1000000
+doipConfig.setP6ExtendTimeout(100)  # 设置P6*，0-1000000
+doipConfig.setS3Timeout(4000)  # 设置S3客户端时间，0-10000
+doipConfig.setiGWAdder(0x0E80)  # 网关地址0-0xFFFF，默认两字节
+doipConfig.setMode(0)  # 0代表物理寻址，1代表功能寻址
+doipConfig.setResFlag(False)  # 是否禁止肯定响应
+diagDOIPSendPDU(doipConfig, connectHandle, [0x3E, 0x80])
+
+8. 其他和函数或变量强相关的内容
+无

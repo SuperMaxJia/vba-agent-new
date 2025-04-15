@@ -1,0 +1,47 @@
+1. 函数名
+ICMPv4Packet
+
+2. 函数描述
+用于创建一条ICMPv4以太网报文
+
+3. 函数体
+ICMPv4Packet()
+
+4. 返回值
+返回一个ICMPv4Packet对象
+
+5. 参数
+名称              类型      描述
+message_type      int       设置ICMPv4报文的消息类型
+identifier        int       设置ICMPv4报文的标识符
+sequence_number   int       序列号值，一个16位的无符号整数
+internet_packet   object    设置ICMPv4报文的网络层协议包（支持IPv4Packet）
+
+6. 内置函数
+函数名称              函数描述
+setMessageType       设置ICMPv4报文的消息类型
+setIdentifier        设置ICMPv4报文的标识符
+setSequenceNumber    设置序列号值
+setInternetPacket    设置ICMPv4报文的网络层协议包
+
+7. 示例
+示例功能：创建一条DHCP以太网报文
+
+示例代码：
+icmpPacket = ICMPv4Packet()
+icmpPacket.setMessageType(0x08)  // 0x08: request 0x03: destination unreachable
+icmpPacket.setIdentifier(0x0000) // 0x08: request生效
+icmpPacket.setSequenceNumber(0x0000) // 0x08: request生效
+icmpPacket.setInternetPacket(IPv4Packet)
+
+代码注释：
+- 第一行创建ICMPv4Packet对象
+- 第二行设置报文类型为请求(0x08)
+- 第三行设置标识符为0x0000
+- 第四行设置序列号为0x0000
+- 第五行设置网络层协议包为IPv4Packet
+
+8. 其他说明
+- 消息类型0x08表示请求，0x03表示目标不可达
+- 标识符和序列号在请求类型(0x08)时生效
+- 需要配合IPv4Packet使用

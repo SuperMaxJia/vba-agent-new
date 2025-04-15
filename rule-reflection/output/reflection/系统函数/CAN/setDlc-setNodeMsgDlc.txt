@@ -1,0 +1,51 @@
+##功能##
+该函数用于为指定节点(Node)上的CAN报文设置新的数据长度代码(DLC)。可以通过报文对象(message)或报文ID(id)两种方式来指定目标报文。在实际应用中，常用于动态调整CAN报文的数据长度以适应不同的通信需求。
+
+##vba规范##
+函数定义：setNodeMsgDlc(Node, message, dlc) 或 setNodeMsgDlc(Node, id, dlc)
+参数：
+- Node: ECUNode类型，表示目标节点
+- message: CANDBCMessage类型，表示报文对象
+- id: 整数或字符串类型，表示报文ID（标准帧用数字，扩展帧用字符串）
+- dlc: 整数类型，表示新的数据长度代码
+返回值：整数类型，0表示成功，-1表示失败
+
+##capl规范##
+函数定义：setDlc(messageId, dlc) 或 setDlc(messageName, dlc)
+参数：
+- messageId: 整数类型，表示报文ID
+- messageName: 字符串类型，表示报文名称
+- dlc: 整数类型，表示新的数据长度代码
+返回值：整数类型，0表示成功，-1表示失败
+
+示例1：
+// 通过ID设置DLC
+int result = setDlc(0x123, 8);
+if(result == 0) write("DLC设置成功");
+
+示例2：
+// 通过名称设置DLC
+int result = setDlc("EngineMsg", 4);
+if(result == -1) write("DLC设置失败");
+
+##capl名##
+setDlc
+
+##转换须知##
+1. CAPL中不需要Node参数，因为CAPL通常在单个节点上下文中运行
+2. CAPL中报文ID只能是整数类型，不支持字符串形式的扩展帧ID
+3. CAPL中可以直接使用报文名称作为标识
+4. 返回值含义相同，但CAPL中可能缺少某些错误检查功能
+
+##转换示例##
+1. CAPL原始代码：
+int res = setDlc(0x101, 6);
+
+2. 转换后的VBA代码：
+Dim res As Integer
+res = setNodeMsgDlc(Node, &H101, 6)
+
+3. 关键转换步骤说明：
+- 移除了Node参数（在VBA中需要显式指定）
+- 将十六进制数0x101转换为VBA的&H101表示法
+- 保持相同的返回值处理逻辑

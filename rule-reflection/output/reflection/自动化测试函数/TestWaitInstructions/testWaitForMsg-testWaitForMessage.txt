@@ -1,0 +1,59 @@
+##功能##
+用于等待一个指定的报文是否在指定的时间内出现。常用于测试环境中验证特定CAN/LIN报文是否在预期时间内被接收到。
+
+##vba规范##
+函数定义：testWaitForMessage(network, message, timeout = 1000) 或 testWaitForMessage(network, id, timeout)
+参数：
+- network: object类型，表示网段对象
+- message: str类型，表示CAN/LIN报文对象
+- id: int类型，表示报文ID（标准帧用数字，扩展帧用字符串）
+- timeout: int类型，表示超时时间（毫秒），0表示无限等待
+返回值：int类型，0表示超时，1表示事件发生，-1表示错误
+
+##capl规范##
+函数定义：testWaitForMsg(messageId, timeout)
+参数：
+- messageId: dword类型，表示CAN报文ID
+- timeout: int类型，表示超时时间（毫秒）
+返回值：int类型，1表示接收到报文，0表示超时
+
+示例1：
+```capl
+dword msgId = 0x123;
+int result = testWaitForMsg(msgId, 1000);
+if(result == 1) write("Message received");
+else write("Timeout occurred");
+```
+
+示例2：
+```capl
+int result = testWaitForMsg(0x456, 0); // 无限等待
+if(result) write("Message received");
+```
+
+##capl名##
+testWaitForMsg
+
+##转换须知##
+1. CAPL只支持messageId参数，不支持network和message对象参数
+2. CAPL返回值更简单，只有0/1两种状态，没有错误状态-1
+3. CAPL的timeout参数行为与VBA一致，0表示无限等待
+4. CAPL只支持CAN报文ID，不支持LIN报文
+
+##转换示例##
+CAPL原始代码：
+```capl
+dword msgId = 0x123;
+int result = testWaitForMsg(msgId, 500);
+```
+
+转换后的VBA代码：
+```vba
+Dim result As Integer
+result = testWaitForMessage(network, "0x123", 500)
+```
+
+关键转换说明：
+1. 将CAPL的dword类型msgId转换为VBA的字符串形式
+2. 在VBA中需要添加network参数
+3. 返回值处理逻辑需要调整，因为VBA有更多状态码

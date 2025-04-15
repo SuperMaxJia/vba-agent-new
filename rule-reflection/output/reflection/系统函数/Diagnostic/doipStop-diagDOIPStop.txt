@@ -1,0 +1,46 @@
+##功能##
+停止DOIP协议栈，用于终止通过DOIP建立的诊断通信连接。常用于车辆诊断过程中需要断开DOIP连接时。
+
+##vba规范##
+函数名：diagDOIPStop
+参数：
+- doipConnectLinkConfig: DOIPConnectLinkConfig对象，配置DOIP连接参数
+- connectHandle: 整数类型，表示DOIP连接句柄
+返回值：无
+
+##capl规范##
+函数名：doipStop
+参数：
+- handle: 整数类型，表示DOIP连接句柄
+返回值：无
+
+示例1：
+doipStop(handle);
+
+示例2：
+int handle = 1;
+doipStop(handle);
+
+##capl名##
+doipStop
+
+##转换须知##
+1. CAPL中只需要连接句柄一个参数，而VBA需要配置对象和句柄两个参数
+2. 两者都没有返回值
+3. 函数行为相同，都是停止DOIP连接
+4. 在CAPL中不需要传递配置对象，只需句柄即可
+
+##转换示例##
+1. CAPL原始代码：
+int handle = 2;
+doipStop(handle);
+
+2. 转换后的VBA代码：
+Dim handle As Integer
+handle = 2
+diagDOIPStop(doipConnectLinkConfig, handle)
+
+3. 关键转换说明：
+- CAPL中的handle直接对应VBA的connectHandle
+- VBA需要额外传递doipConnectLinkConfig对象
+- 函数名从doipStop变为diagDOIPStop

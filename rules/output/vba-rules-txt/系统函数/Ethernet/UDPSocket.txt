@@ -1,0 +1,40 @@
+1. 函数名
+UDPSocket
+
+2. 函数描述
+创建一个UDP套接字对象
+
+3. 函数体
+UDPSocket(ipType=0, host='127.0.0.0', port=3434)
+
+4. 返回值
+名称        类型        描述
+udpSocket   UDPSocket   返回一个UDP套接字对象
+
+5. 参数
+名称    类型    描述
+ipType  int     类型，0代表ipv4,1代表ipv6
+ip      String  服务器IP地址
+port    int     服务器端口
+
+6. 内置函数
+函数名称                              描述
+sendUDPMsg(data, ip='127.0.0.0', port=3434)  向指定的IP地址和端口发送UDP报文
+recvUDPMsg(bufsize)                          接收本端口的UDP报文
+stop()                                       关闭UDP套接字
+
+参数说明：
+名称    类型    描述
+data    List    UDP报文
+ip      String  ip地址
+port    int     目标端口号
+bufsize int     接收的字节数
+
+7. 示例
+示例功能：创建UDP套接字，并将指定的ip地址和端口发送数据
+示例代码：
+udpSocket = UDPSocket(ipType=0, host='192.168.7.5', port=8890)
+udpSocket.sendUDPMsg([1,2,3,4,5], host='192.168.7.2', port=65535)
+
+8. 其他
+无其他相关内容

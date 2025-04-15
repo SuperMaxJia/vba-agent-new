@@ -1,0 +1,30 @@
+1. 函数名
+strLastIndexOf
+
+2. 函数描述
+字符串targetStr在sourceStr字符串最后一次出现的targetStr第一个字符的索引
+
+3. 函数体
+strLastIndexOf(sourceStr, targetStr)
+
+4. 返回值
+名称：index
+类型：int
+描述：返回索引数值，如果没有返回-1
+
+5. 参数
+名称        类型    描述
+sourceStr   String  要查询索引的原字符串
+targetStr   String  要查询索引的字符串
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：获取字符串'ab'在'abcdab'中最后一次出现的索引
+示例代码：strLastIndexOf('abcdab', 'ab')
+代码注释：返回结果为4（从0开始计数）
+
+8. 其他说明
+- 索引从0开始计数
+- 如果未找到目标字符串则返回-1

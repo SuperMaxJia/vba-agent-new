@@ -1,0 +1,50 @@
+1. 函数名  
+chkCreate_MsgAbsCycleTimeViolation  
+
+2. 函数描述  
+用于检测周期性报文的周期是否在指定的范围内。  
+
+3. 函数体  
+所有检测函数都有对应的chkStart_xxxx()和chkCreate_xxxx()。  
+chkCreate_xxxx()只创建检测对象但不开始检测，需要调用chkControl_Start；  
+chkStart_xxxx()创建检测对象同时直接开始检测。  
+
+4. 返回值  
+| 名称 | 类型 | 描述 |  
+|------|------|------|  
+| res  | int  | 代表创建的对象，-1代表创建失败 |  
+
+5. 参数  
+| 名称           | 类型                                      | 描述               |  
+|----------------|-------------------------------------------|--------------------|  
+| network        | Network                                   | 网段对象           |  
+| message        | CANDBCMessage, str, int, LINDBCMessage, CANMessage, LINMsg | 报文信息           |  
+| aMinCycleTime  | int                                       | 最小时间           |  
+| aMaxCycleTime  | int                                       | 最大时间           |  
+
+6. 内置函数  
+| 函数名称                | 函数描述                     |  
+|-------------------------|------------------------------|  
+| chkControl_Start        | 启动检测对象                 |  
+| testAddCondition        | 将统计信息加入自动化测试报告 |  
+| testWaitForTimeout      | 等待指定时间                 |  
+| testRemoveCondition     | 结束统计                     |  
+
+7. 示例  
+功能：检测总线上报文的周期是否在90到110ms内。  
+代码：  
+```vba  
+checkId = chkStart_MsgAbsCycleTimeViolation(CAN1.MsgToObserve, 90, 110);  
+testAddCondition(checkId);  
+testWaitForTimeout(1000);  
+testRemoveCondition(checkId);  
+```  
+注释：  
+- `checkId` 存储检测对象的标识符。  
+- `testAddCondition` 将检测结果加入报告。  
+- `testWaitForTimeout` 设置统计时长为1000ms。  
+- `testRemoveCondition` 结束检测并移除条件。  
+
+8. 其他  
+- 需配合 `chkControl_Start` 使用以启动检测。  
+- 检测结果可通过自动化测试报告查看。

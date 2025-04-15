@@ -1,0 +1,74 @@
+##功能##
+用于创建和配置以太网报文，包括设置源/目的MAC地址、EtherType值和payload数据。常用于汽车网络通信测试中模拟或验证以太网通信。
+
+##vba规范##
+函数名：EthernetPacket
+参数：
+- source_mac_address: str (格式XX:XX:XX:XX:XX:XX)
+- destination_mac_address: str (格式XX:XX:XX:XX:XX:XX)  
+- ethertype: int (0x0000-0xFFFF)
+- payload: list
+- packet_id: str (UUID)
+- timestamp: float
+方法：
+- setSourceMacAddress(str)
+- setDestinationMacAddress(str)
+- setType(int)
+- setPayload(list)
+
+##capl规范##
+在CAPL中使用以太网报文通常通过以下方式：
+1. 直接定义以太网帧变量：
+   ethernetFrame ethFrame;
+2. 设置帧属性：
+   ethFrame.sourceAddress = "20:00:00:00:00:01";
+   ethFrame.destinationAddress = "FF:FF:FF:FF:FF:FF";
+   ethFrame.etherType = 0xF123;
+   ethFrame.payload = {};
+
+示例1：
+ethernetFrame ethMsg;
+ethMsg.sourceAddress = "00:11:22:33:44:55";
+ethMsg.destinationAddress = "FF:FF:FF:FF:FF:FF";
+ethMsg.etherType = 0x0800;
+ethMsg.payload = {0x01, 0x02, 0x03};
+
+示例2：
+on key 'e' {
+  ethernetFrame testFrame;
+  testFrame.sourceAddress = macById(1);
+  testFrame.destinationAddress = "33:33:00:00:00:01";
+  testFrame.etherType = 0x86DD;
+  output(testFrame);
+}
+
+##capl名##
+ethernetFrame
+
+##转换须知##
+1. CAPL使用原生ethernetFrame类型，而VBA需要对象实例化
+2. CAPL直接赋值属性，VBA需要调用setter方法
+3. CAPL的payload是字节数组，VBA是列表
+4. CAPL自动处理时间戳，VBA需要显式记录
+5. CAPL没有packet_id概念，需要额外实现
+
+##转换示例##
+CAPL原始代码：
+ethernetFrame msg;
+msg.sourceAddress = "20:00:00:00:00:01";
+msg.destinationAddress = "FF:FF:FF:FF:FF:FF";
+msg.etherType = 0xF123;
+msg.payload = {0x01, 0x02};
+
+转换后的VBA代码：
+Set ethPacket = CreateObject("EthernetPacket")
+ethPacket.setSourceMacAddress "20:00:00:00:00:01"
+ethPacket.setDestinationMacAddress "FF:FF:FF:FF:FF:FF" 
+ethPacket.setType &HF123
+ethPacket.setPayload Array(&H01, &H02)
+
+关键转换说明：
+1. CAPL的变量声明转换为VBA对象创建
+2. CAPL的属性赋值转换为VBA方法调用
+3. CAPL的十六进制数组转换为VBA Array函数
+4. 添加了VBA特有的Set关键字处理对象

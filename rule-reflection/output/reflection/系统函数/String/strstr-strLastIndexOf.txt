@@ -1,0 +1,70 @@
+##功能##
+该函数用于查找目标字符串在源字符串中最后一次出现的位置索引，常用于字符串处理场景，如日志分析、文本解析等需要反向查找字符串位置的场景。
+
+##vba规范##
+函数名：strLastIndexOf
+参数：
+- sourceStr：String类型，要查询索引的原字符串
+- targetStr：String类型，要查询索引的字符串
+返回值：Integer类型，返回目标字符串最后一次出现的索引（从0开始），未找到则返回-1
+
+##capl规范##
+CAPL中使用strstr函数结合指针运算可以实现类似功能：
+```c
+long strLastIndexOf(char sourceStr[], char targetStr[])
+{
+    long pos = -1;
+    char *p = sourceStr;
+    char *found;
+    
+    while((found = strstr(p, targetStr)) != 0)
+    {
+        pos = found - sourceStr;
+        p = found + 1;
+    }
+    return pos;
+}
+```
+示例1：
+```c
+on key 'a'
+{
+    long index = strLastIndexOf("abcdab", "ab");
+    write("Index: %d", index); // 输出4
+}
+```
+示例2：
+```c
+on key 'b'
+{
+    long index = strLastIndexOf("hello world", "xyz");
+    write("Index: %d", index); // 输出-1
+}
+```
+
+##capl名##
+strstr
+
+##转换须知##
+1. CAPL需要手动实现反向查找逻辑，而VBA是内置函数
+2. CAPL使用指针运算计算索引位置
+3. 两者都从0开始计数索引
+4. 未找到时都返回-1
+5. CAPL版本需要处理空字符串的特殊情况
+
+##转换示例##
+CAPL原始代码：
+```c
+long index = strLastIndexOf("abcdab", "ab");
+```
+
+转换后的VBA代码：
+```vba
+Dim index As Integer
+index = strLastIndexOf("abcdab", "ab")
+```
+
+关键转换步骤：
+1. 将CAPL的long类型改为VBA的Integer
+2. 直接使用VBA内置函数替代CAPL自定义实现
+3. 保持相同的参数顺序和返回值语义

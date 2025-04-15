@@ -1,0 +1,57 @@
+##功能##
+该函数用于将原始字符串左侧填充指定字符，使其达到目标长度。常用于格式化输出、对齐文本或生成固定长度的标识符等场景。
+
+##vba规范##
+函数定义：Function strLeftPad(sourceStr As String, size As Integer, Optional code As String = " ") As String
+参数：
+- sourceStr：原始字符串，String类型
+- size：目标长度，Integer类型
+- code：填充字符，String类型，默认为空格
+返回值：填充后的字符串，String类型
+
+##capl规范##
+CAPL中没有直接对应的内置函数，但可以通过字符串操作实现：
+char[] strLeftPad(char sourceStr[], int size, char code = ' ')
+{
+    while(strlen(sourceStr) < size)
+    {
+        strinsert(sourceStr, code, 0);
+    }
+    return sourceStr;
+}
+
+示例1：
+char result[20];
+strncpy(result, strLeftPad("ABC", 5, '0'), 20);
+// result = "00ABC"
+
+示例2：
+char result[20];
+strncpy(result, strLeftPad("Test", 10), 20);
+// result = "      Test" (6个空格)
+
+##capl名##
+strLeftPad
+
+##转换须知##
+1. CAPL中需要手动实现此功能，而VBA是内置函数
+2. CAPL中字符串是字符数组，需要预分配足够空间
+3. CAPL的默认填充字符需要显式指定
+4. CAPL需要处理字符串缓冲区溢出的风险
+
+##转换示例##
+CAPL原始代码：
+char padded[15];
+strncpy(padded, strLeftPad("CAPL", 10, '-'), 15);
+// padded = "------CAPL"
+
+转换后的VBA代码：
+Dim padded As String
+padded = strLeftPad("CAPL", 10, "-")
+' padded = "------CAPL"
+
+关键转换步骤：
+1. CAPL的字符数组声明改为VBA的String类型
+2. 移除CAPL中的缓冲区大小限制
+3. 保持相同的函数名和参数顺序
+4. VBA中无需处理字符串拷贝操作

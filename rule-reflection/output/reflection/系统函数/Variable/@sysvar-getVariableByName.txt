@@ -1,0 +1,46 @@
+##功能##
+根据变量组名称和变量名称获取对应的变量对象，用于在脚本中访问和操作特定变量。
+
+##vba规范##
+函数定义：getVariableByName(groupName As String, variableName As String) As String
+参数：
+- groupName: String类型，变量组名称
+- variableName: String类型，变量名称
+返回值：String类型，返回对应的变量对象
+
+##capl规范##
+在CAPL中，可以使用@sysvar直接访问系统变量，格式为：@sysvar::namespace::variableName
+示例1：
+```capl
+int speed = @sysvar::Vehicle_Flash::speed;
+```
+示例2：
+```capl
+float temperature = @sysvar::Engine_Data::coolantTemp;
+```
+
+##capl名##
+@sysvar
+
+##转换须知##
+1. CAPL使用命名空间和变量名的直接访问方式，而VBA需要函数调用
+2. CAPL中变量类型需要在声明时明确指定，VBA返回的是通用对象
+3. CAPL的变量访问是编译时检查，VBA是运行时解析
+4. 对于不存在的变量，CAPL会报编译错误，VBA可能返回空或报运行时错误
+
+##转换示例##
+1. CAPL原始代码：
+```capl
+int currentSpeed = @sysvar::Vehicle_Flash::speed;
+```
+
+2. 转换后的VBA代码：
+```vba
+Dim currentSpeed As Integer
+currentSpeed = getVariableByName("Vehicle_Flash", "speed")
+```
+
+3. 关键转换说明：
+- 将CAPL的直接变量访问语法@sysvar转换为VBA的函数调用
+- 在VBA中需要先声明变量类型
+- 变量组和变量名从命名空间格式转换为字符串参数

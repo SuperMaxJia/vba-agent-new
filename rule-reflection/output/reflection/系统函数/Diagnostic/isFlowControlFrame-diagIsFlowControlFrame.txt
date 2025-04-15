@@ -1,0 +1,58 @@
+##功能##
+判断报文数据是否是诊断中定义的流控帧。主要用于诊断协议处理中识别流控帧，常见于CAN总线诊断通信中，用于控制数据流传输。
+
+##vba规范##
+函数名：diagIsFlowControlFrame  
+函数描述：判断报文数据是否是诊断中定义的流控帧  
+参数：data（List类型，数据场列表）  
+返回值：ans（boolean类型，True表示是流控帧，False表示不是）  
+内置函数：无  
+
+##capl规范##
+函数定义：int isFlowControlFrame(byte data[])  
+参数：byte data[]（字节数组，表示CAN报文数据）  
+返回值：int（1表示是流控帧，0表示不是）  
+示例1：  
+```capl
+byte msgData[8] = {0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+int result = isFlowControlFrame(msgData);
+write("Is flow control frame: %d", result);
+```
+示例2：  
+```capl
+on message CAN1.0x7E0
+{
+  if (isFlowControlFrame(this.byte(0))) {
+    write("Received flow control frame");
+  }
+}
+```
+
+##capl名##
+isFlowControlFrame
+
+##转换须知##
+1. 参数类型差异：VBA使用List类型，CAPL使用byte数组  
+2. 返回值差异：VBA返回boolean，CAPL返回int（1/0）  
+3. 数组索引：VBA列表从0开始，CAPL数组也从0开始  
+4. 数据长度：需要确保传入的数据长度符合诊断协议要求（通常8字节）  
+
+##转换示例##
+1. CAPL原始代码：  
+```capl
+byte data[8] = {0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+int flag = isFlowControlFrame(data);
+```
+
+2. 转换后的VBA代码：  
+```vba
+Dim data As Variant
+data = Array(&H30, &H0, &H0, &H0, &H0, &H0, &H0, &H0)
+Dim flag As Boolean
+flag = diagIsFlowControlFrame(data)
+```
+
+3. 关键转换说明：  
+- 将CAPL的byte数组转换为VBA的Array  
+- 将CAPL的int返回值转换为VBA的Boolean  
+- 保持相同的逻辑判断标准

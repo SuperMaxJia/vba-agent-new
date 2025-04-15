@@ -1,0 +1,63 @@
+##功能##
+testStepInconclusive函数用于在测试过程中记录无法确定通过或失败的测试步骤状态，通常用于处理意外情况或不确定结果。它将测试步骤的重要程度和描述信息记录到测试报告中，帮助测试人员分析问题。
+
+##vba规范##
+函数名：testStepInconclusive
+参数：
+1. levelOfDetail: 字符串类型，表示测试步骤的重要程度，0表示最重要
+2. description: 字符串类型，测试步骤的描述信息，可选，默认为空字符串
+返回值：无
+函数行为：将测试步骤的不确定状态记录到测试报告中
+
+##capl规范##
+函数名：TestStepInconclusive
+参数：
+1. levelOfDetail: char[]或字符串常量，表示测试步骤的重要程度
+2. description: char[]或字符串常量，测试步骤的描述信息
+返回值：void
+示例1：
+```capl
+on key 'i'
+{
+  TestStepInconclusive("2.1", "Unexpected response received");
+}
+```
+示例2：
+```capl
+if(message.id == 0x123 && message.dlc != 8)
+{
+  TestStepInconclusive("1.0", "Message 0x123 has invalid DLC");
+}
+```
+
+##capl名##
+TestStepInconclusive
+
+##转换须知##
+1. CAPL中的字符串参数通常使用char[]类型或字符串常量，而VBA使用String类型
+2. CAPL和VBA的参数数量和顺序相同
+3. 两者都没有返回值
+4. CAPL中的字符串需要使用双引号，而VBA中可以使用单引号或双引号
+5. CAPL函数名通常采用驼峰命名法，而VBA中可能使用不同风格
+
+##转换示例##
+1. CAPL原始代码：
+```capl
+if(errorCount > threshold)
+{
+  TestStepInconclusive("3.5", "Error count exceeds threshold but within tolerance");
+}
+```
+
+2. 转换后的VBA代码：
+```vba
+If errorCount > threshold Then
+    testStepInconclusive "3.5", "Error count exceeds threshold but within tolerance"
+End If
+```
+
+3. 关键转换步骤说明：
+- 将CAPL的if语句转换为VBA的If...Then结构
+- 保持参数顺序和内容不变
+- 移除CAPL中的分号和花括号
+- 调整函数命名风格（首字母大小写）

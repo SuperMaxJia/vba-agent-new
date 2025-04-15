@@ -1,0 +1,37 @@
+##功能##
+用于报告测试步骤结果通过，满足期望结果，并将成功的信息输出在测试报告中。常用于自动化测试中标记测试步骤通过并记录相关信息。
+
+##vba规范##
+函数名：testStepPass
+参数：
+- levelOfDetail: str类型，表示测试步骤的重要性级别，0表示"非常重要"，数字越大重要程度越低
+- description: str类型，测试步骤的描述信息，可选参数，默认为空字符串
+返回值：无
+
+##capl规范##
+CAPL中没有完全对应的内置函数，但可以使用testStep或testCasePass来模拟类似功能。
+示例1：
+testCasePass(2, "Communication prepared pass");
+示例2：
+testStep(2, "Communication check passed", "PASS");
+
+##capl名##
+testCasePass
+
+##转换须知##
+1. 参数类型差异：CAPL的testCasePass第一个参数是整数而非字符串
+2. 返回值差异：两者都无返回值
+3. 行为差异：CAPL的testCasePass会自动标记测试用例通过状态
+4. 参数数量：CAPL版本不支持可选参数，必须提供两个参数
+
+##转换示例##
+1. CAPL原始代码：
+testCasePass(2, "Communication prepared pass");
+
+2. 转换后的VBA代码：
+testStepPass "2.0", "Communication prepared pass"
+
+3. 关键转换说明：
+- 将CAPL的testCasePass改为VBA的testStepPass
+- 注意参数类型的转换（整数2改为字符串"2.0"）
+- 保持描述字符串不变

@@ -1,0 +1,42 @@
+1. 函数名  
+chkCreate_AllNodesDead  
+
+2. 函数描述  
+用于检测所有被监视的指定网段节点必须在指定的时间间隔内至少发送一个Tx消息。否则将触发事件。判断节点是否是激活状态。  
+
+3. 函数体  
+所有检测函数都有对应的chkStart_xxxx()和chkCreate_xxxx()  
+chkCreate_xxxx()只创建检测对象但不开始检测，需要调用chkControl_Start；  
+chkStart_xxxx()创建检测对象同时直接开始检测。  
+
+4. 返回值  
+| 名称 | 类型 | 描述 |  
+|------|------|------|  
+| res  | int  | 代表创建的对象，-1代表创建失败 |  
+
+5. 参数  
+| 名称           | 类型    | 描述               |  
+|----------------|---------|--------------------|  
+| network        | Network | 网段对象           |  
+| aMaxQuietTime  | int     | 最大截至时间（ms） |  
+
+6. 内置函数  
+- chkControl_Start：启动检测对象  
+- testAddCondition：将统计信息加入自动化测试报告  
+- testWaitForTimeout：等待指定时间（ms）  
+- testRemoveCondition：结束统计  
+
+7. 示例  
+功能：检测CAN1网段下所有节点在110ms内是否有报文发送，若无则触发事件并生成测试报告。  
+
+示例代码：  
+```vba  
+checkId = chkStart_AllNodesDead(CAN1, 110)  
+testAddCondition(checkId)  ' 将检测事件加入测试报告  
+testWaitForTimeout(1000)  ' 持续统计1000ms  
+testRemoveCondition(checkId)  ' 结束统计  
+```  
+
+8. 其他说明  
+- 需配合自动化测试函数（如`testAddCondition`）使用以生成报告。  
+- 关联函数：`chkStart_AllNodesDead`（直接创建并启动检测）。

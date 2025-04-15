@@ -1,0 +1,47 @@
+1. 函数名  
+ethGetOperationMode  
+
+2. 函数描述  
+用于获取以太网通道的主从模式（Master/Slave）。  
+
+3. 函数体  
+```vba  
+ethGetOperationMode(network)  
+```  
+
+4. 返回值  
+| 名称 | 类型 | 描述 |  
+|------|------|------|  
+| res  | int  | 0代表Master模式，1代表Slave模式，-1表示获取失败 |  
+
+5. 参数  
+| 名称     | 类型    | 描述       |  
+|----------|---------|------------|  
+| network  | Network | 网段对象   |  
+
+6. 内置函数  
+无（此函数为独立功能，未调用其他内置函数）。  
+
+7. 示例  
+**功能**：获取指定以太网通道的主从模式状态。  
+**代码**：  
+```vba  
+Dim mode As Integer  
+mode = ethGetOperationMode(network)  
+If mode = 0 Then  
+    WriteInfo "当前模式: Master"  
+ElseIf mode = 1 Then  
+    WriteInfo "当前模式: Slave"  
+Else  
+    WriteWarningInfo "模式获取失败"  
+End If  
+```  
+**注释**：  
+- `network`需提前定义为有效的网段对象。  
+- 通过返回值判断模式，若为-1需处理异常情况。  
+
+8. 其他说明  
+- 需确保网段对象已正确初始化且硬件通道处于连接状态。  
+- 返回值-1可能由硬件未响应或配置错误导致。  
+
+（注：原始文档中无更多关联变量或扩展内容。）

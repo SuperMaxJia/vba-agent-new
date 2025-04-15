@@ -1,0 +1,38 @@
+1. 函数名
+onEthernetPacketByProtocol
+
+2. 函数描述
+接收到指定协议的以太网数据包时触发
+
+3. 函数体
+onEthernetPacketByProtocol(protocol, network=None, VLAN=['0x88A8:0x0003','0x8100:0x0002'])
+
+4. 返回值
+无明确返回值说明（事件触发函数通常无返回值）
+
+5. 参数
+| 名称     | 类型        | 描述                                                                 |
+|----------|-------------|----------------------------------------------------------------------|
+| protocol | str, list   | 协议参数 ['TCP','UDP']                                               |
+| network  | NetworkI    | 网段对象                                                             |
+| VLAN     | str, list   | VLAN配置，默认值为['0x88A8:0x0003','0x8100:0x0002']                  |
+
+6. 内置函数
+无明确内置函数说明（事件回调函数本身属于内置函数）
+
+7. 示例
+示例功能：监听TCP/UDP协议的数据包
+示例代码：
+@onEthernetPacketByprotocol(['TCP','UDP'])
+def onEthernetPacketEvent(ETHFrame):
+    ETHFrame.gettimestamp()
+
+代码注释：
+- 使用装饰器语法监听TCP/UDP协议的数据包
+- 回调函数接收ETHFrame参数
+- 在回调函数中调用gettimestamp()方法获取时间戳
+
+8. 其他说明
+- 该函数为事件触发函数，需要配合回调函数使用
+- VLAN参数支持多种配置格式
+- 回调函数参数ETHFrame包含以太网帧信息

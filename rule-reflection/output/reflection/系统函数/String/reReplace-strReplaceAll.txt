@@ -1,0 +1,53 @@
+##功能##
+该函数用于在字符串中替换所有匹配的子字符串。在实际应用中常用于文本处理、数据清洗等场景，例如批量修改文件路径、标准化数据格式等。
+
+##vba规范##
+函数名：strReplaceAll
+参数：
+- sourceStr：String类型，原始字符串
+- old：String类型，需要被替换的子字符串
+- new：String类型，替换后的子字符串
+返回值：String类型，返回替换后的新字符串
+功能：将sourceStr中所有出现的old子串替换为new子串
+
+##capl规范##
+CAPL中没有完全对应的内置函数，但可以通过strReplace()函数结合循环实现类似功能。或者使用正则表达式函数reReplace()。
+
+示例1：
+```
+char result[100];
+strReplace(result, "abcdedf", "d", "k");  // 只能替换第一个匹配项
+```
+
+示例2：
+```
+char result[100];
+reReplace(result, "abcdedf", "d", "g", "k");  // 使用正则表达式全局替换
+```
+
+##capl名##
+reReplace
+
+##转换须知##
+1. CAPL的strReplace()只能替换第一个匹配项，而VBA的strReplaceAll会替换所有
+2. 要实现全局替换，CAPL需要使用reReplace()函数并指定"g"标志
+3. CAPL需要预分配结果字符串缓冲区，而VBA会自动处理
+4. CAPL的字符串操作函数通常需要目标缓冲区作为第一个参数
+
+##转换示例##
+1. CAPL原始代码：
+```
+char output[50];
+reReplace(output, "hello world", "o", "g", "0");
+```
+
+2. 转换后的VBA代码：
+```
+result = strReplaceAll("hello world", "o", "0")
+```
+
+3. 关键转换说明：
+- 将CAPL的reReplace()转换为VBA的strReplaceAll
+- 移除CAPL中的目标缓冲区参数
+- 移除正则表达式标志"g"参数
+- 保持其他参数顺序不变

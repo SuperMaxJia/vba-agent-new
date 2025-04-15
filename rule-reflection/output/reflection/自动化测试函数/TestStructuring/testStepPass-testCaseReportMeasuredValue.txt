@@ -1,0 +1,42 @@
+##功能##
+该函数用于在测试报告中记录测量值，将参数名称、测量值和单位组合成可读格式输出到报告中，便于测试结果分析和记录。
+
+##vba规范##
+函数名：testCaseReportMeasuredValue
+参数：
+1. paName：字符串类型，表示参数名称
+2. value：任意类型，表示测量值
+3. unit：字符串类型，表示单位
+返回值：无
+功能：将测量值记录到测试报告中
+
+##capl规范##
+函数名：testStepPass
+参数：
+1. description：字符串类型，描述测试步骤
+返回值：无
+示例1：
+testStepPass("Speed = 60 km/h");
+示例2：
+testStepPass("Voltage = 12.5 V");
+
+##capl名##
+testStepPass
+
+##转换须知##
+1. CAPL的testStepPass只接受一个字符串参数，而VBA版本需要三个参数
+2. 需要在CAPL中手动拼接参数名称、值和单位
+3. CAPL没有返回值，与VBA一致
+4. 数值类型在CAPL中需要显式转换为字符串
+
+##转换示例##
+1. CAPL原始代码：
+testStepPass("车速 = " + 60 + " km");
+
+2. 转换后的VBA代码：
+testCaseReportMeasuredValue "车速", 60, "km"
+
+3. 关键转换说明：
+- 将CAPL的字符串拼接转换为VBA的多参数形式
+- 保持参数顺序一致：名称、值、单位
+- 移除CAPL中的显式字符串连接操作

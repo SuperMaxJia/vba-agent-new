@@ -1,0 +1,75 @@
+1. 函数名
+DOIPConnectLinkConfig
+
+2. 函数描述
+创建一个自定义的DOIP连接配置对象，然后通过修改其对象的属性值来设置相应的连接参数
+
+3. 函数体
+DOIPConnectLinkConfig()
+
+4. 返回值
+名称       类型        描述
+doipConfig DOIPConfig 返回一个DOIP连接配置对象，该对象包含以下属性，可分别给下面的属性进行赋值
+
+5. 参数
+名称               类型          描述
+ip                 String        诊断仪ip地址
+waitTime           int           等待时间
+internalTime       int           间隔时间
+reapeatTime        int           重复上限次数
+flag               boolean       车辆是否连接标识
+ecuaddress         dict          Ecu地址
+routeReserved      int           路由激活保留位
+multicast          String        组播地址
+dhcpConfig         DHCPConfig    DHCP配置
+tcpipStack         TCPIPStack    诊断仪TCP/IP协议栈
+network            INetwork      以太网网段
+
+6. 内置函数
+函数名称                    描述
+getTestIP()                获取诊断仪ip地址，字符串类型
+getWaitTime()              获取等待时间，整数类型
+getReapeatInternal()       获取间隔时间，整数类型
+getReapeatTimes()          获取重复上限次数，整数类型
+getIsVehicleIdent()        获取车辆是否连接标识，True或者False
+getEcuAddress()            获取Ecu地址,字典存储
+getTestAddress()           获取诊断仪逻辑地址，字符串类型
+getRotueActivationReserved() 获取路由激活保留位
+getMulticast()             设置组播地址
+getDHCPConfig()            获取DHCP配置
+getTestTCPIPStack()        获取诊断仪TCP/IP协议栈
+getNetwork()               获取以太网网段
+setTestIP(testIp)          设置诊断仪ip地址，字符串类型
+setWaitTime(wait_time)     设置等待时间，整数类型
+setRepeatInterval(reapeat_internal) 设置间隔时间，整数类型
+setRepeatTimes(Reapeat_times) 设置重复上限次数，整数类型
+setIsVehicleIdent(isVehicleIdent) 设置车辆是否连接状态,True或者False
+setEcuAddress(ecuaddress)  设置ECU的IP地址和逻辑地址，格式为IP地址:逻辑地址
+setTestAddress(test_address) 设置诊断仪逻辑地址,字符串类型
+setRotueActivationReserved(routeReserved) 设置路由激活保留位
+setMulticast(multicast)    设置组播地址
+setDHCPConfig(dhcpConfig)  设置DHCP配置
+getTestTCPIPStack(tcpipStack) 设置诊断仪TCP/IP协议栈
+getNetwork(network)        设置以太网网段
+
+7. 示例
+示例功能：使用本地网卡实现DoIP连接，创建一套自定义的DOIP连接配置对象，并基于此配置参数连接，返回connectHandle
+
+示例代码：
+doipConnectLinkConfig = DOIPConnectLinkConfig()
+doipConnectLinkConfig.setTestIP('') #设置诊断仪ip地址
+doipConnectLinkConfig.setTestAddress() #设置诊断仪逻辑地址，两字节
+doipConnectLinkConfig.setEcuAddress(['']) #设置ECU的ip地址和逻辑地址，格式为(['192.168.1.0:0x0E80'])
+doipConnectLinkConfig.setWaitTime(500) #设置车辆声明和发现等待时间
+doipConnectLinkConfig.setRepeatInterval(100) #设置车辆声明和发现间隔时间
+doipConnectLinkConfig.setRepeatTimes(10) #设置车辆声明和发现重复上限次数
+doipConnectLinkConfig.setRotueActivationReserved(-1) #设置路由激活保留位，设置为-1表示不启用
+doipConnectLinkConfig.setMulticast('') #设置组播地址，如果设置成'',代表是广播形式
+doipConnectLinkConfig.setDHCPConfig(dhcpConfig=None) #设置DHCP配置，设置为None表示不启用
+doipConnectLinkConfig.setVehicleIdent(True) #设置是否车辆识别
+doipConnectLinkConfig.setTestTCPIPStack(tcpipStack=None) #设置诊断仪TCP/IP协议栈，使用本机网卡DoIP连接，需设置为None
+doipConnectLinkConfig.setNetwork(network=None) #设置以太网网段，如Ethernet1，如果使用本机网卡DoIP连接，此属性无效
+connectHandle = diagDOIPConnect(doipConnectLinkConfig)
+
+8. 其他
+该函数用于配置DOIP连接参数，支持本地网卡和V90A硬件两种连接方式。配置对象包含诊断仪IP地址、逻辑地址、ECU地址、等待时间、间隔时间等参数。通过设置不同的参数可以实现不同的连接配置需求。

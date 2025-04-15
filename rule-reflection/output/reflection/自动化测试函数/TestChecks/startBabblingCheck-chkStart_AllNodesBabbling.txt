@@ -1,0 +1,60 @@
+##功能##
+该函数用于启动自动化测试中所有节点的“Babbling”检查，检测网络中是否存在异常通信节点（如持续发送无效数据的节点）。通常用于总线监控环节，涉及CAN/LIN/ETH等总线协议，确保所有节点的通信状态被监控。
+
+##vba规范##
+函数名：chkStart_AllNodesBabbling  
+函数描述：启动所有节点的Babbling检查  
+返回值：无明确返回值（可能为void或布尔状态）  
+参数：无显式参数（依赖全局配置或其他函数设置）  
+内置函数依赖：TestControlChecks组中的其他控制函数（如chkControl_Start、chkControl_Reset）和通信监控函数（如getNode、getMsgs）
+
+##capl规范##
+函数定义：void startBabblingCheck()  
+参数：无  
+返回值：void  
+使用示例1：  
+```capl
+on start  
+{  
+  startBabblingCheck();  
+  write("Babbling检查已启动");  
+}  
+```  
+使用示例2：  
+```capl
+testCase CheckBabblingNodes()  
+{  
+  startBabblingCheck();  
+  TestStepPass("Babbling检查启动成功");  
+}  
+```
+
+##capl名##
+startBabblingCheck
+
+##转换须知##
+1. CAPL函数无参数，VBA也无参数，直接对应  
+2. CAPL返回void，VBA无明确返回值，直接对应  
+3. CAPL中需通过write或TestStepPass输出状态，VBA使用testStepPass  
+4. CAPL需在事件或测试用例中调用，VBA可直接调用  
+
+##转换示例##
+CAPL原始代码：  
+```capl
+on key 'b'  
+{  
+  startBabblingCheck();  
+  write("Babbling检查手动触发");  
+}  
+```  
+转换后的VBA代码：  
+```vba
+Sub ManualTriggerBabblingCheck()  
+  Call chkStart_AllNodesBabbling()  
+  Call testStepPass("Babbling检查手动触发")  
+End Sub  
+```  
+关键转换步骤：  
+1. CAPL的on事件转换为VBA的Sub过程  
+2. write输出替换为testStepPass  
+3. 函数名从startBabblingCheck映射为chkStart_AllNodesBabbling

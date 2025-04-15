@@ -1,0 +1,62 @@
+##功能##
+该函数用于创建SOMEIP-SD（Service Discovery）的负载均衡选项对象，并设置其优先级和权重。主要用于SOME/IP服务发现协议中，实现服务实例的负载均衡策略。
+
+##vba规范##
+函数名：SOMEIPSDOption_LoadBalancingOption
+返回值：SOMEIPSD Option对象
+参数：
+- priority (int): 设置负载均衡选项的优先级
+- weight (int): 设置负载均衡选项的权重
+方法：
+- setPriority(int): 设置优先级
+- setWeight(int): 设置权重
+
+##capl规范##
+在CAPL中没有直接对应的SOMEIP-SD负载均衡选项创建函数。通常需要手动构建SOMEIP-SD消息并设置相应字段：
+1. 使用message变量创建SOMEIP-SD消息
+2. 手动设置负载均衡选项字段
+
+示例1：
+```capl
+message SOMEIP_SD sdMsg;
+sdMsg.LoadBalancingOption.priority = 0;
+sdMsg.LoadBalancingOption.weight = 0;
+```
+
+示例2：
+```capl
+on message SOMEIP_SD
+{
+  this.LoadBalancingOption.priority = 1;
+  this.LoadBalancingOption.weight = 50;
+}
+```
+
+##capl名##
+！！！
+
+##转换须知##
+1. CAPL中没有直接对应的创建函数，需要手动构建消息
+2. VBA返回对象，CAPL直接操作消息结构
+3. VBA使用方法设置属性，CAPL直接赋值
+4. 在CAPL中需要先创建SOMEIP-SD消息结构
+
+##转换示例##
+CAPL原始代码：
+```capl
+message SOMEIP_SD sdMsg;
+sdMsg.LoadBalancingOption.priority = 1;
+sdMsg.LoadBalancingOption.weight = 50;
+```
+
+转换后的VBA代码：
+```vba
+someipSDoption = SOMEIPSDOption_LoadBalancingOption()
+someipSDoption.setPriority(1)
+someipSDoption.setWeight(50)
+```
+
+关键转换说明：
+1. CAPL的消息声明转换为VBA的对象创建
+2. CAPL的直接字段赋值转换为VBA的方法调用
+3. 数值参数保持相同

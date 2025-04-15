@@ -1,0 +1,42 @@
+##功能##
+将数值向下取整到最接近的整数。常用于需要去除小数部分或确保结果为整数的场景，如计算数组索引、离散化处理等。
+
+##vba规范##
+函数名：mathFloor
+参数：num (int类型，需要取整的数值)
+返回值：int类型，返回向下取整后的整数值
+内置函数：无
+
+##capl规范##
+函数名：floor
+参数：double类型，需要取整的数值
+返回值：double类型，返回向下取整后的值
+示例1：
+double result = floor(97.2); // result = 97.0
+示例2：
+double x = 45.9;
+int rounded = (int)floor(x); // rounded = 45
+
+##capl名##
+floor
+
+##转换须知##
+1. CAPL的floor返回double类型，而VBA返回int类型，需要显式类型转换
+2. CAPL参数接受double类型，VBA参数为int类型，可能丢失精度
+3. 函数行为相同，都是向下取整
+4. 处理负数时两者行为一致
+
+##转换示例##
+1. CAPL原始代码：
+double value = 123.75;
+int result = (int)floor(value);
+
+2. 转换后的VBA代码：
+Function mathFloor(num As Integer) As Integer
+    mathFloor = Int(num)
+End Function
+
+3. 关键转换说明：
+- 将CAPL的floor函数替换为VBA的Int函数
+- 添加显式类型转换确保返回值类型一致
+- 保持相同的向下取整功能

@@ -1,0 +1,65 @@
+1. 函数名
+CANMessage
+
+2. 函数描述
+创建一个自定义的CAN或者CANFD报文对象，然后通过设置其对象的属性来设置这条报文相应的参数。
+
+3. 函数体
+CANMessage()
+
+4. 返回值
+名称 | 类型 | 描述
+msg | CANDBCMessage | 报文对象。可通过内置函数给属性进行赋值。
+
+5. 参数
+名称 | 类型 | 描述
+timestamp | float | 时间戳
+msgID | int | 报文id
+idType | int | 扩展帧标识。0：标准帧，1：扩展帧
+canType | int | 报文的类型。0：CAN报文，1：CANFD报文，2：CANRemote报文
+dlc | int | 报文DLC
+data | list[byte] | 报文数据场
+brs | list[byte] | 报文的速率切换标识。0：未切换，1：切换
+dir | list[byte] | 报文的方向。0：Tx，1：Rx
+channel | String | 报文的通道
+
+6. 内置函数
+函数名称 | 函数描述
+getTimestamp() | 获取报文的时间戳
+getId() | 获取报文id
+getExtend() | 获取报文的扩展帧标识
+getCanType() | 获取报文的类型
+getDlc() | 获取报文DLC
+getData() | 获取报文数据场
+getBrs() | 获取报文的速率切换标识
+getDir() | 获取报文的方向
+getChannel() | 获取报文的通道
+getSignalVal(signalName, valType = 1) | 获取信号值
+setId(id) | 设置报文的id
+setExtend(extend) | 设置报文的扩展帧标识
+setExtend(extend) | 设置报文的类型
+setDlc(dlc) | 设置报文DLC
+setData(data) | 设置报文的数据字节
+setBrs(brs) | 设置报文的速率切换标识
+setSignalVal(signalName, signalValue, valType = 1) | 设置信号值。注：该方法仅在数据库中的报文中有效，创建的报文不支持
+
+内置函数setSignalVal和getSignalVal的参数
+名称 | 类型 | 描述
+signalName | String | 信号名称
+signalValue | float | 信号值
+valType | int | 设置类型。0：总线，1：物理。默认为物理值
+
+7. 示例
+示例功能：创建一个CAN报文并发送
+示例代码：
+msg = CANMessage()
+msg.setId(0x12) #设置报文ID
+msg.setExtend(0) #设置报文扩展帧标识：0代表标准帧，1代表扩展帧
+msg.setCanType(0) #设置报文类型：0：CAN，1：CANFD 2：CANRemote
+msg.setDlc(8) #设置报文数据字节长度
+msg.setData([0x11, 0x12, 0, 0, 0, 0, 0, 0]) #设置报文数据场
+msg.setBrs(0) #设置速率切换位（0或1）
+sendMsg(msg, CAN1)
+
+8. 其他和函数或变量强相关的内容
+无

@@ -1,0 +1,122 @@
+##功能##
+创建一个自定义的ARP报文对象，通过设置其属性来配置报文参数，并发送到总线上。用于模拟或测试ARP协议相关的网络通信场景。
+
+##vba规范##
+函数名：ARPMsg
+返回值：arpMsg (ARPMsg类型)
+参数：
+- ether_dhost (int): 目标MAC地址
+- ether_shost (int): 源MAC地址
+- arp_op (int): ARP操作字段
+- arp_sha (string): ARP MAC地址
+- arp_spa (string): ARP IP地址
+- arp_dha (string): 客户端ARP MAC地址
+- arp_dpa (string): 客户端ARP IP地址
+- data (byte[]): ARP报文数据场
+- address (int): 地址信息
+- op (int): ARP操作字段
+
+内置函数：
+- get/set方法用于获取/设置各字段值
+- sendETHMsg()用于发送报文
+
+##capl规范##
+CAPL中使用EthernetPacket结构体处理ARP报文，主要函数：
+- ethernetPacket: 创建以太网报文
+- arpPacket: 创建ARP报文
+- dwordToByteArray: 转换地址格式
+- output: 发送报文
+
+示例1：
+variables {
+  byte arpData[28];
+  EthernetPacket ethPacket;
+  ArpPacket arpPacket;
+}
+
+on start {
+  arpPacket.operation = 2; // ARP应答
+  arpPacket.senderHardwareAddr = "11:22:33:44:55:66";
+  arpPacket.senderProtocolAddr = "192.168.1.0";
+  arpPacket.targetHardwareAddr = "22:33:44:55:44:55";
+  arpPacket.targetProtocolAddr = "192.168.1.10";
+  
+  ethPacket.source = "11:22:33:44:55:66";
+  ethPacket.destination = "FF:FF:FF:FF:FF:FF";
+  ethPacket.type = 0x0806; // ARP类型
+  ethPacket.payload = arpPacket;
+  
+  output(ethPacket);
+}
+
+示例2：
+on key 'a' {
+  EthernetPacket pkt;
+  pkt.source = "11:22:33:44:55:66";
+  pkt.destination = "FF:FF:FF:FF:FF:FF";
+  pkt.type = 0x0806;
+  
+  ArpPacket arp;
+  arp.operation = 1; // ARP请求
+  arp.senderHardwareAddr = pkt.source;
+  arp.senderProtocolAddr = "192.168.1.100";
+  arp.targetHardwareAddr = "00:00:00:00:00:00";
+  arp.targetProtocolAddr = "192.168.1.1";
+  
+  pkt.payload = arp;
+  output(pkt);
+}
+
+##capl名##
+EthernetPacket
+
+##转换须知##
+1. CAPL使用结构体而非对象，需要分开创建以太网和ARP报文
+2. MAC地址在CAPL中使用冒号分隔的字符串格式
+3. ARP操作字段值相同(1-4)
+4. CAPL需要显式设置以太网类型为0x0806(ARP)
+5. CAPL使用output()函数发送报文
+
+##转换示例##
+CAPL原始代码：
+variables {
+  EthernetPacket eth;
+  ArpPacket arp;
+}
+
+on start {
+  eth.source = "11:22:33:44:55:66";
+  eth.destination = "FF:FF:FF:FF:FF:FF";
+  eth.type = 0x0806;
+  
+  arp.operation = 2;
+  arp.senderHardwareAddr = eth.source;
+  arp.senderProtocolAddr = "192.168.1.0";
+  arp.targetHardwareAddr = "22:33:44:55:44:55";
+  arp.targetProtocolAddr = "192.168.1.10";
+  
+  eth.payload = arp;
+  output(eth);
+}
+
+转换后的VBA代码：
+Sub SendARPMsg()
+    Dim arpMsg As ARPMsg
+    Set arpMsg = New ARPMsg
+    
+    arpMsg.setEtherSHost("11:22:33:44:55:66")
+    arpMsg.setEtherDHost("FF:FF:FF:FF:FF:FF")
+    arpMsg.setARPop(2)
+    arpMsg.setARPSMacAddress("11:22:33:44:55:66")
+    arpMsg.setARPSIPAddress("192.168.1.0")
+    arpMsg.setARPCMacAddress("22:33:44:55:44:55")
+    arpMsg.setARPCIPAddress("192.168.1.10")
+    
+    sendETHMsg arpMsg.getARPData(), "ETH1"
+End Sub
+
+关键转换步骤：
+1. 将CAPL结构体转换为VBA对象
+2. MAC地址格式从字符串转为VBA接受的格式
+3. 使用set方法替代直接属性赋值
+4. 发送方法从output()改为sendETHMsg()

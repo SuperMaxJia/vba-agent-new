@@ -1,0 +1,52 @@
+##功能##
+该函数用于根据DLL文件中封装的CRC算法计算给定字节数组的CRC值。主要用于数据校验场景，如通信协议中的消息完整性验证。
+
+##vba规范##
+函数定义：Function diagGetCRCData(path As String, datas() As Byte) As Variant
+参数：
+- path: String类型，DLL文件路径
+- datas: Byte数组类型，待校验数据
+返回值：Variant类型数组，第一个元素是段长度，第二个元素是CRC计算结果
+
+##capl规范##
+在CAPL中没有直接对应的内置CRC计算函数，但可以通过以下方式实现：
+1. 使用外部DLL调用（需预先加载DLL）
+2. 使用内置的CRC计算函数（如crc8/crc16/crc32）
+
+示例1（DLL调用）：
+dll "GenerateCRC.dll";
+byte data[] = {0x10, 0x11};
+long result[2];
+result = diagGetCRC("C:\\GenerateCRC.dll", data);
+
+示例2（内置CRC）：
+byte data[] = {0x10, 0x11};
+dword crcResult;
+crcResult = crc32(0, data, elcount(data));
+
+##capl名##
+crc32
+
+##转换须知##
+1. CAPL的内置CRC函数通常直接返回计算结果，不返回段长度
+2. CAPL需要显式指定CRC算法类型（如crc8/crc16/crc32）
+3. 使用DLL方式时需要确保DLL路径正确且已加载
+4. CAPL的数组索引从0开始，与VBA相同
+
+##转换示例##
+CAPL原始代码：
+byte data[] = {0x10, 0x11};
+dword crcValue;
+crcValue = crc32(0, data, elcount(data));
+
+转换后的VBA代码：
+Dim data(1) As Byte
+data(0) = &H10
+data(1) = &H11
+Dim res As Variant
+res = diagGetCRCData("C:\GenerateCRC.dll", data)
+
+关键转换步骤：
+1. 将CAPL的数组初始化改为VBA的数组赋值
+2. 将CAPL的直接CRC计算改为通过DLL调用
+3. 注意VBA返回的是包含两个元素的数组，而CAPL直接返回CRC值

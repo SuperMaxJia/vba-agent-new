@@ -1,0 +1,53 @@
+##功能##
+该函数用于将指定ECU节点从CAN总线上断开，使其停止发送报文。主要用于模拟ECU离线故障场景，测试系统对ECU离线状态的响应能力。典型应用包括ECU故障恢复测试、总线负载变化测试等。
+
+##vba规范##
+函数定义：testSetEcuOffline(Node)
+参数：
+- Node：报文对象类型，表示需要离线的ECU节点
+返回值：无返回值
+限制：仅支持CAN总线控制，需与testSetEcuOnline配对使用
+
+##capl规范##
+函数定义：setNodeState(nodeName, state)
+参数：
+- nodeName：char[]类型，表示节点名称字符串
+- state：int类型，0表示离线，1表示在线
+返回值：无
+示例1：
+setNodeState("CAN1.SUT", 0);  // 使节点离线
+setNodeState("CAN1.SUT", 1);  // 使节点重新上线
+
+示例2：
+on timer offlineTimer {
+    setNodeState("ECU1", 1);
+}
+setNodeState("ECU1", 0);
+timer offlineTimer = 5000;  // 5秒后自动恢复
+
+##capl名##
+setNodeState
+
+##转换须知##
+1. 参数差异：VBA使用对象引用，CAPL使用字符串节点名
+2. 状态控制：VBA分两个函数控制，CAPL通过参数统一控制
+3. 返回值：两者都无返回值
+4. 总线支持：VBA明确仅支持CAN，CAPL可能支持更多总线类型
+5. 需要手动处理CAPL中的字符串参数转换
+
+##转换示例##
+CAPL原始代码：
+setNodeState("CAN1.ECU_A", 0);
+testWaitForTimeout(2000);
+setNodeState("CAN1.ECU_A", 1);
+
+转换后的VBA代码：
+testSetEcuOffline(CAN1.ECU_A)
+testWaitForTimeout(2000)
+testSetEcuOnline(CAN1.ECU_A)
+
+关键转换说明：
+1. 将CAPL的字符串节点名转换为VBA的对象引用格式
+2. 将CAPL的state参数0/1转换为VBA的专用函数
+3. 保持相同的延时控制逻辑
+4. 注意VBA需要显式调用两个独立函数完成状态切换

@@ -1,0 +1,26 @@
+1. 函数名
+testSupplyTextEvent
+
+2. 函数描述
+用于提供一个测试模块的事件文本，主要给testWaitForTextEvent函数提供。
+
+3. 函数体
+testSupplyTextEvent(text)
+
+4. 返回值
+无
+
+5. 参数
+名称      类型      描述
+text      str       测试事件文本
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：添加测试模块的事件文本，提供"text字符串"给testWaitForTextEvent函数。
+示例代码：
+testSupplyTextEvent('text')
+
+8. 其他
+无

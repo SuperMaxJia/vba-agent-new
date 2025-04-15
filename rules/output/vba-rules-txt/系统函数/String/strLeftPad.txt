@@ -1,0 +1,29 @@
+1. 函数名
+strLeftPad
+
+2. 函数描述
+将字符串sourceStr设置成长度为size的字符串，如果不够左侧补code字符串
+
+3. 函数体
+strLeftPad(sourceStr, size, code)
+
+4. 返回值
+名称 | 类型 | 描述
+str | String | 返回修改后的字符串
+
+5. 参数
+名称 | 类型 | 描述
+sourceStr | String | 原始字符串
+size | int | 目标字符串长度
+code | char | 填充字符，默认是''
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：将字符串'ABCdedf'左侧填充字符'd'至10位长度
+示例代码：strLeftPad('ABCdedf', 10, 'd')
+代码注释：返回结果为'dddABCdedf'
+
+8. 其他说明
+无其他相关信息

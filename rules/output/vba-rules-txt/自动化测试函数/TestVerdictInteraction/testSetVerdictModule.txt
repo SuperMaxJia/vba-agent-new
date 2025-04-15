@@ -1,0 +1,39 @@
+1. 函数名
+testSetVerdictModule
+
+2. 函数描述
+用于设定测试模块的状态信息。测试模块只有两种状态，0（fail）和1（pass）。
+
+3. 函数体
+res = testSetVerdictModule(verdict)
+
+4. 返回值
+无明确返回值说明（根据上下文推断可能返回操作结果）
+
+5. 参数
+| 名称     | 类型 | 描述                     |
+|----------|------|--------------------------|
+| verdict  | int  | 0表示failed，1表示pass   |
+
+6. 内置函数
+无直接关联的内置函数说明
+
+7. 示例
+示例功能：根据上一个测试用例的状态设置当前模块状态
+示例代码：
+@MainTest
+def MainTestExecute():
+    MyTestCase()
+    if (testGetVerdictLastTestCase() == 1):
+        testSetVerdictModule(1)
+    else:
+        testSetVerdictModule(0)
+代码注释：
+- 先执行MyTestCase测试用例
+- 通过testGetVerdictLastTestCase获取上一个测试用例结果
+- 根据结果（1/0）设置当前模块状态
+
+8. 其他说明
+- 该函数属于TestVerdictInteraction类别
+- 需要与testGetVerdictLastTestCase配合使用
+- 状态值严格限定为0或1

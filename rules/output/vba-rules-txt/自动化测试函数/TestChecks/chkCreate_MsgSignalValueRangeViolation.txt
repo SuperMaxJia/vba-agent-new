@@ -1,0 +1,46 @@
+1. 函数名  
+chkCreate_MsgSignalValueRangeViolation  
+
+2. 函数描述  
+用于检测信号或变量的值是否在期望范围内。该函数仅创建检测对象但不开始检测，需调用`chkControl_Start`启动检测。  
+
+3. 函数体  
+所有检测函数均有对应的`chkStart_xxxx()`和`chkCreate_xxxx()`：  
+- `chkCreate_xxxx()`仅创建检测对象，需手动调用`chkControl_Start`启动检测。  
+- `chkStart_xxxx()`创建检测对象并自动开始检测。  
+
+函数声明：  
+```vba  
+chkCreate_MsgSignalValueRangeViolation(object, aMinValue, aMaxValue)  
+```  
+
+4. 返回值  
+| 名称 | 类型 | 描述 |  
+|------|------|------|  
+| res  | int  | 代表创建的对象，-1表示创建失败 |  
+
+5. 参数  
+| 名称       | 类型                          | 描述                     |  
+|------------|-------------------------------|--------------------------|  
+| object     | VariableEntity, CANDBCSignal, LINDBCSignal | 信号对象或变量对象 |  
+| aMinValue  | Number                        | 最小值（包含边界）       |  
+| aMaxValue  | Number                        | 最大值（包含边界）       |  
+
+6. 内置函数  
+- `chkControl_Start`: 启动检测。  
+- `testAddCondition`: 将统计信息加入自动化测试报告。  
+- `testWaitForTimeout`: 设置检测时长。  
+- `testRemoveCondition`: 结束统计。  
+
+7. 示例  
+**功能**：检测报文信号值是否在2.5-3.7范围内，超出范围则触发。  
+```vba  
+checkId = chkStart_MsgSignalValueRangeViolation(CAN1.MS.SignalToObserve, 2.5, 3.7)  
+testAddCondition(checkId)  ' 将统计信息加入报告  
+testWaitForTimeout(1000)   ' 检测持续1000毫秒  
+testRemoveCondition(checkId) ' 结束统计  
+```  
+
+8. 其他  
+- 关联函数：`chkStart_MsgSignalValueRangeViolation`（自动启动检测版本）。  
+- 边界值包含在检测范围内（即闭区间）。

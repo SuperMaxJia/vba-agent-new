@@ -1,0 +1,82 @@
+##功能##
+cycleFunction用于创建并控制周期性执行的函数，可以设置执行间隔、启动/停止周期执行以及动态调整周期时间。常用于需要定时执行特定操作的场景，如定时数据采集、周期状态检查等。
+
+##vba规范##
+函数定义：cycleFunction(cycle_time, func, *parm)
+参数：
+- cycle_time: Integer类型，周期时间（毫秒）
+- func: Function类型，要周期执行的函数
+- *parm: Variant数组，传递给func的参数
+返回值：Object类型，包含三个方法：
+- startSchedule(): 启动周期执行
+- stop(): 停止周期执行
+- setCycleTime(cycle_time): 设置新的周期时间
+
+##capl规范##
+CAPL中使用on timer事件实现类似功能：
+1. 声明timer变量：msTimer myTimer;
+2. 设置定时器：setTimer(myTimer, cycle_time);
+3. 在on timer事件中调用目标函数
+
+示例1：
+// 周期执行简单函数
+msTimer demoTimer;
+int counter = 0;
+
+on timer demoTimer {
+    write("Tick %d", counter++);
+    setTimer(demoTimer, 100); // 重置定时器
+}
+
+// 启动定时器
+setTimer(demoTimer, 100);
+
+示例2：
+// 带参数的周期函数
+msTimer paramTimer;
+int a = 1, b = 2;
+
+on timer paramTimer {
+    write("Sum: %d", a + b);
+    setTimer(paramTimer, 200);
+}
+
+// 启动定时器
+setTimer(paramTimer, 200);
+
+##capl名##
+on timer
+
+##转换须知##
+1. CAPL使用独立timer变量和事件处理，而VBA封装为对象方法
+2. CAPL需要手动重置定时器(setTimer)来实现周期执行
+3. CAPL的timer精度和系统调度相关，可能不如VBA精确
+4. CAPL中参数传递需要通过全局变量实现，不像VBA可直接传递
+
+##转换示例##
+CAPL原始代码：
+msTimer myTimer;
+int x = 5, y = 10;
+
+on timer myTimer {
+    write("Result: %d", x * y);
+    setTimer(myTimer, 150);
+}
+
+setTimer(myTimer, 150);
+
+转换后的VBA代码：
+Dim cycle As Object
+
+Sub multiplyFunc(a As Integer, b As Integer)
+    Debug.Print "Result: " & a * b
+End Sub
+
+Set cycle = cycleFunction(150, multiplyFunc, 5, 10)
+cycle.startSchedule
+
+关键转换说明：
+1. CAPL的timer事件转换为VBA的独立函数
+2. CAPL的全局变量改为VBA函数参数
+3. CAPL的setTimer调用转换为VBA的startSchedule方法
+4. 周期时间设置从setTimer参数改为cycleFunction参数

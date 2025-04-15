@@ -1,0 +1,32 @@
+1. 函数名  
+getVariableByGroupName  
+
+2. 函数描述  
+根据变量组的名称获取变量对象列表  
+
+3. 函数体  
+getVariableByGroupNameModel(groupName)  
+
+4. 返回值  
+名称：variables  
+类型：List  
+描述：返回变量对象的列表  
+
+5. 参数  
+名称        | 类型   | 描述  
+-----------|--------|----------------  
+groupName  | String | 变量组名称  
+
+6. 内置函数  
+无  
+
+7. 示例  
+示例功能：根据变量组‘Vehicle’的名称获取变量对象列表  
+示例代码：  
+```vba  
+variables = getVariableByGroupNameModel('Vehicle')  
+```  
+代码注释：调用函数获取名为'Vehicle'的变量组的所有变量对象  
+
+8. 其他和函数或变量强相关的内容  
+无

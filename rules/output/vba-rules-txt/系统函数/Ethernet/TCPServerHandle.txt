@@ -1,0 +1,44 @@
+1. 函数名  
+TCPServerHandle  
+
+2. 函数描述  
+创建一个TCP服务器句柄，用于继承和回调处理TCP服务器接收的消息。  
+
+3. 函数体  
+```python  
+class TCPServerHandle(TCPServerHandle):  
+    def handle(self):  
+        self.request.recv(1024)  
+        self.request.send('yes'.encode('utf-8'))  
+```  
+
+4. 返回值  
+| 名称             | 类型             | 描述                     |  
+|------------------|------------------|--------------------------|  
+| tcpServerHandle  | TCPServerHandle  | 返回一个TCPServerHandle对象 |  
+
+5. 参数  
+无直接参数，但需通过继承类实现回调逻辑。  
+
+6. 内置函数  
+无直接内置函数，但依赖以下外部函数：  
+- `createTCPServerSocket`：用于创建TCP服务器并绑定回调句柄。  
+
+7. 示例  
+**示例功能**：创建一个支持回调的TCP服务端，接收客户端消息并回复"yes"。  
+**示例代码**：  
+```python  
+class TCPServerHandleTest(TCPServerHandle):  
+    def handle(self):  
+        self.request.recv(1024)  # 接收客户端数据  
+        self.request.send('yes'.encode('utf-8'))  # 回复客户端  
+
+createTCPServerSocket(host='192.168.7.5', port=8989, handle=TCPServerHandleTest)  
+```  
+**代码注释**：  
+- `TCPServerHandleTest` 继承 `TCPServerHandle`，重写 `handle` 方法实现自定义逻辑。  
+- `createTCPServerSocket` 绑定服务器IP、端口及回调句柄。  
+
+8. 其他说明  
+- 需配合 `createTCPServerSocket` 使用，实现TCP服务器的消息处理。  
+- 回调逻辑需在子类的 `handle` 方法中定义。

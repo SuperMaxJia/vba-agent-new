@@ -1,0 +1,51 @@
+##功能##
+该函数用于设置ECU仿真节点下特定报文的数据场内容，修改后的数据将在该节点下次发送该报文时生效。适用于CAN或LIN总线仿真环境中动态修改报文数据。
+
+##vba规范##
+函数定义：setNodeMessageData(DBMessage, data)
+参数：
+- DBMessage: CANDBCMessage或LINDBCMessage类型，表示目标报文对象
+- data: list类型，包含新数据场内容的字节列表（十六进制格式）
+返回值：无
+特性：通过按键事件触发数据更新，修改立即生效（下次发送时）
+
+##capl规范##
+函数定义：setSignal/setMessage（根据具体使用场景选择）
+参数：
+- message: 报文对象或报文ID
+- data: byte数组或信号值
+返回值：无
+示例1：
+on key 'k' {
+  setMessage(ESP_Status, {0x10, 0x12, 0x13});
+}
+示例2：
+on message CAN1.ESP.ESP_Status {
+  this.byte(0) = 0x10;
+  this.byte(1) = 0x12;
+  this.byte(2) = 0x13;
+}
+
+##capl名##
+setMessage
+
+##转换须知##
+1. CAPL使用大括号{}定义字节数组，而VBA使用方括号[]
+2. CAPL可通过直接修改报文对象或使用setMessage函数，VBA仅支持函数调用方式
+3. CAPL的报文引用方式更灵活（支持ID或名称）
+4. CAPL需要区分信号级(setSignal)和报文级(setMessage)操作
+
+##转换示例##
+CAPL原始代码：
+on key 'k' {
+  setMessage(CAN1::ESP_Status, {0x10, 0x12, 0x13});
+}
+转换后的VBA代码：
+@onKey('K')
+def onKeyEvent():
+    setNodeMessageData(CAN1.ESP.ESP_Status, [0x10, 0x12, 0x13])
+关键转换说明：
+1. 事件触发器从on key改为@onKey装饰器
+2. 报文引用路径从CAN1::ESP_Status改为CAN1.ESP.ESP_Status
+3. 数据格式从大括号改为方括号
+4. 函数名从setMessage改为setNodeMessageData

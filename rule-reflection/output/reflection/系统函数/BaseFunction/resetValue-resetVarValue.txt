@@ -1,0 +1,45 @@
+##功能##
+该函数用于将单个系统变量重置为其初始值，如果没有设置初始值则设置为0或空字符串。常用于测试过程中需要恢复变量默认值的场景。
+
+##vba规范##
+函数定义：resetVarValue(variable As VariableEntity)
+参数：variable - VariableEntity类型的变量对象
+返回值：无（void类型）
+功能分类：BaseFunction系统函数
+相关函数：resetGroupVarValue, resetAllVarValue
+
+##capl规范##
+在CAPL中对应的函数是"resetValue"，用于重置变量的值。
+语法：resetValue(variable);
+参数：variable - 任意类型的变量
+返回值：无
+示例1：
+int x = 10;
+resetValue(x); // 将x重置为0
+
+示例2：
+char str[20] = "test";
+resetValue(str); // 将str重置为空字符串
+
+##capl名##
+resetValue
+
+##转换须知##
+1. 参数类型差异：VBA使用VariableEntity对象，而CAPL直接使用变量名
+2. 返回值相同：都是void类型
+3. 行为差异：CAPL的resetValue会重置为类型默认值，而VBA可能重置为初始值
+4. 特殊情况：CAPL不支持变量组操作，需要单独处理每个变量
+
+##转换示例##
+1. CAPL原始代码：
+int engineSpeed;
+resetValue(engineSpeed);
+
+2. 转换后的VBA代码：
+Dim engineSpeed As VariableEntity
+resetVarValue(engineSpeed)
+
+3. 关键转换说明：
+- 将CAPL的变量声明转换为VBA的VariableEntity对象
+- 将resetValue函数名改为resetVarValue
+- 保持相同的参数传递方式

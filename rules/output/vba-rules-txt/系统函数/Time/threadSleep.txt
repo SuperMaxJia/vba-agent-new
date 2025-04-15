@@ -1,0 +1,29 @@
+1. 函数名
+threadSleep
+
+2. 函数描述
+推迟线程运行指定时间
+
+3. 函数体
+threadSleep(delaytime)
+
+4. 返回值
+无
+
+5. 参数
+名称       类型   描述
+delaytime  int    延时时间，单位是毫秒
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：当按键K后，延时当前线程10毫秒后执行打印输出语句
+示例代码：
+@onKey('K')
+def onKeyEvent():
+    threadSleep(10)
+    writeInfo('延时10毫秒后执行')
+
+8. 其他
+无

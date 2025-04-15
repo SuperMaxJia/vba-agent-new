@@ -1,0 +1,70 @@
+##功能##
+该函数用于获取上一次执行的测试用例的判别结果（状态信息），包括失败、通过、无结果、包含或系统错误等状态。常用于测试流程控制，根据上一次测试结果决定后续操作。
+
+##vba规范##
+函数名：testGetVerdictLastTestCase  
+参数：无  
+返回值：int类型（0:失败, 1:通过, 2:无结果, 3:包含, 4:系统错误）  
+内置函数：无  
+典型应用：在测试序列中判断前一个测试用例的执行状态
+
+##capl规范##
+函数名：testCaseVerdict  
+参数：无  
+返回值：long类型（0:FAILED, 1:PASS, 2:NONE, 3:INCONCLUSIVE, 4:ERROR）  
+
+示例1：
+```capl
+on start
+{
+  long result;
+  testCase1();
+  result = testCaseVerdict();
+  if(result == 1) {
+    write("Test passed");
+  }
+}
+```
+
+示例2：
+```capl
+on key 'a'
+{
+  if(testCaseVerdict() == 0) {
+    write("Last test failed - stopping sequence");
+    testStop();
+  }
+}
+```
+
+##capl名##
+testCaseVerdict
+
+##转换须知##
+1. 返回值映射：VBA的0-4对应CAPL的预定义常量
+2. 函数调用方式：CAPL直接调用，VBA需要加括号
+3. 常量命名：CAPL使用全大写形式（如PASS），VBA使用数值
+4. 错误处理：系统错误(4)在两语言中含义相同
+
+##转换示例##
+CAPL原始代码：
+```capl
+long verdict = testCaseVerdict();
+if(verdict == PASS) {
+  write("Test passed");
+}
+```
+
+转换后的VBA代码：
+```vba
+verdict = testGetVerdictLastTestCase()
+If verdict = 1 Then
+    WriteInfo "Test passed"
+End If
+```
+
+关键转换说明：
+1. 函数名从testCaseVerdict改为testGetVerdictLastTestCase
+2. CAPL的PASS常量(1)转换为VBA的数值1
+3. CAPL的write改为VBA的WriteInfo
+4. 语法结构从C风格改为VBA风格

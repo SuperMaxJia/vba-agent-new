@@ -1,0 +1,74 @@
+##功能##
+向Map变量指定区域的指定索引处写入标定值，用于标定过程中的参数修改。常用于ECU标定、参数调试等场景。
+
+##vba规范##
+函数定义：writeMapValueByIndex(calNode, variable, columnIndex, rowIndex, region, value)
+参数：
+- calNode: CalNode类型，标定节点对象
+- variable: String/Object类型，Map变量名或变量对象
+- columnIndex: Integer类型，列索引（从0开始）
+- rowIndex: Integer类型，行索引（从0开始）
+- region: Integer类型，区域索引（从0开始）
+- value: Float类型，待写入的标定值
+返回值：ResultInfo类型，包含errorInfo和backPhyValue字段
+
+##capl规范##
+函数定义：writeCalibrationValue(mapName, column, row, region, value)
+参数：
+- mapName: char[]类型，Map变量名
+- column: long类型，列索引（从0开始）
+- row: long类型，行索引（从0开始）
+- region: long类型，区域索引（从0开始）
+- value: float类型，待写入的标定值
+返回值：long类型，0表示成功，非0表示错误码
+
+示例1：
+```capl
+long result;
+result = writeCalibrationValue("NewMap", 0, 0, 0, 123.0);
+if(result == 0) {
+    write("Write successful");
+} else {
+    write("Write failed with error: %d", result);
+}
+```
+
+示例2：
+```capl
+writeCalibrationValue("EngineMap", 2, 1, 0, 45.67);
+```
+
+##capl名##
+writeCalibrationValue
+
+##转换须知##
+1. CAPL使用简单的错误码返回，而VBA返回包含详细信息的对象
+2. CAPL不需要calNode参数，直接使用变量名
+3. CAPL参数顺序与VBA不同
+4. CAPL没有变量对象形式，只能使用字符串形式的变量名
+5. 错误处理方式不同，CAPL需要手动检查返回值
+
+##转换示例##
+CAPL原始代码：
+```capl
+long result;
+result = writeCalibrationValue("EngineMap", 1, 2, 0, 89.12);
+if(result != 0) {
+    write("Error writing value");
+}
+```
+
+转换后的VBA代码：
+```vba
+Dim ans As ResultInfo
+ans = writeMapValueByIndex(CAN1.Calibrations.calNode1, "EngineMap", 1, 2, 0, 89.12)
+If Not ans.errorInfo = "" Then
+    writeInfo "Error writing value: " & ans.errorInfo
+End If
+```
+
+关键转换步骤：
+1. 将CAPL的mapName参数移到VBA的第二个参数位置
+2. 在VBA中添加calNode参数
+3. 将CAPL的简单错误码转换为VBA的ResultInfo对象检查
+4. 保持行列和区域索引顺序一致

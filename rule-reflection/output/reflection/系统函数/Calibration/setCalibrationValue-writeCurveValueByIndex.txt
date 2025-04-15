@@ -1,0 +1,70 @@
+##功能##
+该函数用于向Curve变量的指定区域和索引位置写入标定值，主要用于标定过程中的参数修改。适用于需要动态调整曲线参数的应用场景，如发动机标定、温度控制等。
+
+##vba规范##
+函数定义：writeCurveValueByIndex(calNode, variable, index, region, value)
+参数：
+- calNode: CalNode类型，标定节点对象
+- variable: str或CalVariable类型，变量名称或变量对象
+- index: int类型，索引位置
+- region: int类型，区域类型(0:值区域，1:X轴区域，2:Y轴区域)
+- value: double类型，要写入的标定值
+返回值：ResultInfo类型，包含errorInfo(错误信息)和backPhyValue(回读值)
+
+##capl规范##
+函数定义：setCalibrationValue(node, variable, index, region, value)
+参数：
+- node: char[]类型，节点名称
+- variable: char[]类型，变量名称
+- index: int类型，索引位置
+- region: int类型，区域类型(0:值区域，1:X轴区域，2:Y轴区域)
+- value: float类型，要写入的标定值
+返回值：long类型，返回0表示成功，非0表示错误码
+
+示例1：
+long result;
+result = setCalibrationValue("CAN1::calNode1", "ResistTemp_Y", 0, 0, 1.0);
+write("Result: %d", result);
+
+示例2：
+on key 'a'
+{
+  float readback;
+  long res = setCalibrationValue("ECU1::calNode2", "InjTime_X", 2, 1, 2.5);
+  if(res == 0)
+  {
+    readback = getCalibrationValue("ECU1::calNode2", "InjTime_X", 2, 1);
+    write("Value set successfully: %f", readback);
+  }
+}
+
+##capl名##
+setCalibrationValue
+
+##转换须知##
+1. CAPL使用字符串表示节点和变量名，而VBA可以使用对象引用
+2. CAPL返回值是简单错误码，VBA返回包含更多信息的对象
+3. CAPL需要手动调用getCalibrationValue获取回读值
+4. CAPL中region参数含义与VBA一致
+5. CAPL中value参数类型为float而非double
+
+##转换示例##
+CAPL原始代码：
+long res;
+res = setCalibrationValue("CAN1::calNode1", "ResistTemp_Y", 0, 0, 1.0);
+if(res == 0)
+{
+  write("Calibration successful");
+}
+
+转换后的VBA代码：
+ans = writeCurveValueByIndex(CAN1.Calibrations.calNode1, "ResistTemp_Y", 0, 0, 1.0)
+If ans.errorInfo = "" Then
+    writeInfo("Calibration successful")
+End If
+
+关键转换说明：
+1. 将CAPL的节点字符串转换为VBA的节点对象引用
+2. CAPL的错误码检查转换为VBA的错误信息检查
+3. 保持相同的参数顺序和区域类型定义
+4. 添加了VBA特有的对象引用方式

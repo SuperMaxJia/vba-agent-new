@@ -1,0 +1,82 @@
+##功能##
+该函数用于创建和配置一个Map结构对象，主要用于设置和获取二维表格数据（如X轴、Y轴坐标及对应的值）。常用于汽车ECU标定中配置参数映射表。
+
+##vba规范##
+函数名：MapValueInfo
+返回值：MapValueInfo对象（包含多个属性和方法）
+方法：
+- getColumnNumber() → int
+- getRowNumber() → int  
+- getXAxisValue() → list[float]
+- getYAxisValue() → list[float]  
+- getValue() → list[float]
+- getInfo() → str
+- setColumnNumber(int)
+- setRowNumber(int)  
+- setXAxisValue(list)
+- setYAxisValue(list)
+- setValue(list)
+
+##capl规范##
+在CAPL中对应使用Map对象和其相关操作：
+- 创建：直接声明变量
+- 设置：通过属性赋值
+- 写入：使用mapWrite函数
+
+示例1：
+```capl
+variables {
+  float xAxis[2] = {1.0, 1.0};
+  float yAxis[2] = {1.0, 1.0};
+  float values[4] = {3.0, 4.0, 5.0, 6.0};
+}
+
+on start {
+  mapWrite(CAN1::Calibrations::calNode1, "NewMap", xAxis, yAxis, values);
+}
+```
+
+示例2：
+```capl
+on key 'm' {
+  float x[3], y[3], z[9];
+  // 填充数组数据
+  mapWrite(CAN1::Calibrations::engineMap, "RPM_TPS", x, y, z);
+}
+```
+
+##capl名##
+mapWrite
+
+##转换须知##
+1. CAPL直接操作数组而非对象方法
+2. CAPL需要预定义所有数组变量
+3. 错误处理方式不同（CAPL无getInfo方法）
+4. 维度设置隐含在数组长度中
+5. 数据必须完整初始化后才能写入
+
+##转换示例##
+CAPL原始代码：
+```capl
+float x[2] = {1000, 2000};
+float y[2] = {20, 40};
+float v[4] = {10.5, 20.3, 30.1, 40.7};
+mapWrite(CAN1::Calibrations::fuelMap, "Main", x, y, v);
+```
+
+转换后的VBA代码：
+```vba
+mapValueInfo = MapValueInfo()
+mapValueInfo.setColumnNumber(2)
+mapValueInfo.setRowNumber(2)
+mapValueInfo.setXAxisValue([1000, 2000])
+mapValueInfo.setYAxisValue([20, 40])
+mapValueInfo.setValue([10.5, 20.3, 30.1, 40.7])
+writeMapValue(CAN1.Calibrations.fuelMap, "Main", mapValueInfo)
+```
+
+关键转换步骤：
+1. 将CAPL数组初始化转换为set方法调用
+2. 显式设置行列数（CAPL隐含在数组长度中）
+3. 使用writeMapValue替代mapWrite函数
+4. 保持相同的CAN通道和标定节点命名

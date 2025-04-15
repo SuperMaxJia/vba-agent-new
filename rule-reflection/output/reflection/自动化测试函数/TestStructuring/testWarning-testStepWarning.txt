@@ -1,0 +1,46 @@
+##功能##
+testStepWarning函数用于在自动化测试过程中报告测试步骤的警告状态，将警告信息输出到测试报告中。它适用于当测试步骤既不是完全通过也不是完全失败，而是处于需要警告注意的中间状态时使用。典型应用场景包括处理未知错误、非关键性异常或需要注意但不影响测试继续执行的情况。
+
+##vba规范##
+函数定义：testStepWarning(levelOfDetail As String, description As String)
+参数：
+- levelOfDetail：字符串类型，表示测试步骤的重要程度，数字越小越重要
+- description：字符串类型，测试步骤的描述信息
+返回值：无
+内置函数：无
+
+##capl规范##
+函数定义：testWarning(char levelOfDetail[], char description[])
+参数：
+- levelOfDetail：字符数组，表示警告级别
+- description：字符数组，警告描述文本
+返回值：void
+示例1：
+testWarning("2.1", "Unexpected response format detected");
+示例2：
+if(signalValue > threshold) {
+    testWarning("1.5", "Signal exceeded warning threshold");
+}
+
+##capl名##
+testWarning
+
+##转换须知##
+1. 参数类型差异：VBA使用String类型，CAPL使用char数组
+2. 函数名差异：VBA使用testStepWarning，CAPL使用testWarning
+3. 重要程度表示方式相同，都是数字越小越重要
+4. 两者都没有返回值
+5. 在CAPL中字符数组需要明确声明大小或使用字符串常量
+
+##转换示例##
+CAPL原始代码：
+testWarning("3.2", "CAN bus load exceeded warning level");
+
+转换后的VBA代码：
+testStepWarning "3.2", "CAN bus load exceeded warning level"
+
+关键转换步骤：
+1. 函数名从testWarning改为testStepWarning
+2. 参数类型从char数组改为String
+3. 移除了CAPL中的分号
+4. 保持参数顺序和意义不变

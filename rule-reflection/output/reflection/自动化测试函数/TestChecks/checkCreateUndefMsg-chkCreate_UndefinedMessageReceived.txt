@@ -1,0 +1,65 @@
+##功能##
+用于检测指定网段上是否有未在数据库中定义的报文。该函数通常在自动化测试场景中使用，结合其他测试函数统计指定时间内出现的未定义报文，并将结果加入测试报告。
+
+##vba规范##
+函数名：chkCreate_UndefinedMessageReceived  
+参数：network（Network类型，表示网段对象）  
+返回值：int类型，代表创建的对象ID，-1表示创建失败  
+行为：创建检测对象但不开始检测，需手动调用chkControl_Start开始检测  
+相关函数：chkStart_UndefinedMessageReceived（创建并立即开始检测）
+
+##capl规范##
+函数名：checkCreateUndefMsg  
+参数：busType（枚举类型，如CAN1/CAN2等）  
+返回值：long类型，检测对象句柄，-1表示失败  
+行为：创建未定义报文检测器但不启动，需调用checkControlStart  
+示例1：
+```capl
+long handle;
+handle = checkCreateUndefMsg(CAN1);
+if(handle != -1) {
+  checkControlStart(handle);
+  testWaitForTimeout(1000);
+  checkControlStop(handle);
+}
+```
+示例2：
+```capl
+long checkId = checkStartUndefMsg(CAN2);  // 创建并立即启动
+testAddCondition(checkId);
+```
+
+##capl名##
+checkCreateUndefMsg
+
+##转换须知##
+1. 参数差异：VBA使用Network对象，CAPL直接使用总线枚举
+2. 启动方式：VBA需调用chkControl_Start，CAPL对应checkControlStart
+3. 命名风格：CAPL采用驼峰命名且更简洁
+4. 错误处理：两者都用-1表示失败
+
+##转换示例##
+CAPL原始代码：
+```capl
+long handle = checkCreateUndefMsg(CAN1);
+checkControlStart(handle);
+delay(5000);
+write("Found %d undefined messages", checkGetCount(handle));
+```
+
+转换后的VBA代码：
+```vba
+Dim checkId As Integer
+checkId = chkCreate_UndefinedMessageReceived(CAN1)
+If checkId <> -1 Then
+    chkControl_Start checkId
+    testWaitForTimeout 5000
+    Debug.Print "Found " & chkGetCount(checkId) & " undefined messages"
+End If
+```
+
+关键转换说明：
+1. checkCreateUndefMsg → chkCreate_UndefinedMessageReceived
+2. checkControlStart → chkControl_Start
+3. CAPL的delay改为VBA的testWaitForTimeout
+4. 输出函数从write改为Debug.Print

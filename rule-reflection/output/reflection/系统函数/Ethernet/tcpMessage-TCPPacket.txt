@@ -1,0 +1,83 @@
+##功能##
+用于创建一条TCP以太网报文，设置源端口、目的端口、IPv4报文封装、序列号、确认号、数据负载、标志位、校验和及紧急指针等参数，适用于网络通信测试和协议开发场景。
+
+##vba规范##
+函数名：TCPPacket  
+返回值：TCPPacket对象实例  
+参数：  
+- source_port: int (16位无符号整数)  
+- destination_port: int (16位无符号整数)  
+- internet_packet: IPv4Packet对象  
+- sequence_number: int (32位无符号整数)  
+- ack_number: int (32位无符号整数)  
+- payload: list  
+- flag: int (8位无符号整数)  
+- checksum: int (16位无符号整数，-1自动计算)  
+- urgentPointer: int (16位无符号整数)  
+
+##capl规范##
+CAPL中通过`tcpMessage`创建TCP报文，参数通过属性设置：  
+- `tcp.sourcePort`: word  
+- `tcp.destinationPort`: word  
+- `tcp.ipPacket`: ipv4Message  
+- `tcp.sequenceNumber`: dword  
+- `tcp.ackNumber`: dword  
+- `tcp.payload`: byte[]  
+- `tcp.flags`: byte  
+- `tcp.checksum`: word (0xFFFF自动计算)  
+- `tcp.urgentPointer`: word  
+
+示例1：  
+```capl
+tcpMessage tcp;
+tcp.sourcePort = 7000;
+tcp.destinationPort = 8000;
+tcp.ipPacket = ipv4Message; // 假设已定义ipv4Message
+tcp.sequenceNumber = 1;
+tcp.ackNumber = 0;
+tcp.payload = {0x00, 0x01};
+tcp.flags = 0x50;
+tcp.checksum = 0xFFFF; // 自动计算
+tcp.urgentPointer = 0;
+```
+
+示例2：  
+```capl
+tcpMessage tcp = {7000, 8000, ipv4Message, 1, 0, {0x00}, 0x50, 0xFFFF, 0};
+```
+
+##capl名##
+tcpMessage
+
+##转换须知##
+1. CAPL使用`tcpMessage`结构体，VBA使用对象实例  
+2. CAPL校验和自动计算值为0xFFFF，VBA为-1  
+3. CAPL的`ipPacket`需预定义为`ipv4Message`，VBA需传入IPv4Packet对象  
+4. CAPL的`payload`为字节数组，VBA为列表  
+
+##转换示例##
+CAPL原始代码：  
+```capl
+tcpMessage tcp;
+tcp.sourcePort = 7000;
+tcp.destinationPort = 8000;
+tcp.ipPacket = ipv4Message;
+tcp.sequenceNumber = 1;
+tcp.payload = {0x01, 0x02};
+```
+
+转换后的VBA代码：  
+```vba
+Dim tcpPacket As TCPPacket
+Set tcpPacket = TCPPacket()
+tcpPacket.setSourcePort 7000
+tcpPacket.setDestinationPort 8000
+tcpPacket.setInternetPacket IPv4Packet
+tcpPacket.setSequenceNumber 1
+tcpPacket.setPayload Array(&H01, &H02)
+```
+
+关键转换步骤：  
+1. CAPL结构体`tcpMessage`转为VBA对象`TCPPacket`  
+2. CAPL属性赋值转为VBA的set方法  
+3. CAPL字节数组`{0x01, 0x02}`转为VBA的`Array`函数

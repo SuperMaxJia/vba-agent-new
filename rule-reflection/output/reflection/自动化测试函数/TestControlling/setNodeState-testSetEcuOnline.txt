@@ -1,0 +1,51 @@
+##功能##
+该函数用于将指定ECU节点上的所有CAN报文连接到总线，使其能够正常通信。通常用于ECU仿真测试中控制节点的在线/离线状态切换，需要与testSetEcuOffline配合使用。
+
+##vba规范##
+函数定义：testSetEcuOnline(Node)
+参数：
+- Node: 报文对象类型，表示要设置为在线的ECU节点对象
+返回值：无
+限制：仅支持CAN报文，需要先获取有效的节点对象
+
+##capl规范##
+函数定义：setNodeState(node, state)
+参数：
+- node: 节点名称字符串或节点变量
+- state: 整型，0表示离线，1表示在线
+返回值：无
+示例1：
+setNodeState("CAN1::SUT", 1);  // 将CAN1网段的SUT节点设为在线
+示例2：
+variables {
+  char nodeName[20] = "CAN2::DUT";
+}
+on key 'o' {
+  setNodeState(nodeName, 1);  // 通过变量设置节点在线
+}
+
+##capl名##
+setNodeState
+
+##转换须知##
+1. CAPL使用字符串指定节点名称，格式为"总线名::节点名"，而VBA使用对象引用
+2. CAPL需要显式指定状态值(1=在线)，VBA函数隐含在线状态
+3. CAPL函数是通用函数，VBA函数专用于在线状态设置
+4. 节点命名转换需要特别注意总线名称和节点名称的组合方式
+
+##转换示例##
+CAPL原始代码：
+setNodeState("CAN1::SUT", 1);
+testWait(5000);
+setNodeState("CAN1::SUT", 0);
+
+转换后的VBA代码：
+testSetEcuOnline CAN1.SUT
+testWaitForTimeout 5000
+testSetEcuOffline CAN1.SUT
+
+关键转换说明：
+1. 将CAPL的节点命名格式"CAN1::SUT"转换为VBA的对象引用格式CAN1.SUT
+2. CAPL的通用状态设置函数拆分为VBA的两个专用函数
+3. testWait函数对应转换为testWaitForTimeout
+4. 保持相同的逻辑顺序：上线->等待->下线

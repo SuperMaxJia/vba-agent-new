@@ -1,0 +1,38 @@
+1. 函数名  
+testCaseFail  
+
+2. 函数描述  
+用于修改当前测试用例的状态，将测试用例状态判别设为fail（0）。  
+注：当前测试用例的状态为Error（4）时除外，由于Fail的优先级小于Error，测试用例状态不改变。  
+
+3. 函数体  
+testCaseFail()  
+
+4. 返回值  
+无  
+
+5. 参数  
+无  
+
+6. 内置函数  
+无  
+
+7. 示例  
+示例功能：判断返回值result的值是否等于1，不是的话就将该条测试用例置为failed。  
+
+示例代码：  
+```vba  
+@testcase  
+def checkUndifinedMessage():  
+    result = checkSignalInRange(Node_SUT.Velocity, 60, 100);  
+    if (result != 1):  
+        testCaseFail();  
+```  
+
+代码注释：  
+- `checkSignalInRange` 函数用于检查信号值是否在指定范围内。  
+- 如果返回值 `result` 不等于1，则调用 `testCaseFail` 将测试用例状态设为失败。  
+
+8. 其他和函数或变量强相关的内容  
+- 该函数主要用于自动化测试中，标记测试用例为失败状态。  
+- 不能覆盖优先级更高的错误状态（如Error）。

@@ -1,0 +1,45 @@
+1. 函数名  
+setLINSchedulerService  
+
+2. 函数描述  
+设置LIN调度表。  
+
+3. 函数体  
+```vba  
+setLINSchedulerService(scheduler_list, lin_network)  
+```  
+
+4. 返回值  
+无  
+
+5. 参数  
+
+| 名称           | 类型      | 描述               |  
+|----------------|-----------|--------------------|  
+| scheduler_list | List      | 调度报文列表       |  
+| lin_network    | NetworkI  | LIN网段对象        |  
+
+6. 内置函数  
+无  
+
+7. 示例  
+
+**示例功能**  
+将LDF中定义的报文和自定义的报文设置到调度表。  
+
+**示例代码**  
+```vba  
+linframer1 = LIN1.BLIN_BCM  
+linframer2 = LIN1.BLIN_CLS  
+linframe3 = LinFrameItem(0x12, 4, 10)  
+setLINSchedulerService([linframer1, linframer2, linframer3], LIN1)  
+```  
+
+**代码注释**  
+- `linframer1` 和 `linframer2` 是从LIN网段 `LIN1` 中获取的预定义报文。  
+- `linframe3` 是通过 `LinFrameItem` 创建的自定义报文，参数分别为帧ID（0x12）、数据长度（4）和周期时间（10ms）。  
+- `setLINSchedulerService` 将这三个报文设置为调度表，并应用于 `LIN1` 网段。  
+
+8. 其他相关说明  
+- 该函数用于动态配置LIN网络的调度表，支持预定义报文和自定义报文的混合调度。  
+- 调度表设置后，LIN网络将按照指定的报文周期进行通信。

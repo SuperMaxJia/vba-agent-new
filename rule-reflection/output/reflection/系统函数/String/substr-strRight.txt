@@ -1,0 +1,71 @@
+##功能##
+从字符串的右侧截取指定长度的子字符串。常用于处理需要从字符串末尾提取部分内容的场景，如文件扩展名提取、日志信息截取等。
+
+##vba规范##
+函数名：strRight
+参数：
+- sourceStr：String类型，原始字符串
+- length：Integer类型，要截取的字符长度
+返回值：String类型，返回从右侧截取的子字符串
+内置函数：无
+示例：strRight("abcdef", 3) 返回 "def"
+
+##capl规范##
+函数名：substr
+参数：
+- sourceStr：char[]类型，原始字符串
+- startPos：int类型，起始位置（从0开始计数）
+- length：int类型，要截取的字符长度
+返回值：char[]类型，返回截取的子字符串
+示例1：
+```
+char str[] = "abcdef";
+char result[4];
+strncpy(result, &str[3], 3); // 从第3个字符开始截取3个字符
+// result = "def"
+```
+示例2：
+```
+char filename[] = "document.txt";
+char ext[4];
+strncpy(ext, &filename[9], 3); // 从第9个字符开始截取3个字符
+// ext = "txt"
+```
+
+##capl名##
+substr
+
+##转换须知##
+1. CAPL使用0-based索引，VBA使用1-based索引
+2. CAPL需要手动计算起始位置（字符串长度-截取长度）
+3. CAPL需要预先分配目标字符串空间
+4. CAPL使用strncpy函数实现子字符串截取
+5. 需要特别注意字符串终止符的处理
+
+##转换示例##
+1. CAPL原始代码：
+```
+char source[] = "abcdef";
+char target[4];
+int len = 3;
+strncpy(target, &source[strlen(source)-len], len);
+target[len] = 0; // 添加字符串终止符
+// target = "def"
+```
+
+2. 转换后的VBA代码：
+```
+Dim source As String
+Dim target As String
+Dim length As Integer
+source = "abcdef"
+length = 3
+target = strRight(source, length)
+' target = "def"
+```
+
+3. 关键转换说明：
+- CAPL的strncpy调用转换为VBA的strRight函数
+- CAPL的手动位置计算由VBA函数内部处理
+- CAPL显式的终止符处理在VBA中不需要
+- CAPL的字符数组声明改为VBA的String类型

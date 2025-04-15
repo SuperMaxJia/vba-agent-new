@@ -1,0 +1,58 @@
+##功能##
+检测CAN/LIN报文的实际长度是否与预期长度一致。用于验证总线通信中报文长度是否符合规范，常见于汽车电子测试中验证DBC/LDF文件中定义的报文长度与实际通信是否匹配。
+
+##vba规范##
+函数名：chkCreate_InconsistentDLC
+参数：
+1. message (CANDBCMessage/LINDBCMessage) - 报文对象
+2. id (str/int) - 报文标识符，标准帧用数字，扩展帧用字符串
+3. dlc (int) - 期望长度，-1表示使用数据库默认值
+返回值：int - 检测对象ID，-1表示创建失败
+行为：创建检测器但不自动启动，需显式调用chkControl_Start
+
+##capl规范##
+CAPL对应函数：checkDlc
+参数：
+1. message (message*) - 报文对象指针
+2. expectedDlc (int) - 预期长度
+返回值：long - 检测ID，0表示失败
+示例1：
+```capl
+// 检查报文0x100的DLC是否为8
+checkId = checkDlc(mes0x100, 8);
+testAddCondition(checkId);
+timerStart(1000);
+```
+示例2：
+```capl
+// 使用数据库默认长度检查
+checkId = checkDlc(mes0x200, -1);
+testControlStart(checkId);
+```
+
+##capl名##
+checkDlc
+
+##转换须知##
+1. CAPL的message参数需通过报文变量名直接传递，VBA需构造报文对象
+2. CAPL返回0表示失败，VBA返回-1
+3. CAPL的timerStart对应VBA的testWaitForTimeout
+4. CAPL需要显式调用testControlStart，VBA的chkStart_xxx自动启动
+
+##转换示例##
+1. CAPL原始代码：
+```capl
+checkId = checkDlc(msgEngineData, 8);
+testAddCondition(checkId);
+timerStart(1000);
+```
+2. 转换后VBA代码：
+```vba
+checkId = chkStart_InconsistentDLC(CAN1.msgEngineData, dlc:=8)
+testAddCondition(checkId)
+testWaitForTimeout(1000)
+```
+3. 关键说明：
+- msgEngineData直接转换为CAN1.msgEngineData对象
+- checkDlc转换为chkStart_InconsistentDLC并添加命名参数dlc
+- timerStart转换为testWaitForTimeout

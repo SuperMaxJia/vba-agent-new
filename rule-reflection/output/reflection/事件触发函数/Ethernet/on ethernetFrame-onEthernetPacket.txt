@@ -1,0 +1,60 @@
+##功能##
+用于当接收到符合触发条件的以太网报文时触发，支持通配符或字节列表匹配，常用于监听和分析以太网通信数据。
+
+##vba规范##
+函数定义：onEthernetPacket('*', network=None) 或 onEthernetPacket(bytes, network=None)
+参数：
+- bytes：支持通配符'*'或字节列表格式[[startbyte,0x80,0x01],[startbyte,0x80,0x01]]
+- network：可选网段对象
+返回值：无，触发后执行绑定的回调函数
+
+##capl规范##
+对应函数：on ethernetFrame
+参数：
+- 支持通配符'*'或直接指定报文ID/数据模式
+- 可通过环境变量指定网络通道
+返回值：无，触发事件处理程序
+示例1：
+```capl
+on ethernetFrame *
+{
+  write("Timestamp: %f", this.time);
+}
+```
+示例2：
+```capl
+on ethernetFrame 0x100
+{
+  byte data[8];
+  this.getByteArray(data, 8);
+  write("Received data: %02x %02x %02x %02x", data[0], data[1], data[2], data[3]);
+}
+```
+
+##capl名##
+on ethernetFrame
+
+##转换须知##
+1. CAPL使用this关键字访问当前报文，VBA使用ethFrame参数
+2. CAPL的字节匹配语法更简单，直接支持报文ID过滤
+3. VBA的network参数在CAPL中通常通过环境变量设置
+4. CAPL的时间戳通过this.time访问，VBA需要调用getTimestamp()
+
+##转换示例##
+CAPL原始代码：
+```capl
+on ethernetFrame 0x200
+{
+  write("Frame received at %f", this.time);
+}
+```
+转换后的VBA代码：
+```vba
+@onEthernetPacket([[0,0x02,0x00]])
+def onEthernetPacketEvent(ethFrame):
+    ethFrame.getTimestamp()
+```
+关键转换说明：
+1. CAPL的0x200报文ID转换为VBA的字节模式[[0,0x02,0x00]]
+2. CAPL的this.time转换为VBA的getTimestamp()调用
+3. 保持相同的输出功能但语法结构不同

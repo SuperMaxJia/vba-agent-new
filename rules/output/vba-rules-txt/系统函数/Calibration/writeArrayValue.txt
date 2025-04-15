@@ -1,0 +1,46 @@
+1. 函数名  
+writeArrayValue  
+
+2. 函数描述  
+写入数组变量值信息  
+
+3. 函数体  
+```vba  
+writeArrayValue(calNode, variable, arrayValueInfo)  
+```  
+
+4. 返回值  
+| 名称       | 类型          | 描述                                                                 |  
+|------------|---------------|----------------------------------------------------------------------|  
+| ans        | ArrayValueInfo | ans.columnNumber为数组列(x)方向维数, ans.rowNumber为数组行(y)方向维数，ans.value为数组值列表，ans.info为接口执行失败的原因 |  
+
+5. 参数  
+| 名称           | 类型          | 描述                                   |  
+|----------------|---------------|----------------------------------------|  
+| calNode        | CalNode       | 标定节点对象                           |  
+| variable       | str, CalVariable | 读取的变量，可以是变量名称或变量对象   |  
+| arrayValueInfo | ArrayValueInfo | 数组变量对象信息                       |  
+
+6. 内置函数  
+无  
+
+7. 示例  
+**功能**：标定CAN1网段下calNode1标定节点中名称为"NewArray"的标定量的信息为arrayValueInfo。  
+
+**示例代码**：  
+```vba  
+arrayValueInfo = ArrayValueInfo()  
+arrayValueInfo.setColumnNumber(2)  '设置数组列(x)方向维数，整数类型  
+arrayValueInfo.setRowNumber(2)     '设置数组行(y)方向维数，整数类型  
+arrayValueInfo.setValue([11.2, 12.0, 14.0, 15.0])  '设置数组值列表  
+
+ans = writeArrayValue(CAN1.Calibrations.calNode1, "NewArray", arrayValueInfo)  
+'或者  
+'ans = writeArrayVlaue(CAN1.Calibrations.calNode1, CAN1.Calibrations.calNode1.characteristics.NewArray, arrayValueInfo)  
+
+writeInfo(vars(ans))  
+```  
+
+8. 其他相关说明  
+- 该函数用于写入数组变量的值信息，包括数组的维度和具体数值。  
+- 返回值`ans`包含操作结果，可通过`ans.info`获取执行失败的原因。

@@ -1,0 +1,65 @@
+##功能##
+将输入字符串中的所有小写字母转换为大写字母，返回处理后的新字符串。常用于字符串标准化处理、大小写不敏感比较等场景。
+
+##vba规范##
+函数名：strToUpper
+参数：sourceStr（String类型）- 输入字符串
+返回值：String类型 - 转换后的全大写字符串
+行为：仅转换小写字母a-z，不影响其他字符
+示例：strToUpper("ABCdedf") 返回 "ABCDEDF"
+
+##capl规范##
+函数名：toupper
+参数：char[]或string类型 - 输入字符串
+返回值：同输入类型 - 转换后的全大写字符串
+行为：转换整个字符串为大写
+示例1：
+```capl
+char str[20] = "ABCdedf";
+write("Result: %s", toupper(str));  // 输出: ABCDEDF
+```
+示例2：
+```capl
+on key 'u' {
+    char input[50] = "Test123";
+    write("Uppercase: %s", toupper(input));  // 输出: TEST123
+}
+```
+
+##capl名##
+toupper
+
+##转换须知##
+1. CAPL的toupper直接操作字符数组，而VBA操作String对象
+2. CAPL版本会修改原数组内容，VBA返回新字符串
+3. CAPL需要预分配足够字符数组空间
+4. 空字符串处理方式相同
+5. 非字母字符在两个版本中都被保留原样
+
+##转换示例##
+CAPL原始代码：
+```capl
+variables {
+    char testStr[10] = "aBc1";
+}
+on start {
+    write("CAPL: %s", toupper(testStr));
+}
+```
+
+转换后的VBA代码：
+```vba
+Function strToUpper(sourceStr As String) As String
+    strToUpper = UCase(sourceStr)
+End Function
+
+Sub Test()
+    Debug.Print "VBA: " & strToUpper("aBc1")
+End Sub
+```
+
+关键转换步骤：
+1. 将CAPL的toupper()替换为VBA的UCase()
+2. 移除字符数组声明，改用VBA的String类型
+3. 输出函数从write改为Debug.Print
+4. 添加VBA特有的函数定义语法

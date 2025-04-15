@@ -1,0 +1,47 @@
+1. 函数名
+sendMsg
+
+2. 函数描述
+向指定的通道上发送一条CAN(CANFD)报文
+
+3. 函数体
+sendMsg(msg, network)
+
+4. 返回值
+无明确返回值说明
+
+5. 参数
+| 名称       | 类型         | 描述                                                                 |
+|------------|--------------|----------------------------------------------------------------------|
+| msg        | CANMessage   | 获取方法1：通过CANMessage类创建<br>获取方法2：来自DBC的报文对象CANDBCMessage<br>获取方法3：通过createCANMsg或者createCANFDMs方法 |
+| network    | Network      | 网段对象                                                             |
+
+6. 内置函数
+无相关信息
+
+7. 示例
+示例1：通过CANMessage创建CAN报文属性，发送到CAN1。
+```vba
+msg = CANMessage()
+msg.setId(0x10)
+msg.setDlc(2)
+msg.setData([0x10, 0x12])
+sendMsg(msg, CAN1)
+```
+
+示例2：通过createCANMsg创建CAN报文，发送到CAN1。
+```vba
+msg = createCANMsg(0x10, 0, 2, [0x11, 0x22])
+sendMsg(msg1, CAN1)
+```
+
+示例3：获取CAN1网段下某报文，发送到CAN1。
+```vba
+sendMsg(CAN1.EMS.Message1, CAN1)
+```
+
+8. 其他信息
+- 函数所属类别：CAN系统函数
+- 文档版本：VBA V3.0.0R
+- 公司信息：北京经纬恒润股份有限公司
+- 修订时间：2025-01-22 16:07:29

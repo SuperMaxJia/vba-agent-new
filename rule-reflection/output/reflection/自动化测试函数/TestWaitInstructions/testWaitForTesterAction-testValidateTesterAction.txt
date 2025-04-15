@@ -1,0 +1,68 @@
+##功能##
+testValidateTesterAction函数用于创建一个交互式测试窗口，该窗口在满足预设条件、超时或用户手动取消时关闭。窗口允许输入测试注释并保存到测试报告中，常用于需要人工干预或条件触发的测试场景。
+
+##vba规范##
+函数定义：testValidateTesterAction(action, timeout, result)
+参数：
+- action: 测试动作对象，由testCreateTesterAction创建
+- timeout: 整型，超时时间(毫秒)
+- result: 整型，返回状态(0=超时,1=条件满足,2=用户取消,-1=错误)
+返回值：通过result参数返回状态码
+关联函数：需配合testCreateTesterAction和TestAddTriggerTesterAction使用
+
+##capl规范##
+函数定义：testWaitForTesterAction(handle, timeout, &result)
+参数：
+- handle: 长整型，测试动作句柄
+- timeout: 整型，超时时间(ms)
+- &result: 输出参数，整型指针
+返回值：void(通过输出参数返回状态)
+状态码：0=超时,1=条件满足,2=用户取消,-1=错误
+
+示例1：
+variables {
+  long handle;
+  int res;
+}
+handle = testCreateTesterAction("Check engine status");
+testAddTrigger(handle, sysvar::EngineRPM, 3000);
+testWaitForTesterAction(handle, 10000, res);
+
+示例2：
+on signal_update CAN1.EngineSpeed {
+  if (this.raw >= 2500) {
+    testWaitForTesterAction(gHandle, 0, gResult); 
+  }
+}
+
+##capl名##
+testWaitForTesterAction
+
+##转换须知##
+1. CAPL使用输出参数&result代替VBA的返回值
+2. CAPL的handle参数类型为long而非对象
+3. CAPL需要显式声明输出参数变量
+4. 触发条件在CAPL中通过testAddTrigger单独设置
+5. CAPL不支持VBA的全局变量隐式传递
+
+##转换示例##
+CAPL原始代码：
+variables {
+  long handle;
+  int res;
+}
+handle = testCreateTesterAction("Verify signal");
+testAddTrigger(handle, CAN1.Speed, 60);
+testWaitForTesterAction(handle, 5000, res);
+
+转换后VBA代码：
+Dim handle As Object
+handle = testCreateTesterAction("Verify signal")
+gTrigger = TestAddTriggerTesterAction(handle, CAN.MW.Speed)
+testValidateTesterAction(handle, 5000, result)
+
+关键转换说明：
+1. 将CAPL的变量声明改为VBA的Dim
+2. testAddTrigger改为TestAddTriggerTesterAction
+3. 输出参数res改为返回值result
+4. 移除CAPL的&引用符号

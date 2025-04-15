@@ -1,0 +1,44 @@
+1. 函数名  
+testGetVerdictLastTestCase  
+
+2. 函数描述  
+用于获取上一次测试用例的判别结果，即上一个测试用例的状态信息。  
+
+3. 函数体  
+```vba  
+res = testGetVerdictLastTestCase()  
+```  
+
+4. 返回值  
+| 名称 | 类型 | 描述 |  
+|------|------|------|  
+| res  | int  | 0: failed, 1: pass, 2: none, 3: inclusive, 4: error in system |  
+
+5. 参数  
+无  
+
+6. 内置函数  
+无  
+
+7. 示例  
+**示例功能**  
+获取上一次测试用例的状态结果，根据状态信息来对接下来的步骤进行判断。  
+
+**示例代码**  
+```vba  
+@MainTest  
+def MainTestExecute()  
+    MyTestCase();  
+    if (testGetVerdictLastTestCase() == 1):  
+        WriteInfo("MyTestCase failed.")  
+    else:  
+        WriteInfo("MyTestCase passed.")  
+```  
+
+**代码注释**  
+- `MyTestCase()`：执行测试用例。  
+- `testGetVerdictLastTestCase()`：获取上一次测试用例的状态结果。  
+- `WriteInfo()`：输出信息到日志或控制台。  
+
+8. 其他和函数或变量强相关的内容  
+无

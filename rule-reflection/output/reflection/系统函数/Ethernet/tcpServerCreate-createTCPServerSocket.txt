@@ -1,0 +1,77 @@
+##功能##
+该函数用于创建一个TCP服务器套接字，监听指定IP地址和端口，并通过回调处理接收到的TCP消息。适用于需要建立TCP服务端进行网络通信的场景，如车辆ECU测试中与远程设备通信。
+
+##vba规范##
+函数定义：createTCPServerSocket(host, port, handle)
+参数：
+- host: String类型，指定本机IP地址
+- port: Integer类型，指定本机端口号
+- handle: 类对象，必须继承TCPServerHandle并实现handle方法
+返回值：无
+特殊要求：需要配合TCPServerHandle类使用
+
+##capl规范##
+函数定义：tcpServerCreate(ipAddress, port, callbackFunction)
+参数：
+- ipAddress: char数组，指定本机IP地址
+- port: dword类型，指定本机端口号
+- callbackFunction: 函数指针，指向消息处理函数
+返回值：dword类型，返回套接字句柄
+
+示例1：
+dword sockHandle;
+char ipAddress[] = "192.168.7.5";
+
+on tcpServerMessage(dword handle, byte data[])
+{
+  // 处理接收到的数据
+}
+
+sockHandle = tcpServerCreate(ipAddress, 8989, "tcpServerMessage");
+
+示例2：
+dword setupTCPServer()
+{
+  dword handle;
+  handle = tcpServerCreate("127.0.0.1", 8080, "onTcpDataReceived");
+  return handle;
+}
+
+##capl名##
+tcpServerCreate
+
+##转换须知##
+1. CAPL使用函数指针作为回调，而VBA使用类继承方式
+2. CAPL返回套接字句柄，VBA无返回值
+3. CAPL回调函数需要单独定义，VBA在类中实现
+4. CAPL中IP地址为char数组，VBA为String类型
+5. CAPL端口号为dword类型，VBA为Integer类型
+
+##转换示例##
+CAPL原始代码：
+dword sockHandle;
+char ip[] = "192.168.7.5";
+
+on tcpServerMessage(dword handle, byte data[])
+{
+  // 处理数据
+}
+
+sockHandle = tcpServerCreate(ip, 8989, "tcpServerMessage");
+
+转换后的VBA代码：
+Class TCPServerHandler
+    Public Sub Handle()
+        ' 处理数据
+    End Sub
+End Class
+
+Sub Main()
+    createTCPServerSocket "192.168.7.5", 8989, New TCPServerHandler
+End Sub
+
+关键转换步骤：
+1. 将CAPL回调函数转换为VBA类方法
+2. 将CAPL的tcpServerCreate调用转换为createTCPServerSocket
+3. 移除CAPL中的句柄处理，因VBA不返回句柄
+4. 将char数组IP地址转换为VBA字符串

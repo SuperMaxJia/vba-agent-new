@@ -1,0 +1,51 @@
+##功能##
+将字符串补足到指定长度，若原始字符串长度不足则在右侧填充指定字符。常用于格式化输出或数据对齐。
+
+##vba规范##
+函数名：strRightPad  
+参数：  
+- sourceStr：String类型，原始字符串  
+- size：Integer类型，目标长度  
+- code：Char类型，填充字符（默认空字符串）  
+返回值：String类型，补足后的字符串  
+
+##capl规范##
+CAPL中没有完全对应的内置函数，但可以通过字符串拼接实现类似功能。  
+示例1：  
+```capl
+char result[20];
+strncpy(result, "ABCdedf", 10);
+for(int i=strlen("ABCdedf"); i<10; i++) result[i]='d';
+result[10]=0;
+```  
+示例2：  
+```capl
+char padded[15];
+snprintf(padded, 15, "%-*.*s", 10, 10, "Hello");
+```  
+
+##capl名##
+！！！
+
+##转换须知##
+1. CAPL需要手动处理字符串填充，没有直接等效函数  
+2. CAPL中字符串需要预分配空间  
+3. CAPL的字符串操作更底层，需要显式处理终止符  
+4. 当size小于源字符串长度时，VBA会截断而CAPL需要手动处理  
+
+##转换示例##
+CAPL原始代码：  
+```capl
+char output[20];
+strncpy(output, "Test", 8);
+for(int i=strlen("Test"); i<8; i++) output[i]='_';
+output[8]=0;
+```  
+转换后的VBA代码：  
+```vba
+strRightPad("Test", 8, "_")
+```  
+关键转换说明：  
+1. CAPL的显式数组声明转换为VBA的动态字符串处理  
+2. CAPL的手动填充循环转换为VBA内置函数  
+3. CAPL的终止符处理由VBA自动完成

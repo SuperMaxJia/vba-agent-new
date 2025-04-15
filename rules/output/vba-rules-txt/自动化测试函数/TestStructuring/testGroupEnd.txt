@@ -1,0 +1,38 @@
+1. 函数名
+testGroupEnd
+
+2. 函数描述
+此函数用于标识测试用例分组的结尾，必须写在主函数中才会生效，并且与testGroupBegin成对出现。
+
+3. 函数体
+testGroupEnd()
+
+4. 返回值
+无
+
+5. 参数
+无
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：将TC1和TC2分为一组，TC3和TC4不进行分组
+示例代码：
+@MainTest('ModuleTitle')
+def MainTestExecute()
+    testGroupBegin('title', 'description')
+    TC1()
+    TC2()
+    testGroupEnd()
+    TC3()
+    TC4()
+代码注释：
+- testGroupBegin和testGroupEnd必须成对使用
+- TC1和TC2被包含在同一个测试组中
+- TC3和TC4不属于任何测试组
+
+8. 其他说明
+- 必须与testGroupBegin函数配对使用
+- 需要在主函数(MainTest)中调用才有效
+- 用于组织测试用例的分组结构

@@ -1,0 +1,28 @@
+1. 函数名
+setSignalVal
+
+2. 函数描述
+设置ECU节点下该信号的值
+
+3. 函数体
+setSignalVal(canDBCSignal, signalValue, valType = 1)
+
+4. 返回值
+无
+
+5. 参数
+名称          类型          描述
+canDBCSignal  CANDBCSiganl  从数据库中映射出来的信号对象
+signalValue   float         信号量值
+valType       int           信号量设置值类型，0：总线值，1：物理值。默认为1
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：设置CAN1网段下BCM_383报文BCM_TyrePressure_LF信号的物理值为10.0
+示例代码：setSignalVal(CAN1.BCM_383.BCM_TyrePressure_LF, 10.0, 1)
+代码注释：无
+
+8. 其他
+无

@@ -1,0 +1,44 @@
+1. 函数名  
+chkCreate_MsgSignalValueInvalid  
+
+2. 函数描述  
+用于检测信号、变量的值是否在某个范围以外。  
+
+3. 函数体  
+所有检测函数都有对应的chkStart_xxxx()和chkCreate_xxxx()。  
+chkCreate_xxxx()只创建检测对象但不开始检测，需要调用chkControl_Start；  
+chkStart_xxxx()创建检测对象同时直接开始检测。  
+
+4. 返回值  
+名称：res  
+类型：int  
+描述：代表创建的对象，-1代表创建失败  
+
+5. 参数  
+| 名称       | 类型                              | 描述                          |  
+|------------|-----------------------------------|-------------------------------|  
+| object     | VariableEntity, CANDBCSignal, LINDBCSignal | 信号对象(变量对象)            |  
+| aMinValue  | Number                            | 最小值                        |  
+| aMaxValue  | Number                            | 最大值（包含边界）            |  
+
+6. 内置函数  
+| 函数名称                 | 函数描述                          |  
+|--------------------------|-----------------------------------|  
+| chkControl_Start         | 启动检测对象                      |  
+| testAddCondition         | 将统计信息加入自动化测试报告      |  
+| testWaitForTimeout       | 等待指定时间（毫秒）              |  
+| testRemoveCondition      | 结束检测并移除条件                |  
+
+7. 示例  
+功能：检测信号值是否在2.5-3.7以外，若在该范围内则触发。  
+代码：  
+```vba  
+checkId = chkStart_MsgSignalValueInvalid(CAN1.MS.SignalToObserve, 2.5, 3.7)  
+testAddCondition(checkId)  ' 将检测结果加入测试报告  
+testWaitForTimeout(1000)  ' 持续检测1000毫秒  
+testRemoveCondition(checkId)  ' 结束检测  
+```  
+
+8. 其他相关说明  
+- 需配合自动化测试框架使用，检测结果可通过testAddCondition加入报告。  
+- 与chkStart_MsgSignalValueInvalid功能相同，但后者直接启动检测。

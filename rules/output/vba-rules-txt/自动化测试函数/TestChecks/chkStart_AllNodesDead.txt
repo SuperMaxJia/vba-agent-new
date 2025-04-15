@@ -1,0 +1,44 @@
+1. 函数名  
+chkStart_AllNodesDead  
+
+2. 函数描述  
+该函数用于在自动化测试中启动对所有节点“死亡”（即无通信活动）状态的检查。通常用于验证总线系统中所有节点是否在规定时间内未发送任何报文，以检测通信故障或节点离线情况。  
+
+3. 函数体  
+函数属于自动化测试函数类别中的`TestControlChecks`，通过调用`chkStart_AllNodesDead`启动检查逻辑。具体实现由底层测试框架处理，用户无需关注内部细节，只需调用接口即可。  
+
+4. 返回值  
+无显式返回值，但会通过测试框架生成检查结果（如事件计数或测试报告）。  
+
+5. 参数  
+无输入参数。  
+
+6. 内置函数  
+无直接关联的内置函数，但依赖以下测试框架功能：  
+- `chkQuery_NumEvents`：查询触发的事件数量  
+- `testStepFail`/`testStepPass`：记录测试结果  
+
+7. 示例  
+**示例功能**：在测试用例中启动所有节点死亡检查，并验证结果。  
+**示例代码**：  
+```vba
+Sub TestAllNodesDead()  
+    ' 启动检查  
+    chkStart_AllNodesDead  
+    ' 等待检测周期（例如5秒）  
+    threadSleep(5000)  
+    ' 验证是否检测到事件  
+    If chkQuery_NumEvents("AllNodesDead") > 0 Then  
+        testStepFail("存在节点未死亡")  
+    Else  
+        testStepPass("所有节点均无通信活动")  
+    End If  
+End Sub  
+```  
+**代码注释**：  
+- `threadSleep`用于模拟等待检测时间。  
+- `chkQuery_NumEvents`统计符合条件的事件数。  
+
+8. 其他相关  
+- 需配合`chkControl_Stop`或`chkControl_Reset`停止或重置检查。  
+- 通常与`chkCreate_AllNodesDead`配对使用，后者为创建检查条件。

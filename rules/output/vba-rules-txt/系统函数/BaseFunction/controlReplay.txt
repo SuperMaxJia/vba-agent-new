@@ -1,0 +1,29 @@
+1. 函数名
+controlReplay
+
+2. 函数描述
+控制replay启动停止
+
+3. 函数体
+controlReplay(network, replayName, controlType)
+
+4. 返回值
+无
+
+5. 参数
+| 名称        | 类型    | 描述                          |
+|-------------|---------|-------------------------------|
+| network     | Network | 网段对象                      |
+| replayName  | str     | replay名称                    |
+| controlType | int     | 控制类型：0停止、1启动、2暂停 |
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：控制replay启动停止
+示例代码：
+controlReplay(network, replayName, controlType)
+
+8. 其他
+无

@@ -1,0 +1,51 @@
+1. 函数名  
+chkCreate_ErrorFramesOccured  
+
+2. 函数描述  
+检查总线上出现的错误帧。如果接收到的帧数小于MinCountOfErrorFrames或大于MaxCountOfErrorFrames，则产生该事件。  
+
+3. 函数体  
+所有检测函数都有对应的chkStart_xxxx()和chkCreate_xxxx()。  
+chkCreate_xxxx()只创建检测对象但不开始检测，需要调用chkControl_Start；  
+chkStart_xxxx()创建检测对象同时直接开始检测。  
+
+4. 返回值  
+名称：res  
+类型：int  
+描述：代表创建的对象，-1代表创建失败  
+
+5. 参数  
+名称 | 类型 | 描述  
+minCountOfErrorFrames | int | 最小错误帧数量  
+MaxCountOfErrorFrames | int | 最大错误帧数量  
+timeout | int | 超时时间，超过该时间，自动停止检测，如果设置为0，默认一直检测，除非主动停止事件检测  
+network | NetWork | 要检测的网段  
+
+6. 内置函数  
+函数名称 | 函数描述  
+chkControl_Start | 启动检测对象  
+testAddCondition | 将统计信息加入自动化测试报告  
+testWaitForTimeout | 等待指定时间后输出统计信息  
+testRemoveCondition | 移除检测条件  
+
+7. 示例  
+示例功能：检查总线上出现的错误帧  
+示例代码：  
+```vba  
+# 检测错误帧的数量，0代表一直检测  
+checkId = chkStart_ErrorFramesOccured(0, 2, 0, CAN1);  
+#调用该方法后，统计信息将加入到自动化测试报告  
+testAddCondition(checkId);  
+#1000ms后，向报告输出统计信息。  
+testWaitForTimeout(1000);  
+testRemoveCondition(checkId);  
+```  
+代码注释：  
+- `chkStart_ErrorFramesOccured` 启动错误帧检测，参数为最小错误帧数量、最大错误帧数量、超时时间和网段。  
+- `testAddCondition` 将检测结果加入测试报告。  
+- `testWaitForTimeout` 等待1000ms后输出统计信息。  
+- `testRemoveCondition` 移除检测条件。  
+
+8. 其他相关  
+- 该函数属于自动化测试函数类别，用于总线监控和错误检测。  
+- 需要配合其他控制函数（如 `chkControl_Start`）使用以实现完整的检测流程。

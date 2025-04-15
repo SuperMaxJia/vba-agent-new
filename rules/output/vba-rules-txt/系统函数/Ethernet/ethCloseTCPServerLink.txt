@@ -1,0 +1,28 @@
+1. 函数名
+ethCloseTCPServerLink
+
+2. 函数描述
+断开TCP服务器连接
+
+3. 函数体
+ethCloseTCPServerLink(network, [Link1, Link2 ......])
+
+4. 返回值
+无
+
+5. 参数
+| 名称                | 类型    | 描述                                  |
+|---------------------|---------|---------------------------------------|
+| network             | Network | 网段信息                              |
+| [Link1, Link2 ...] | list    | ethGetTCPServerLinkStates函数的返回值 |
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：断开TCP服务器连接
+示例代码：
+ethCloseTCPServerLink(network, [Link1, Link2 ......])
+
+8. 其他
+无

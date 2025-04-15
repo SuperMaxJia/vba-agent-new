@@ -1,0 +1,41 @@
+1. 函数名  
+disableNodeMsg  
+
+2. 函数描述  
+用于禁止发送某个指定的报文。  
+
+3. 函数体  
+```vba
+disableNodeMsg(network, message)  
+disableNodeMsg(network, id)  
+```  
+
+4. 返回值  
+| 名称 | 类型 | 描述 |  
+|------|------|------|  
+| res  | int  | 0代表没有错误，-1代表出现错误 |  
+
+5. 参数  
+| 名称    | 类型          | 描述 |  
+|---------|---------------|------|  
+| node    | ECUNode       | 节点对象 |  
+| message | CANDBCMessage | 报文对象 |  
+| id      | int或str      | 报文的ID，标准帧可以输入数字，扩展帧输入字符串 |  
+
+6. 内置函数  
+无  
+
+7. 示例  
+**示例功能**：禁止发送某个指定的报文。  
+**示例代码**：  
+```vba
+disableNodeMsg(network, message)  
+disableNodeMsg(network, id)  
+```  
+**代码注释**：  
+- `network`：网络对象，表示当前通信的网络。  
+- `message`：报文对象，表示需要禁止发送的报文。  
+- `id`：报文的ID，可以是数字（标准帧）或字符串（扩展帧）。  
+
+8. 其他和函数或变量强相关的内容  
+无

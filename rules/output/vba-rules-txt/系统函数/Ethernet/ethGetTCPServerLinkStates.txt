@@ -1,0 +1,28 @@
+1. 函数名
+ethGetTCPServerLinkStates
+
+2. 函数描述
+获取TCP服务器连接信息
+
+3. 函数体
+links = ethGetTCPServerLinkStates(network, socketid)
+
+4. 返回值
+名称: links
+类型: List
+描述: 返回一个列表，列表中每一个元素为一个Link对象，对象属性包含连接序号，IP和端口等,Link对象额外加一个属性socketid，为了关闭TCP连接去用
+
+5. 参数
+名称     类型       描述
+network  NetworkI  网段信息
+socketid int       连接对应的socketid
+
+6. 内置函数
+无
+
+7. 示例
+示例功能: 获取TCP服务器连接信息
+示例代码: links = ethGetTCPServerLinkStates(network, socketid)
+
+8. 其他和函数或变量强相关的内容
+无

@@ -1,0 +1,73 @@
+##功能##
+该函数用于将字符串中所有大写字母转换为小写字母，同时将所有小写字母转换为大写字母。常用于需要反转字符串大小写的场景，如数据格式化、用户输入处理等。
+
+##vba规范##
+函数名：strSwapCase
+参数：sourceStr (String类型) - 需要转换大小写的原始字符串
+返回值：String类型 - 转换后的新字符串
+功能：交换字符串中所有字母的大小写形式
+
+##capl规范##
+CAPL中没有直接对应的内置函数，但可以通过字符遍历和ASCII码操作实现：
+1. 使用strlen获取字符串长度
+2. 遍历每个字符，判断其ASCII码范围
+3. 对大写字母(65-90)加32转换为小写
+4. 对小写字母(97-122)减32转换为大写
+
+示例1：
+```
+char[] swapCase(char sourceStr[])
+{
+  int i;
+  for(i=0; i<strlen(sourceStr); i++) {
+    if(sourceStr[i] >= 'A' && sourceStr[i] <= 'Z') {
+      sourceStr[i] += 32;
+    } else if(sourceStr[i] >= 'a' && sourceStr[i] <= 'z') {
+      sourceStr[i] -= 32;
+    }
+  }
+  return sourceStr;
+}
+```
+
+示例2：
+```
+on key 'a' {
+  char testStr[] = "HelloCAPL";
+  write("转换结果: %s", swapCase(testStr));  // 输出"hELLOcapl"
+}
+```
+
+##capl名##
+swapCase
+
+##转换须知##
+1. CAPL需要手动实现该功能而VBA是内置函数
+2. CAPL使用字符数组而非String类型
+3. CAPL需要显式处理字符串长度
+4. CAPL中ASCII码操作更底层
+5. 非字母字符在两种语言中处理方式相同
+
+##转换示例##
+CAPL原始代码：
+```
+char testStr[] = "Test123";
+char result[50];
+strncpy(result, swapCase(testStr), 50);
+write("Result: %s", result);
+```
+
+转换后的VBA代码：
+```
+Dim testStr As String
+testStr = "Test123"
+Dim result As String
+result = strSwapCase(testStr)
+Debug.Print "Result: " & result
+```
+
+关键转换步骤：
+1. 将CAPL字符数组改为VBA的String类型
+2. 移除手动实现的swapCase函数，改用内置strSwapCase
+3. 将write改为Debug.Print输出
+4. 移除显式的字符串拷贝操作

@@ -1,0 +1,58 @@
+1. 函数名
+DHCPConfig
+
+2. 函数描述
+创建一个自定义的DHCP配置对象，然后通过修改其对象的属性值来实现动态主机配置
+
+3. 函数体
+DHCPConfig()
+
+4. 返回值
+名称        类型        描述
+dhcpConfig  DHCPConfig  返回一个DHCP连接配置对象
+
+5. 参数
+无
+
+6. 内置函数
+函数名称                    描述
+getStartingIPAddress()      获取起始ip地址，字符串类型
+getEndingIPAddress()        获取结束ip地址，字符串类型
+getLeaseTime()              获取租赁期时常，整数类型
+getNetworkMask()            获取子网掩码，字符串类型
+getGateway()                获取网关，字符串类型
+getWaitTime()               获取等待时间，整数类型
+setStartingIPAddress(startingIP)  设置起始ip地址，字符串类型
+setEndingIPAddress(endingIP)      设置结束ip地址，字符串类型
+setLeaseTime(leaseTime)           设置租赁期时常，整数类型
+setNetworkMask(networkMask)       设置子网掩码，字符串类型
+setGateway(gateway)               设置网关，字符串类型
+setWaitTime(waitTime)             设置等待时间，整数类型
+
+7. 示例
+使用DHCPConfig配置DHCP连接参数，并基于doipConnectLinkConfig配置连接，实现DHCP功能
+
+dhcpConfig = DHCPConfig()
+dhcpConfig.setStartingIPAddress('192.168.1.1')  #设置起始IP地址
+dhcpConfig.setEndingIPAddress('192.168.1.5')    #设置结束IP地址
+dhcpConfig.setLeaseTime(192)                    #设置租赁期时长，单位小时
+dhcpConfig.setNetworkMask('255.255.255.0')      #设置子网掩码
+dhcpConfig.setGateway('0.0.0.0')                #设置网关
+dhcpConfig.setWaitTime(5)                       #设置DHCP分配地址等待时间，单位秒
+
+doipConnectLinkConfig = DOIPConnectLinkConfig()
+doipConnectLinkConfig.setTestIP('')             #设置诊断仪ip地址
+doipConnectLinkConfig.setTestAddress()          #设置诊断仪逻辑地址，两字节
+doipConnectLinkConfig.setEcuAddress([''])       #设置ECU的ip地址和逻辑地址
+doipConnectLinkConfig.setWaitTime(500)          #设置车辆声明和发现等待时间
+doipConnectLinkConfig.setRepeatInterval(100)    #设置车辆声明和发现间隔时间
+doipConnectLinkConfig.setRepeatTimes(10)        #设置车辆声明和发现重复上限次数
+doipConnectLinkConfig.setRotueActivationReserved(-1)  #设置路由激活保留位
+doipConnectLinkConfig.setMulticast('')          #设置组播地址
+doipConnectLinkConfig.setDHCPConfig(dhcpConfig) #设置DHCP配置
+doipConnectLinkConfig.setVehicleIdent(True)     #设置是否车辆识别
+doipConnectLinkConfig.setTestTCPIPStack(tcpipStack=None)  #设置诊断仪TCP/IP协议栈
+doipConnectLinkConfig.setNetwork(network=None)  #设置以太网网段
+
+8. 其他
+该函数返回的DHCPConfig对象可以用于DOIP连接配置，实现动态主机配置功能。

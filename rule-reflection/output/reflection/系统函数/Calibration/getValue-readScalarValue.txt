@@ -1,0 +1,62 @@
+##功能##
+该函数用于从标定节点读取单值变量（标定量或测量量）的当前值。主要用于ECU标定和测量场景，例如读取传感器测量值或修改ECU标定参数。
+
+##vba规范##
+函数名：readScalarValue
+参数：
+- calNode: CalNode类型，标定节点对象
+- variable: 字符串或CalVariable类型，变量名或变量对象
+- isMeasurement: 布尔值，True表示测量量，False表示标定量
+返回值：ResultInfo复合对象，包含errorInfo(错误信息)和backPhyValue(物理值)
+
+##capl规范##
+CAPL对应函数：getValue
+参数：
+- node: 节点名或节点对象
+- variable: 字符串变量名
+- isMeas: 整型(0=标定量，1=测量量)
+返回值：直接返回物理值，错误时返回-1
+
+示例1：
+// 读取标定量
+value = getValue("CAN1::calNode1", "KeEOL_Ctrl", 0);
+write("Value: %f", value);
+
+示例2：
+// 读取测量量
+nodeObj = "CAN1::calNode1";
+measValue = getValue(nodeObj, "EngineSpeed", 1);
+if(measValue != -1) {
+    write("Engine Speed: %f", measValue);
+}
+
+##capl名##
+getValue
+
+##转换须知##
+1. CAPL的getValue直接返回数值，而VBA返回复合对象
+2. CAPL用整型表示测量/标定标志，VBA用布尔值
+3. CAPL错误时返回-1，VBA需要通过errorInfo判断
+4. CAPL节点参数可以是字符串或对象，VBA必须是对象
+5. 需要手动处理CAPL的-1返回值情况
+
+##转换示例##
+CAPL原始代码：
+node = "CAN1::calNode1";
+value = getValue(node, "KeEOL_Ctrl", 0);
+if(value != -1) {
+    write("Value: %f", value);
+}
+
+转换后的VBA代码：
+Set node = CAN1.Calibrations.calNode1
+ans = readScalarValue(node, "KeEOL_Ctrl", False)
+If ans.errorInfo = "" Then
+    writeInfo ans.backPhyValue
+End If
+
+关键转换说明：
+1. 将CAPL的字符串节点转换为VBA节点对象
+2. 将CAPL的0/1标志转换为VBA的False/True
+3. 将CAPL的直接返回值检查改为VBA的错误信息检查
+4. 保持相同的变量名和功能逻辑

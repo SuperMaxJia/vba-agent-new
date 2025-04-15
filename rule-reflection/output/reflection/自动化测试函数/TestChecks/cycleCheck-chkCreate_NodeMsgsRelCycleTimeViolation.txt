@@ -1,0 +1,96 @@
+##功能##
+该函数用于检测数据库中定义节点发送的周期性报文的周期是否在指定的相对时间范围内。通常用于自动化测试场景，验证CAN/LIN总线通信中周期性报文的实际周期是否符合预期范围（如±10%的容差）。
+
+##vba规范##
+函数名：chkCreate_NodeMsgsRelCycleTimeViolation  
+参数：  
+- node (ECUNode): 数据库中定义的节点对象  
+- aMinRelCycleTime (Number): 最小相对周期时间(0 < x < 1)  
+- aMaxRelCycleTime (Number): 最大相对周期时间(1 < x < ∞)  
+返回值：int类型，返回创建的检测对象ID，-1表示创建失败  
+相关函数：  
+- chkControl_Start: 启动检测对象  
+- chkStart_NodeMsgsRelCycleTimeViolation: 创建并立即启动检测  
+
+##capl规范##
+CAPL中没有完全对应的内置函数，但可以通过以下方式实现类似功能：  
+1. 使用message周期监控函数结合定时器  
+2. 使用testWaitForMessage组合检查  
+
+示例1（使用定时器检查）：
+```capl
+variables {
+  int checkId;
+  message * monitoredMsg;
+  float minTime, maxTime;
+  timer checkTimer;
+}
+
+on message CAN1.* {
+  if (this == monitoredMsg) {
+    float actualTime = timeNow() - lastTime;
+    if (actualTime < minTime || actualTime > maxTime) {
+      write("Cycle time violation: %f ms", actualTime);
+    }
+    lastTime = timeNow();
+  }
+}
+
+void startCheck(message * msg, float minRel, float maxRel) {
+  monitoredMsg = msg;
+  minTime = msg.cycleTime * minRel;
+  maxTime = msg.cycleTime * maxRel;
+  checkTimer.time = 1000; // 1s监控周期
+  checkTimer.start();
+}
+```
+
+示例2（使用test函数）：
+```capl
+testcase CheckCycleTime() {
+  message * msg = dbMessage(CAN1::NodeToObserve::ExampleMsg);
+  float minTime = msg.cycleTime * 0.9;
+  float maxTime = msg.cycleTime * 1.1;
+  
+  testWaitForTimeout(1000);
+  testVerify(msg.cycleTime >= minTime && msg.cycleTime <= maxTime);
+}
+```
+
+##capl名##
+cycleCheck
+
+##转换须知##
+1. CAPL需要手动实现周期监控逻辑，而VBA是封装好的函数  
+2. VBA返回检测对象ID，CAPL需要自行管理监控状态  
+3. VBA自动记录测试报告，CAPL需要显式调用test函数  
+4. CAPL中需要明确指定监控的消息对象  
+
+##转换示例##
+CAPL原始代码：
+```capl
+variables {
+  int checkId;
+}
+
+void StartCheck() {
+  message * msg = dbMessage(CAN1::NodeToObserve::TestMsg);
+  checkId = cycleCheck(msg, 0.9, 1.1);
+  testAddCondition(checkId);
+  testWaitForTimeout(1000);
+  testRemoveCondition(checkId);
+}
+```
+
+转换后的VBA代码：
+```vba
+checkId = chkStart_NodeMsgsRelCycleTimeViolation(CAN1.NodeToObserve, 0.9, 1.1)
+testAddCondition checkId
+testWaitForTimeout 1000
+testRemoveCondition checkId
+```
+
+关键转换说明：
+1. CAPL的cycleCheck需要替换为VBA的chkStart_NodeMsgsRelCycleTimeViolation  
+2. CAPL的dbMessage调用在VBA中通过NodeToObserve参数隐式包含  
+3. 函数调用语法从CAPL的()改为VBA的空格分隔参数

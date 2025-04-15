@@ -1,0 +1,76 @@
+##功能##
+创建TCP客户端并与服务器建立连接，用于发送和接收TCP报文数据。适用于需要与远程服务器进行TCP通信的场景，如车辆ECU测试、远程诊断等。
+
+##vba规范##
+函数名：TCPClientSocket
+参数：
+- ipType (int): 0=IPv4, 1=IPv6
+- ip (String): 服务器IP地址
+- port (int): 服务器端口
+返回值：TCPClientSocket对象
+方法：
+- connect(): 建立连接
+- sendTCPMsg(data): 发送数据(bytes或list)
+- getExtend(): 获取帧标识(0=标准帧,1=扩展帧)
+- recvTCPMsg(bufsize): 接收数据(指定字节数)
+- close(): 关闭连接
+
+##capl规范##
+函数定义：
+- tcpOpen(ipAddress, port): 创建TCP连接
+- tcpSend(socket, data): 发送数据
+- tcpReceive(socket, buffer, size): 接收数据
+- tcpClose(socket): 关闭连接
+
+示例1：
+```capl
+dword socket;
+byte data[10] = {0x01,0x02,0x03,0x04,0x05};
+socket = tcpOpen("192.168.1.100", 8080);
+tcpSend(socket, data, elcount(data));
+tcpClose(socket);
+```
+
+示例2：
+```capl
+dword socket;
+byte buffer[100];
+socket = tcpOpen("127.0.0.1", 5000);
+tcpReceive(socket, buffer, elcount(buffer));
+tcpClose(socket);
+```
+
+##capl名##
+tcpOpen
+
+##转换须知##
+1. CAPL使用dword类型表示socket句柄，VBA使用对象
+2. CAPL需要显式指定数据长度(elcount)，VBA自动处理
+3. CAPL的tcpReceive需要预分配缓冲区，VBA动态分配
+4. CAPL没有直接对应的IPv6支持，需要特殊处理
+5. CAPL没有内置的帧标识获取功能
+
+##转换示例##
+CAPL原始代码：
+```capl
+dword sock;
+byte msg[5] = {0x11,0x22,0x33,0x44,0x55};
+sock = tcpOpen("192.168.1.1", 8080);
+tcpSend(sock, msg, elcount(msg));
+tcpClose(sock);
+```
+
+转换后的VBA代码：
+```vba
+Dim tcpClient As TCPClientSocket
+Set tcpClient = TCPClientSocket(ipType:=0, ip:="192.168.1.1", port:=8080)
+tcpClient.connect
+tcpClient.sendTCPMsg Array(&H11, &H22, &H33, &H44, &H55)
+tcpClient.close
+```
+
+关键转换步骤：
+1. 将dword sock转换为TCPClientSocket对象
+2. 将静态数组初始化转换为VBA的Array函数
+3. 合并open和connect操作为一个构造函数调用
+4. 添加显式的close方法调用

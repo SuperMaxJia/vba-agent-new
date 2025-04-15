@@ -1,0 +1,42 @@
+1. 函数名
+LINMsg
+
+2. 函数描述
+创建LIN报文对象
+
+3. 函数体
+LINMsg(id, dlc, datas)
+
+4. 返回值
+| 名称   | 类型   | 描述           |
+|--------|--------|----------------|
+| linMsg | LINMsg | 返回一个报文对象 |
+
+5. 参数
+| 名称  | 类型 | 描述             |
+|-------|------|------------------|
+| id    | int  | LIN报文ID        |
+| dlc   | int  | LIN报文数据长度  |
+| datas | List | 报文数据场列表   |
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：创建一组自定义的LIN报文，并将其设置成LIN仿真响应
+
+示例代码：
+linframe1 = LINMsg(0x10, 4, [0x01, 0x11, 0x12, 0x13])
+linframe2 = LINMsg(0x11, 4, [0x01, 0x11, 0x12, 0x13])
+linframe3 = LINMsg(0x12, 4, [0x01, 0x11, 0x12, 0x13])
+setLINSchedulerService([linframe1, linframe2, linframe3], LIN1)
+
+代码注释：
+- 创建3个LIN报文对象，ID分别为0x10、0x11、0x12
+- 每个报文的数据长度均为4字节
+- 使用setLINSchedulerService函数将这组报文设置为LIN1通道的调度服务
+
+8. 其他说明
+- 该函数用于LIN总线仿真场景
+- 需要配合setLINSchedulerService函数使用
+- 报文ID范围为0-63(0x3F)

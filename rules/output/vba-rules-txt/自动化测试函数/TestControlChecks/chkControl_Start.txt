@@ -1,0 +1,39 @@
+1. 函数名
+chkControl_Start
+
+2. 函数描述
+用于开始或继续检测事件
+
+3. 函数体
+result = chkControl_Start(object)
+
+4. 返回值
+名称 类型 描述
+res  int  0 成功 -1失败
+
+5. 参数
+名称     类型   描述
+object  object 检测对象
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：开始或继续检测事件
+示例代码1：
+checkId = chkStart_ErrorFramesOccured();
+chkControl_Stop(checkId)
+testWaitForTimeout(1000); #1000ms后开始检测
+chkControl_Start(checkId);
+
+示例代码2：
+#创建对象，但是不开始检测
+checkId = chkCreate_ErrorFramesOccured();
+#开始检测错误帧数量
+chkControl_Start(checkId)
+
+8. 其他说明
+- 该函数需要配合chkControl_Stop使用
+- 所有检测函数都有Create和Start两种创建方式：
+  - Start方式创建并直接开始检测
+  - Create只创建，需要手动调用chkControl_Start

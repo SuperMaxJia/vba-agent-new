@@ -1,0 +1,56 @@
+##功能##
+该函数用于配置日志记录器，在指定目录下创建录制文件，支持自定义文件类型和过滤条件，实现报文录制功能。如果目录已存在同名文件，则会覆盖之前的录制文件。主要用于CAN总线数据记录和分析场景。
+
+##vba规范##
+函数定义：CreateLoggerConfig(loggerPath As String, fileName As String, fileType As String, size As Integer, loggerFilter As loggerFilter) As loggerConfig
+参数：
+- loggerPath：String类型，文件保存路径
+- fileName：String类型，符合Windows命名规范的文件名
+- fileType：String类型，支持asc/blf/pacp格式（不区分大小写）
+- size：Integer类型，文件大小限制（MB）
+- loggerFilter：loggerFilter对象类型，过滤条件（可选）
+返回值：loggerConfig对象
+
+##capl规范##
+CAPL中没有完全对应的单一函数，但可以通过以下方式实现类似功能：
+1. 使用loggingCreate函数创建日志文件
+2. 使用loggingSetLocation设置路径
+3. 使用loggingSetFileSize限制文件大小
+4. 使用filter配置过滤条件
+
+示例1：
+loggingCreate("CAN_Log", "C:\\Logs\\test.blf", 10);
+filter myFilter;
+filterAddID(myFilter, 0x100, 0x7FF);
+
+示例2：
+loggingSetLocation("D:\\Recordings");
+loggingCreate("ECU_Data", "ecu_log.asc", 5);
+loggingStart();
+
+##capl名##
+loggingCreate
+
+##转换须知##
+1. CAPL需要多个函数组合实现VBA单个函数的功能
+2. CAPL的loggingCreate不直接支持大小写不敏感的文件类型检查
+3. CAPL的过滤系统是独立配置的，不是作为参数传递
+4. CAPL默认会覆盖同名文件，无需特殊处理
+5. 文件路径处理方式不同，CAPL使用双反斜杠
+
+##转换示例##
+CAPL原始代码：
+loggingSetLocation("C:\\CAN_Logs");
+loggingCreate("DataLog", "can_data.blf", 20);
+filter msgFilter;
+filterAddID(msgFilter, 0x100, 0x200);
+loggingFilter(msgFilter);
+
+转换后的VBA代码：
+Set loggerConfig = CreateLoggerConfig("C:\CAN_Logs", "can_data", "blf", 20, msgFilter)
+
+关键转换步骤：
+1. 将loggingSetLocation和loggingCreate合并为CreateLoggerConfig调用
+2. 将独立的filter配置转换为loggerFilter参数
+3. 文件路径格式从双反斜杠改为单反斜杠
+4. 文件名和扩展名在VBA中分开处理

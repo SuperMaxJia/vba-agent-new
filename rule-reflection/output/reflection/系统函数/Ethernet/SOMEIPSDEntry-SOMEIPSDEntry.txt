@@ -1,0 +1,87 @@
+##功能##
+用于创建一条SOMEIPSD的Entry字段，配置SOME/IP服务发现协议中的Entry字段参数，包括类型、索引选项、数字选项、服务ID、实例ID、TTL、次要版本号等。适用于车载以太网通信中的SOME/IP协议栈开发。
+
+##vba规范##
+函数名：SOMEIPSDEntry  
+函数描述：构造函数，用于创建SOMEIPSDEntry实例  
+返回值：无（返回一个SOMEIPSDEntry实例）  
+参数：  
+- type (int): Entry类型  
+- index1Option (int): Index1选项  
+- index2Option (int): Index2选项  
+- number1Option (int): Number1选项  
+- number2Option (int): Number2选项  
+- serviceID (int): 服务ID  
+- instanceID (int): 实例ID  
+- ttl (float): 生存时间  
+- minorVersion (int): 次要版本号  
+- count (int): 计数  
+- eventGroupID (int): 事件组ID  
+
+##capl规范##
+CAPL中没有直接对应的内置函数，但可以通过结构体和函数模拟实现：  
+1. 定义结构体：  
+```capl
+struct SOMEIPSDEntry {
+  int type;
+  int index1Option;
+  int index2Option;
+  int number1Option;
+  int number2Option;
+  int serviceID;
+  int instanceID;
+  float ttl;
+  int minorVersion;
+  int count;
+  int eventGroupID;
+};
+```
+
+2. 创建实例并设置参数：  
+```capl
+SOMEIPSDEntry entry;
+entry.type = 0x00; // FindServiceEntry
+entry.index1Option = 0x01;
+entry.index2Option = 0x01;
+entry.number1Option = 0x01;
+entry.number2Option = 0x80;
+entry.serviceID = 0x0001;
+entry.instanceID = 0xFFFF;
+entry.ttl = 1000.0;
+entry.minorVersion = 0x00000001;
+entry.count = 1;
+entry.eventGroupID = 1;
+```
+
+##capl名##
+SOMEIPSDEntry
+
+##转换须知##
+1. CAPL中使用结构体而非类，需要通过成员直接赋值而非方法调用  
+2. CAPL中没有构造函数概念，需要手动初始化结构体  
+3. 参数类型在CAPL中需要明确指定，如float类型  
+4. CAPL中没有对象实例的概念，直接使用结构体变量  
+
+##转换示例##
+1. CAPL原始代码：  
+```capl
+SOMEIPSDEntry entry;
+entry.type = 0x00;
+entry.serviceID = 0x1234;
+entry.instanceID = 0x5678;
+entry.ttl = 5000.0;
+```
+
+2. 转换后的VBA代码：  
+```vba
+Set someipSDEntry = SOMEIPSDEntry()
+someipSDEntry.setType(0x00)
+someipSDEntry.setServiceID(&H1234)
+someipSDEntry.setInstanceID(&H5678)
+someipSDEntry.setTTL(5000)
+```
+
+3. 关键转换步骤说明：  
+- CAPL结构体成员赋值转换为VBA的方法调用  
+- 十六进制数值表示方式转换  
+- CAPL的float类型对应VBA的Double类型

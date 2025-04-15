@@ -1,0 +1,65 @@
+1. 函数名
+onSimulatedMsgChange
+
+2. 函数描述
+识别到仿真ECU上报文的信号值发生修改时触发
+
+3. 函数体
+@onSimulatedMsgChange(onmsg)
+def onSimulatedMsgChangeEvent(canNodeMsg):
+    pass
+
+4. 返回值
+无返回值
+
+5. 参数
+情况1：入参只有一个
+| 名称        | 类型                     | 描述                                                                 |
+|-------------|--------------------------|----------------------------------------------------------------------|
+| message_id  | int                      | 可以输入十进制，如：100；十六进制,如：0x10；扩展帧则须以字符串的形式输入，如：'100x'或 '0x10x' |
+| canmessage  | CANMessage或CANDBCMessage | 自定义的CANMessage对象或者DBC数据库中的CANDBCMessage对象             |
+| ID范围字符串| str                      | 表示报文ID范围字符串:比如‘0x12-0x16’                                |
+| ID列表      | list[str]                | 表示报文ID列表:比如[0x10,‘0x12-0x16’,‘0x20x’]                      |
+
+情况2：入参有两个（不影响第一个参数类型）
+| 名称        | 类型     | 描述                                                                 |
+|-------------|----------|----------------------------------------------------------------------|
+| 第一个参数   | NetWork  | 默认不显示，代表从所有网段匹配数据，如果需要设置网段，则写网段对象，如：CAN1 |
+| 第二个参数   | 同情况1  | 同情况1的参数                                                       |
+
+接受参数：
+| 名称        | 类型                     | 描述                                                                 |
+|-------------|--------------------------|----------------------------------------------------------------------|
+| canNodeMsg  | CANMessage或CANDBCMessage | 接收到触发此事件的报文对象，包含属性：msgId,extend,canType,dlc,data,channel |
+
+6. 内置函数
+无
+
+7. 示例
+示例1：在仿真节点上修改ID为0x132的报文时触发，并打印该报文数据场
+@onSimulatedMsgChange(0x132)
+def onSimulatedMsgChangeEvent(canNodeMsg):
+    writeInfo(canNodeMsg.getData())
+
+示例2：在仿真节点上修改名为'VehicleSpeed'的CAN报文时触发，并打印该CAN报文的dlc
+@onSimulatedMsgChange(CAN.VehicleSpeed)
+def onSimulatedMsgChangeEvent(canNodeMsg):
+    writeInfo(canNodeMsg.getDlc())
+
+示例3:在仿真节点上修改报文ID满足0x12-0x16时触发，并打印该CAN报文的类型
+@onSimulatedMsgChange('0x12-0x16')
+def onSimulatedMsgChangeEvent(canNodeMsg):
+    writeInfo(canNodeMsg.getCanType())
+
+示例4：在仿真节点上修改报文ID在列表中的时候触发，并打印该CAN报文的时间戳
+@onSimulatedMsgChange([0x01,0x02,0x03])
+def onSimulatedMsgChangeEvent(canNodeMsg):
+    writeInfo(canNodeMsg.getTimestamp())
+
+示例5：在仿真节点上修改在CAN1网段，且报文ID为0x01时触发，并打印该CAN报文的通道
+@onSimulatedMsgChange(0x01，CAN1)
+def onSimulatedMsgChangeEvent(canNodeMsg):
+    writeInfo(canNodeMsg.getChannel())
+
+8. 其他
+无

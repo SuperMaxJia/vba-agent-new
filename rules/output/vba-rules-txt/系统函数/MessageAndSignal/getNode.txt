@@ -1,0 +1,28 @@
+1. 函数名
+getNode
+
+2. 函数描述
+从指定的网段中获取ECU节点(ECUNode)对象
+
+3. 函数体
+getNode(name, network)
+
+4. 返回值
+名称      类型      描述
+node      ECUNode  节点对象
+
+5. 参数
+名称        类型      描述
+node_name   String    节点名称
+network     Network   网段对象
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：获取名为'EMS'的节点对象
+示例代码：
+node = getNode('EMS', CAN1)
+
+8. 其他说明
+无其他相关信息

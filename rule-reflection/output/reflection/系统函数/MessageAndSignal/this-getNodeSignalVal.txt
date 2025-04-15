@@ -1,0 +1,56 @@
+##功能##
+该函数用于从仿真节点中获取指定信号的值，可以获取总线值、物理值或两者。主要用于在仿真测试中读取和监控信号状态，适用于车辆网络通信测试场景。
+
+##vba规范##
+函数定义：getNodeSignalVal(DBSignal, valType=1)
+参数：
+- DBSignal：CANDBCSiganl或LINDBCSignal类型，表示从数据库映射的信号对象
+- valType：整型，0表示获取总线值，1表示获取物理值，2表示获取总线值和物理值的元组
+返回值：float或tuple类型，根据valType返回对应的信号值
+
+##capl规范##
+在CAPL中，可以使用以下方式获取信号值：
+1. 直接访问信号物理值：signalName
+2. 获取总线原始值：this.raw
+3. 获取信号对象：this
+
+示例1：
+on key 'k' {
+    float val = CAN1::EBS_General_Status_1::ACCSBrkRqstAvailEBS;
+    write(val);
+}
+
+示例2：
+on message CAN1.EBS_General_Status_1 {
+    float physVal = this.ACCSBrkRqstAvailEBS;
+    byte rawVal = this.ACCSBrkRqstAvailEBS.raw;
+    write("Physical: %f, Raw: %x", physVal, rawVal);
+}
+
+##capl名##
+this
+
+##转换须知##
+1. CAPL中信号值可以直接访问，而VBA需要通过函数获取
+2. CAPL中总线值和物理值分开访问，VBA可以通过参数选择
+3. CAPL没有元组类型，需要分别获取总线值和物理值
+4. CAPL中信号访问使用"::"或"."分隔符，VBA使用"."
+
+##转换示例##
+CAPL原始代码：
+on key 'k' {
+    float val = CAN1::EBS_General_Status_1::ACCSBrkRqstAvailEBS;
+    write(val);
+}
+
+转换后的VBA代码：
+@onKey('K')
+def onKeyEvent():
+    val = getNodeSignalVal(CAN1.EBS_General_Status_1.ACCSBrkRqstAvailEBS, 1)
+    writeInfo(val)
+
+关键转换说明：
+1. CAPL的on key事件转换为VBA的@onKey装饰器
+2. CAPL的直接信号访问转换为getNodeSignalVal函数调用
+3. CAPL的write函数转换为VBA的writeInfo函数
+4. 添加了valType参数1表示获取物理值

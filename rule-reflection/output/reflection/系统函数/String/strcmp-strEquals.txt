@@ -1,0 +1,47 @@
+##功能##
+该函数用于比较两个字符串是否完全相同，返回布尔值表示比较结果。常用于条件判断、数据验证等场景，如检查用户输入或配置文件内容。
+
+##vba规范##
+函数定义：Function strEquals(str1 As String, str2 As String) As Boolean
+参数类型：两个参数均为String类型
+返回值类型：Boolean
+功能说明：严格比较两个字符串的内容是否完全相同（区分大小写）
+
+##capl规范##
+函数定义：int strcmp(char str1[], char str2[]);
+参数类型：两个参数均为char数组
+返回值类型：int（0表示相等，非0表示不等）
+示例1：
+if (strcmp("dbc", "dbc") == 0) {
+    write("Strings are equal");
+}
+示例2：
+char input[10] = "test";
+if (strcmp(input, "TEST") != 0) {
+    write("Case sensitive difference");
+}
+
+##capl名##
+strcmp
+
+##转换须知##
+1. CAPL使用int返回值（0表示相等），而VBA使用Boolean（True表示相等）
+2. CAPL需要显式判断返回值是否为0，而VBA可直接使用布尔结果
+3. CAPL是区分大小写的比较，与VBA默认行为一致
+4. 在CAPL中需要使用字符数组而非String类型
+
+##转换示例##
+CAPL原始代码：
+if (strcmp(msg.text, "START") == 0) {
+    setTimer(1, 1000);
+}
+
+转换后的VBA代码：
+If strEquals(msg.text, "START") Then
+    Call setTimer(1, 1000)
+End If
+
+关键转换步骤：
+1. 将strcmp替换为strEquals
+2. 将==0的比较改为直接使用布尔结果
+3. 保持相同的条件逻辑结构

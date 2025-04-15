@@ -1,0 +1,71 @@
+##功能##
+用于创建一条UDP报文并通过协议栈发送，适用于需要自定义UDP通信的场景，如ECU测试、网络诊断等。
+
+##vba规范##
+函数名：UDPMessage
+返回值：UDPMessage对象
+参数：
+- destination_ip_address: 字符串类型，目标IP地址
+- source_port: 整数类型，16位无符号源端口号
+- destination_port: 整数类型，16位无符号目标端口号
+- payload: 列表类型，报文数据负载
+内置方法：
+- setDestinationIPAddress: 设置目标IP
+- setSourcePort: 设置源端口
+- setDestinationPort: 设置目标端口
+- setPayload: 设置负载数据
+
+##capl规范##
+CAPL中使用EthUdpMessage结构体处理UDP报文：
+1. 创建：直接声明EthUdpMessage变量
+2. 设置：
+   - destAddress: 目标IP字符串
+   - sourcePort: 源端口word类型
+   - destPort: 目标端口word类型
+   - data: byte数组负载
+
+示例1：
+EthUdpMessage msg;
+msg.destAddress = "192.168.2.2"; 
+msg.sourcePort = 7000;
+msg.destPort = 8000;
+msg.data = byteBuffer(0);
+
+示例2：
+EthUdpMessage diagMsg;
+diagMsg.destAddress = "172.16.1.100";
+diagMsg.sourcePort = 50123;
+diagMsg.destPort = 13400;
+diagMsg.data = {0x10,0x02,0x3E};
+
+##capl名##
+EthUdpMessage
+
+##转换须知##
+1. CAPL使用结构体字段直接赋值，VBA需要调用setter方法
+2. CAPL的data字段是byte数组，VBA使用list类型
+3. CAPL端口号使用word类型，VBA使用整数
+4. CAPL报文需要显式发送，VBA可能自动发送
+5. IP地址格式在两者中均为字符串
+
+##转换示例##
+CAPL原始代码：
+EthUdpMessage testMsg;
+testMsg.destAddress = "10.10.10.1";
+testMsg.sourcePort = 60000;
+testMsg.destPort = 8080;
+testMsg.data = {0x01,0x02};
+ethSend(testMsg);
+
+转换后的VBA代码：
+Set testMsg = UDPMessage()
+testMsg.setDestinationIPAddress "10.10.10.1"
+testMsg.setSourcePort 60000
+testMsg.setDestinationPort 8080
+testMsg.setPayload Array(&H01,&H02)
+
+关键转换说明：
+1. CAPL结构体声明转为VBA对象创建
+2. 字段赋值改为方法调用
+3. byte数组转为VBA Array
+4. 显式发送ethSend在VBA中可能不需要

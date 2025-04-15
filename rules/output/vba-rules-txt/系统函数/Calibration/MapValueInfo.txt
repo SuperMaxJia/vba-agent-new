@@ -1,0 +1,59 @@
+1. 函数名  
+MapValueInfo  
+
+2. 函数描述  
+创建一个自定义的Map结构对象，通过修改其对象的属性值来设置相应的Map参数。  
+
+3. 函数体  
+```vba  
+MapValueInfo()  
+```  
+
+4. 返回值  
+| 名称         | 类型         | 描述                                                                 |  
+|--------------|--------------|----------------------------------------------------------------------|  
+| mapValueInfo | MapValueInfo | 返回一个Map结构对象，该对象包含以下属性，可分别给下面的属性进行赋值 |  
+
+5. 参数  
+无  
+
+6. 内置函数  
+| 函数名称               | 描述                                                                 |  
+|------------------------|----------------------------------------------------------------------|  
+| getColumnNumber()      | 获取Map变量列数（X轴轴点个数）,整数类型                             |  
+| getRowNumber()         | 获取Map变量行数（Y轴轴点个数）,整数类型                             |  
+| getXAxisValue()        | 获取MapX轴区域数值列表，元素为float类型                             |  
+| getYAxisValue()        | 获取MapY轴区域数值列表，元素为float类型                             |  
+| getValue()             | 获取Map值区域数值列表，元素为float类型                              |  
+| getInfo()              | 获取调用接口返回的错误信息                                          |  
+| setColumnNumber(columnNumber) | 设置Map变量列数（X轴轴点个数），整数类型                     |  
+| setRowNumber(rowNumber)| 设置Map变量行数（Y轴轴点个数），整数类型                           |  
+| setXAxisValue(xAxisValue) | 设置MapX轴区域数值列表                                          |  
+| setYAxisValue(yAxisValue) | 设置MapY轴区域数值列表                                          |  
+| setValue(value)        | 设置Map值区域数值列表                                              |  
+
+**内置函数参数说明**  
+| 名称           | 类型  | 描述                          |  
+|----------------|-------|-------------------------------|  
+| columnNumber   | int   | Map变量列数（X轴轴点个数）    |  
+| rowNumber      | int   | Map变量行数（Y轴轴点个数）    |  
+| xAxisValue     | list  | X轴区域数值列表               |  
+| yAxisValue     | list  | Y轴区域数值列表               |  
+| value          | list  | 值区域数值列表                |  
+| info           | str   | 错误信息                      |  
+
+7. 示例  
+**示例功能**：创建一个Map结构对象，并设置其属性值。  
+**示例代码**：  
+```vba  
+mapValueInfo = MapValueInfo()  
+mapValueInfo.setColumnNumber(2)  '设置Map变量列数（X轴轴点个数）  
+mapValueInfo.setRowNumber(2)     '设置Map变量行数（Y轴轴点个数）  
+mapValueInfo.setXAxisValue([1.0, 1.0])  '设置Map X轴区域数值列表  
+mapValueInfo.setYAxisValue([1.0, 1.0])  '设置Map Y轴区域数值列表  
+mapValueInfo.setValue([3.0, 4.0, 5.0, 6.0])  '设置Map值区域数值列表  
+writeMapValue(CAN1.Calibrations.calNode1, "NewMap", mapValueInfo)  
+```  
+
+8. 其他和函数或变量强相关的内容  
+无

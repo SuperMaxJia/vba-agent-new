@@ -1,0 +1,58 @@
+##功能##
+用于管理并设置测试用例的分组，标识分组的开始，必须与testGroupEnd成对使用。分组信息会显示在测试报告中，便于组织和查看测试用例。
+
+##vba规范##
+函数名：testGroupBegin
+参数：
+- title: str，测试用例组的名称
+- description: str，测试用例组的描述信息（可选，默认为空字符串）
+返回值：无
+要求：必须与testGroupEnd成对使用，且必须在测试主函数中调用
+
+##capl规范##
+函数名：TestGroup
+参数：
+- groupName: char[]，测试组的名称
+- description: char[]，测试组的描述信息（可选）
+返回值：无
+示例1：
+TestGroup("PowerTests", "验证电源相关功能");
+Testcase1();
+Testcase2();
+TestGroupEnd();
+
+示例2：
+TestGroup("CommunicationTests");
+Testcase3();
+Testcase4();
+TestGroupEnd();
+
+##capl名##
+TestGroup
+
+##转换须知##
+1. 参数类型：CAPL使用char[]表示字符串，VBA使用str
+2. 函数名差异：CAPL使用TestGroup，VBA使用testGroupBegin
+3. 成对使用要求：两者都需要与对应的End函数成对使用
+4. 位置要求：两者都需要在主测试函数中调用
+
+##转换示例##
+1. CAPL原始代码：
+TestGroup("SafetyTests", "安全相关测试用例");
+TestEmergencyStop();
+TestOverheatProtection();
+TestGroupEnd();
+
+2. 转换后的VBA代码：
+@MainTest('SafetyModule')
+def MainTestExecute()
+    testGroupBegin('SafetyTests', '安全相关测试用例')
+    TestEmergencyStop()
+    TestOverheatProtection()
+    testGroupEnd()
+
+3. 关键转换说明：
+- 函数名从TestGroup改为testGroupBegin
+- 字符串参数保持相同内容和顺序
+- 保持成对的Begin/End结构
+- 保持在主测试函数中的调用位置

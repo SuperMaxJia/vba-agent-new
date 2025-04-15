@@ -1,0 +1,37 @@
+1. 函数名
+testReportAddImage
+
+2. 函数描述
+用于在测试报告中添加图片信息。
+
+3. 函数体
+testReportAddImage(description, filepath, width='', height='')
+
+4. 返回值
+无明确返回值说明（根据上下文推断为无返回值或布尔型成功状态）
+
+5. 参数
+| 名称        | 类型 | 描述                     |
+|-------------|------|--------------------------|
+| description | str  | 图片描述                 |
+| filepath    | str  | 文件路径和名称           |
+| width       | str  | 图片宽度（可选，默认空） |
+| height      | str  | 图片高度（可选，默认空） |
+
+6. 内置函数
+本函数未调用其他内置函数
+
+7. 示例
+示例功能：在测试报告中添加示波器截图
+示例代码：
+testReportAddImage("Oscilloscope Snapshot", "C:\\Users\\qiuguo.yu\\Desktop\\osc_01.png", "400px", "");
+代码注释：
+- 第一个参数设置图片标题为"Oscilloscope Snapshot"
+- 第二个参数指定图片路径
+- 第三个参数设置宽度为400像素
+- 第四个参数高度留空
+
+8. 其他说明
+- 宽度和高度参数为可选参数，可留空
+- 路径参数需要使用双反斜杠或原始字符串格式
+- 函数属于TestReport测试报告功能组

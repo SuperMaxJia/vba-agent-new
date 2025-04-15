@@ -1,0 +1,57 @@
+##功能##
+判断字符串sourceStr是否包含子字符串targetStr，返回布尔值结果。常用于字符串搜索和匹配场景。
+
+##vba规范##
+函数名：strContains
+参数：
+- sourceStr：String类型，源字符串
+- targetStr：String类型，要查找的子字符串
+返回值：Boolean类型，表示是否包含子字符串
+内置函数：无
+
+##capl规范##
+CAPL中使用strstr函数实现类似功能：
+```c
+int result;
+char sourceStr[] = "abcd";
+char targetStr[] = "ab";
+
+result = strstr(sourceStr, targetStr) != 0;  // 返回1表示包含
+```
+
+另一个示例：
+```c
+if(strstr("Hello World", "World")) {
+    write("Found");
+}
+```
+
+##capl名##
+strstr
+
+##转换须知##
+1. CAPL的strstr返回指针而非布尔值，需要与0比较转换
+2. CAPL使用char数组而非String类型
+3. CAPL中字符串比较区分大小写
+4. 当targetStr为空时，CAPL会返回非零值
+
+##转换示例##
+CAPL原始代码：
+```c
+int found;
+char mainStr[] = "CAPL test";
+char searchStr[] = "test";
+
+found = strstr(mainStr, searchStr) != 0;
+```
+
+转换后的VBA代码：
+```vba
+Dim found As Boolean
+found = strContains("CAPL test", "test")
+```
+
+关键转换步骤：
+1. 将char数组改为VBA字符串
+2. 将指针比较改为直接布尔返回
+3. 函数名从strstr改为strContains

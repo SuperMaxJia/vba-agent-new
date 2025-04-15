@@ -1,0 +1,73 @@
+##功能##
+该函数用于通过DOIP协议发送诊断PDU，并接收响应报文数据场。主要用于车辆诊断系统中，通过以太网进行诊断通信，支持物理寻址和功能寻址两种模式，可配置超时时间和响应标志等参数。
+
+##vba规范##
+函数名：diagDOIPSendPDU
+参数：
+- doipConfig: DOIPConfig对象，包含源地址、目标地址、功能地址、超时时间等配置
+- connectHandle: 整数，表示DOIP连接句柄
+- pdu: 字节数组，表示要发送的诊断数据
+返回值：
+- 成功时返回响应报文数据场(List类型)
+- 失败时返回整数错误码：
+  - 0: 诊断通道激活失败
+  - 1: 服务执行失败
+  - 2: 服务发送失败
+  - 3: 服务响应超时
+  - 4: 响应PDU解析失败
+
+##capl规范##
+在CAPL中，可以使用diagSendRequest函数实现类似功能：
+1. 简单示例：
+byte data[2] = {0x3E, 0x80};
+long result = diagSendRequest(0x700, data);
+if(result == 0) {
+  write("诊断请求发送成功");
+} else {
+  write("诊断请求发送失败，错误码: %d", result);
+}
+
+2. 完整配置示例：
+diagSetTarget(0x700);  // 设置目标地址
+diagSetSource(0x0E80); // 设置源地址
+diagSetTimeout(100);   // 设置超时时间
+byte data[2] = {0x3E, 0x80};
+long result = diagSendRequest(0x700, data);
+if(result == 0) {
+  byte response[64];
+  diagGetLastResponse(response);
+  write("收到响应数据");
+} else {
+  write("诊断失败，错误码: %d", result);
+}
+
+##capl名##
+diagSendRequest
+
+##转换须知##
+1. CAPL使用单独的函数设置配置参数，而VBA使用DOIPConfig对象集中配置
+2. CAPL的diagSendRequest直接返回错误码，响应数据需要通过diagGetLastResponse获取
+3. VBA版本支持功能寻址模式，CAPL需要通过diagSetFunctionalAddress设置
+4. CAPL的超时设置是全局的，而VBA可以针对每个请求单独设置
+5. CAPL的错误码体系与VBA不同，需要特别注意转换
+
+##转换示例##
+1. CAPL原始代码：
+diagSetTarget(0x700);
+diagSetSource(0x0E80);
+diagSetTimeout(100);
+byte data[2] = {0x3E, 0x80};
+long result = diagSendRequest(0x700, data);
+
+2. 转换后的VBA代码：
+doipConfig = DOIPConfig()
+doipConfig.setSrcAddr(0x0E80)
+doipConfig.setDestAddr(0x700)
+doipConfig.setP6Timeout(100)
+result = diagDOIPSendPDU(doipConfig, connectHandle, [0x3E, 0x80])
+
+3. 关键转换说明：
+- CAPL的diagSetTarget/diagSetSource转换为VBA的DOIPConfig对象设置
+- CAPL的全局超时设置转换为VBA的P6Timeout设置
+- CAPL的diagSendRequest直接对应VBA的diagDOIPSendPDU
+- 错误处理逻辑需要根据具体错误码体系进行调整

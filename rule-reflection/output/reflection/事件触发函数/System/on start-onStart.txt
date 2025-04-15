@@ -1,0 +1,57 @@
+##功能##
+onStart函数在工程运行成功后自动触发，用于执行初始化或通知操作。适用于需要在工程启动时立即执行的场景，如初始化变量、发送启动通知等。
+
+##vba规范##
+函数定义：使用@onStart装饰器标记的无参无返回值函数
+参数：无
+返回值：无
+特性：支持定义多个不同名称的onStart函数
+内置函数：writeInfo用于控制台输出
+
+##capl规范##
+CAPL中使用on start事件块实现类似功能：
+1. 无参数无返回值
+2. 在测量开始时自动执行
+3. 支持多个on start块（按定义顺序执行）
+
+示例1：
+on start
+{
+    write("工程运行成功！");
+}
+
+示例2：
+on start
+{
+    setTimer(msTimer1, 1000);
+    write("定时器已启动");
+}
+
+##capl名##
+on start
+
+##转换须知##
+1. CAPL的on start是事件块而非函数，没有函数名
+2. CAPL中多个on start块会全部执行，VBA需要不同函数名
+3. CAPL使用write()输出，VBA使用writeInfo()
+4. CAPL的on start在测量开始时触发，VBA在工程运行时触发
+
+##转换示例##
+CAPL原始代码：
+on start
+{
+    write("CANoe工程已启动");
+    setSignal(sig1, 1);
+}
+
+转换后的VBA代码：
+@onStart
+def onStartInit():
+    writeInfo('CANoe工程已启动')
+    setSignal(sig1, 1)
+
+关键转换步骤：
+1. 将CAPL事件块改为VBA函数+装饰器
+2. write改为writeInfo
+3. 信号操作语法保持相同（假设setSignal是通用函数）
+4. 添加必要的函数命名

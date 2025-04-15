@@ -1,0 +1,108 @@
+##功能##
+该函数用于检测指定网段上的所有节点是否在给定的容忍时间内保持休眠状态。如果在容忍时间内没有收到任何报文，则认为节点处于休眠状态；如果超过容忍时间后收到报文，则触发事件。主要用于总线网络节点状态监控和自动化测试。
+
+##vba规范##
+函数定义：`chkStart_AllNodesBabbling(network, aMaxQuietTime)` 或 `chkCreate_AllNodesBabbling(network, aMaxQuietTime)`  
+参数：  
+- network: Network类型，表示要检测的网段对象  
+- aMaxQuietTime: int类型，最大容忍时间（毫秒）  
+返回值：int类型，代表创建的对象ID，-1表示失败  
+相关函数：  
+- `chkControl_Start`: 启动检测对象  
+- `testAddCondition`: 将统计信息加入报告  
+- `testWaitForTimeout`: 设置等待超时时间  
+- `testRemoveCondition`: 结束统计  
+
+##capl规范##
+CAPL中没有完全对应的内置函数，但可以通过以下方式实现类似功能：  
+1. 使用`on timer`和`on message`事件组合  
+2. 使用`TestAddCondition`和`TestWaitForTimeout`函数  
+
+示例1：  
+```capl
+variables {
+  int checkId;
+  timer quietTimer;
+  message * msg;
+}
+
+on start {
+  checkId = 1;  // 模拟对象ID
+  quietTimer.time = 300;
+  setTimer(quietTimer);
+}
+
+on timer quietTimer {
+  write("All nodes are quiet for 300ms");
+}
+
+on message CAN1.* {
+  cancelTimer(quietTimer);
+  quietTimer.time = 300;
+  setTimer(quietTimer);
+}
+```
+
+示例2：  
+```capl
+variables {
+  int checkId;
+}
+
+on start {
+  checkId = TestAddCondition("NodeBabblingCheck");
+  TestWaitForTimeout(1000);
+  // 300ms容忍时间需要额外逻辑实现
+}
+```
+
+##capl名##
+TestAddCondition
+
+##转换须知##
+1. CAPL中没有直接的对应函数，需要组合多个事件和函数实现
+2. VBA中的network参数在CAPL中通常用总线通道号代替
+3. CAPL中的定时器精度和VBA可能有差异
+4. CAPL需要手动实现超时后的事件触发逻辑
+5. CAPL的测试报告函数名称与VBA类似但大小写不同
+
+##转换示例##
+CAPL原始代码：
+```capl
+variables {
+  int checkId;
+  timer nodeTimer;
+}
+
+on start {
+  checkId = 1;
+  nodeTimer.time = 300;
+  setTimer(nodeTimer);
+  TestAddCondition("NodeBabblingCheck");
+  TestWaitForTimeout(1000);
+}
+
+on timer nodeTimer {
+  write("Nodes quiet timeout");
+}
+
+on message CAN1.* {
+  cancelTimer(nodeTimer);
+  nodeTimer.time = 300;
+  setTimer(nodeTimer);
+}
+```
+
+转换后的VBA代码：
+```vba
+checkId = chkStart_AllNodesBabbling(CAN1, 300)
+testAddCondition(checkId)
+testWaitForTimeout(1000)
+testRemoveCondition(checkId)
+```
+
+关键转换步骤说明：
+1. CAPL中的timer事件对应VBA的超时检测功能
+2. CAPL的on message事件对应VBA的报文接收检测
+3. CAPL的TestAddCondition直接对应VBA的testAddCondition
+4. CAPL需要手动实现的定时器逻辑在VBA中由函数内部处理

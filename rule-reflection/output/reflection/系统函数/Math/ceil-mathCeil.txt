@@ -1,0 +1,50 @@
+##功能##
+将数值向上取整到最接近的整数，常用于需要精确整数结果的场景，如计算分页数、数组索引等。
+
+##vba规范##
+函数名：mathCeil  
+参数：num (int) - 需要取整的数值  
+返回值：ceilNumber (int) - 返回取整后的值  
+内置函数：无  
+
+##capl规范##
+函数名：ceil  
+参数：double - 需要取整的数值  
+返回值：double - 返回取整后的值  
+示例1：  
+```capl
+double result;
+result = ceil(97.2); // result = 98.0
+```
+示例2：  
+```capl
+double value = 45.6;
+write("Ceiled value: %f", ceil(value)); // 输出: Ceiled value: 46.0
+```
+
+##capl名##
+ceil
+
+##转换须知##
+1. CAPL的ceil返回double类型，而VBA返回int类型，需要类型转换
+2. CAPL的ceil接受double参数，VBA接受int参数
+3. 函数行为相同，都是向上取整
+4. 特殊情况：负数同样向上取整（如-1.2取整为-1）
+
+##转换示例##
+1. CAPL原始代码：  
+```capl
+double x = 97.2;
+int y = (int)ceil(x);
+```
+2. 转换后的VBA代码：  
+```vba
+Dim x As Double
+x = 97.2
+Dim y As Integer
+y = mathCeil(x)
+```
+3. 关键转换说明：  
+- 添加了显式的类型转换(int)来匹配VBA的返回类型
+- 保留了相同的数学逻辑
+- 变量声明方式改为VBA语法

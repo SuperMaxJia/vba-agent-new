@@ -1,0 +1,30 @@
+1. 函数名
+diagCloseFlashFile
+
+2. 函数描述
+关闭刷写文件，释放内存
+
+3. 函数体
+diagCloseFlashFile(handle)
+
+4. 返回值
+无
+
+5. 参数
+名称      类型  描述
+handle    int   文件句柄
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：关闭刷写文件，释放内存
+示例代码：
+driverFileHandle = diagLoadFlashFile(r'D:flash_dirve.s19')
+diagCloseFlashFile(driverFileHandle)
+代码注释：
+第一行加载刷写文件并获取文件句柄
+第二行关闭刷写文件并释放内存
+
+8. 其他说明
+该函数需要与diagLoadFlashFile配合使用，用于释放通过diagLoadFlashFile加载的文件资源

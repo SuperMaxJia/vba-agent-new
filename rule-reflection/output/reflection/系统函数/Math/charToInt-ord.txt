@@ -1,0 +1,49 @@
+##功能##
+ord函数用于将单个字符转换为其对应的ASCII或Unicode整数值。常用于字符编码转换、数据校验和协议处理等场景。
+
+##vba规范##
+函数定义：ord(c)
+参数：c - char类型，需要转换的字符
+返回值：int类型，返回字符对应的整数值
+内置函数：无
+示例：ord('A')返回65
+
+##capl规范##
+函数定义：charToInt(c)
+参数：c - char类型，需要转换的字符
+返回值：dword类型，返回字符对应的整数值
+示例1：
+```capl
+dword result;
+result = charToInt('A');  // result = 65
+```
+示例2：
+```capl
+write("B的ASCII值是: %d", charToInt('B'));  // 输出: B的ASCII值是: 66
+```
+
+##capl名##
+charToInt
+
+##转换须知##
+1. 参数类型：CAPL使用char类型，VBA也使用char类型，两者一致
+2. 返回值：CAPL返回dword类型，VBA返回int类型，但实际使用中通常可以兼容
+3. 函数行为：两者功能完全一致，都是返回字符的ASCII值
+4. 特殊情况：对于非ASCII字符的处理需要特别注意编码一致性
+
+##转换示例##
+1. CAPL原始代码：
+```capl
+dword asciiValue = charToInt('X');
+```
+
+2. 转换后的VBA代码：
+```vba
+Dim asciiValue As Integer
+asciiValue = ord("X")
+```
+
+3. 关键转换说明：
+- 将CAPL的charToInt函数替换为VBA的ord函数
+- 将CAPL的dword类型变量声明改为VBA的Integer类型
+- 字符表示方式从CAPL的单引号改为VBA的双引号

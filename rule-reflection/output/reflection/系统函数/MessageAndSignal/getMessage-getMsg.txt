@@ -1,0 +1,55 @@
+##功能##
+该函数用于获取CAN数据库中的报文对象，可以通过报文ID或报文名称两种方式获取。适用于需要访问或操作特定CAN报文的场景，如报文解析、信号读写等。
+
+##vba规范##
+函数名：getMsg
+参数：
+1. id: Integer类型，报文ID
+   extend: Boolean类型，扩展帧标识
+   network: Network类型，网段对象
+2. msgName: String类型，报文名称
+   network: Network类型，网段对象
+返回值：CANDBCMessage类型，报文对象
+
+##capl规范##
+函数名：getMessage
+参数：
+1. id: dword类型，报文ID
+   isExtended: int类型，扩展帧标识(0:标准帧，1:扩展帧)
+   busName: char[]类型，总线名称
+2. msgName: char[]类型，报文名称
+   busName: char[]类型，总线名称
+返回值：message类型，报文对象
+
+示例1：
+message msg;
+msg = getMessage(0x10, 0, "CAN1");
+
+示例2：
+message msg;
+msg = getMessage("ESP_Status", "CAN1");
+
+##capl名##
+getMessage
+
+##转换须知##
+1. CAPL使用dword类型表示ID，而VBA使用Integer
+2. CAPL中扩展帧标识用int(0/1)，VBA用Boolean(True/False)
+3. CAPL使用字符串表示总线名称，VBA使用Network对象
+4. CAPL返回值类型为message，VBA为CANDBCMessage
+5. CAPL参数顺序与VBA不同，需要注意调整
+
+##转换示例##
+1. CAPL原始代码：
+message msg;
+msg = getMessage(0x100, 1, "CAN1");
+
+2. 转换后的VBA代码：
+Dim msg As CANDBCMessage
+Set msg = getMsg(&H100, True, CAN1)
+
+3. 关键转换说明：
+- 将dword类型的0x100转换为VBA的&H100
+- 将int类型的1转换为VBA的True
+- 将字符串"CAN1"转换为VBA的CAN1网段对象
+- 调整了参数顺序以匹配VBA规范

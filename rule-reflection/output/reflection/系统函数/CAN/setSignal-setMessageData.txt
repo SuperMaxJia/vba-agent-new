@@ -1,0 +1,53 @@
+##功能##
+该函数用于设置指定CAN报文的数据场内容，主要用于动态仿真或测试场景中修改报文数据。通过传入报文对象和字节数组，可以直接更新报文的数据字段。
+
+##vba规范##
+函数定义：setMessageData(canDBCMessage, data)
+参数：
+- canDBCMessage: CANDBCMessage类型，表示从数据库映射的报文对象
+- data: 数组类型，表示要设置的字节数组数据
+返回值：无
+注意事项：数据长度需与报文DLC匹配
+
+##capl规范##
+函数定义：setSignal(message, data)
+参数：
+- message: message类型，表示目标CAN报文
+- data: byte数组，表示要设置的数据
+返回值：无
+示例1：
+```capl
+byte data[3] = {0x10, 0x12, 0x13};
+setSignal(ESP_Status, data);
+```
+示例2：
+```capl
+byte newData[8] = {0};
+setSignal(EngineSpeed, newData);
+```
+
+##capl名##
+setSignal
+
+##转换须知##
+1. 参数顺序不同：VBA是(报文,数据)，CAPL是(数据,报文)
+2. CAPL需要预先定义字节数组
+3. CAPL中报文直接使用变量名而非路径
+4. 数据长度检查在CAPL中更严格
+
+##转换示例##
+CAPL原始代码：
+```capl
+byte brakeData[2] = {0x30, 0x40};
+setSignal(BrakePressure, brakeData);
+```
+
+转换后的VBA代码：
+```vba
+setMessageData(CAN1.ECU.BrakePressure, [0x30, 0x40])
+```
+
+关键转换步骤：
+1. 将CAPL的字节数组声明转换为VBA的数组字面量
+2. 将CAPL的报文变量名转换为VBA的完整路径表示
+3. 保持相同的功能语义

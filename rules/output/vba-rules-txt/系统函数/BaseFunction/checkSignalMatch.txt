@@ -1,0 +1,35 @@
+1. 函数名
+checkSignalMatch
+
+2. 函数描述
+用于检测总线上信号、系统变量的值是否匹配
+
+3. 函数体
+checkSignalMatch(aSignal, aCompareValue)
+checkSignalMatch(variable, aCompareValue)
+
+4. 返回值
+名称 | 类型 | 描述
+res | int | 1 代表匹配成功，0代表信号或者变量没有出现在总线上，-1代表校验失败
+
+5. 参数
+名称 | 类型 | 描述
+aSignal | CANDBCSignal或LINDBCSignal | 信号对象
+variable | VariableEntity | 变量对象
+aCompareValue | int或float | 比较值，数值类型
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：检测总线上信号值是否匹配预期值
+示例代码：
+result = checkSignalMatch(Node_SUT.Velocity, 60);
+if (result != 1):
+    testStepFail("Value of signal is not in the allowed range!");
+代码注释：
+- 检查Node_SUT.Velocity信号值是否等于60
+- 如果返回值不为1，则输出错误信息
+
+8. 其他说明
+无

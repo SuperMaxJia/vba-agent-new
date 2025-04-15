@@ -1,0 +1,51 @@
+##功能##
+该函数用于从CAN数据库信号对象中获取最新接收到的信号值，可以选择获取总线值、物理值或两者。适用于需要实时读取CAN信号值的场景，如车辆诊断、信号监控等。
+
+##vba规范##
+函数名：getSignalVal
+参数：
+- canDBCSignal: CANDBCSiganl类型，从数据库中映射出来的信号对象
+- valType: int类型，信号量值类型（0：总线值，1：物理值，2：总线值和物理值元组），默认值为1
+返回值：
+- 成功：float类型，总线值或物理值
+- 失败：String类型，错误信息（'Unresolved channel'/'Unresolved Message'/'Unresolvedsignal'）
+
+##capl规范##
+函数名：getSignal
+参数：
+- message: 报文对象
+- signal: 信号名称字符串
+- mode: int类型，0=原始值，1=物理值
+返回值：
+- 成功：返回信号值
+- 失败：返回-1
+
+示例1：
+// 获取报文0x100中信号Speed的物理值
+value = getSignal(Message0x100, "Speed", 1);
+
+示例2：
+// 获取当前报文信号EngineRPM的原始值
+rawValue = getSignal(this, "EngineRPM", 0);
+
+##capl名##
+getSignal
+
+##转换须知##
+1. CAPL使用报文对象和信号名称作为参数，而VBA使用信号对象
+2. CAPL返回值-1表示失败，VBA返回错误字符串
+3. CAPL不支持同时获取总线和物理值（VBA的valType=2）
+4. 在CAPL中需要先获取报文对象，而VBA直接使用信号路径
+
+##转换示例##
+CAPL原始代码：
+// 获取报文0x200中信号Temperature的物理值
+temp = getSignal(Message0x200, "Temperature", 1);
+
+转换后的VBA代码：
+temp = getSignalVal(CAN1.ECU.SENSORS.Temperature, valType:=1)
+
+关键转换步骤：
+1. 将CAPL的报文对象+信号名转换为VBA的信号路径
+2. 将CAPL的mode参数1对应VBA的valType=1
+3. 注意VBA需要使用命名参数语法(valType:=1)

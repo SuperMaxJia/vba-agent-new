@@ -1,0 +1,57 @@
+##功能##
+该函数用于将指定节点(Node)中特定报文(message或通过id指定)的DLC(数据长度代码)重置为数据库定义的值。主要用于在测试过程中恢复报文的默认DLC设置，确保报文长度符合规范。
+
+##vba规范##
+函数定义：resetNodeMsgDlc(Node, message) 或 resetNodeMsgDlc(Node, id)
+参数：
+- Node: ECUNode类型，表示目标节点对象
+- message: CANDBCMessage类型，表示报文对象
+- id: int或str类型，表示报文ID(标准帧用数字，扩展帧用字符串)
+返回值：int类型，0表示成功，-1表示失败
+
+##capl规范##
+函数定义：resetMsgDlc(node, message) 或 resetMsgDlc(node, id)
+参数：
+- node: 节点名称(字符串)或节点对象
+- message: 报文名称(字符串)或报文对象
+- id: 整数类型报文ID
+返回值：int类型，0表示成功，-1表示失败
+
+示例1：
+// 通过报文名称重置DLC
+int result;
+result = resetMsgDlc("ECU1", "EngineMsg");
+
+示例2：
+// 通过报文ID重置DLC
+int result;
+result = resetMsgDlc(ECU1, 0x123);
+
+##capl名##
+resetMsgDlc
+
+##转换须知##
+1. 参数类型差异：VBA使用对象类型(ECUNode, CANDBCMessage)，而CAPL使用字符串或整数
+2. 返回值处理：两者都返回int，但CAPL中可能需要额外检查返回值
+3. 扩展帧处理：VBA中扩展帧使用字符串ID，CAPL中通常使用带标志的整数
+4. 节点引用方式：VBA使用对象引用，CAPL通常使用节点名称字符串
+
+##转换示例##
+1. CAPL原始代码：
+int res;
+res = resetMsgDlc("EngineControl", 0x101);
+if(res == -1){
+  write("DLC重置失败");
+}
+
+2. 转换后的VBA代码：
+Dim res As Integer
+res = resetNodeMsgDlc(EngineControl, "0x101")
+If res = -1 Then
+    Debug.Print "DLC重置失败"
+End If
+
+3. 关键转换说明：
+- 将CAPL的字符串节点名转换为VBA的节点对象
+- CAPL的十六进制ID(0x101)转换为VBA的字符串"0x101"
+- 保持相同的返回值检查逻辑

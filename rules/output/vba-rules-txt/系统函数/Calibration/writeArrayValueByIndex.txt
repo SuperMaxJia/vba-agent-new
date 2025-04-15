@@ -1,0 +1,35 @@
+1. 函数名
+writeArrayValueByIndex
+
+2. 函数描述
+向数组变量指定x、y索引处写入标定值
+
+3. 函数体
+writeArrayValueByIndex(calNode, variable, columnIndex, rowIndex, value)
+
+4. 返回值
+名称      类型        描述
+ans       ResultInfo  ans.errorInfo为标定失败时返回的错误信息，ans.backPhyValue为标定成功时回读的值
+
+5. 参数
+名称         类型            描述
+calNode      CalNode         标定节点对象
+variable     str/CalVariable 读取的变量，可以是变量名称或者变量对象
+columnIndex  int             列索引(x方向索引)
+rowIndex     int             行索引(y方向索引)
+value        double          标定值
+
+6. 内置函数
+(无相关内容)
+
+7. 示例
+示例功能：标定CAN1网段下calNode1标定节点中名称为"NewArray"的标定量在(0,0)索引处的值为69.0
+
+示例代码：
+ans = writeArrayValueByIndex(CAN1.Calibrations.calNode1, 'NewArray', 0, 0, 69.0)
+# 或者
+# ans = writeArrayValueByIndex(CAN1.Calibrations.calNode1, CAN1.Calibrations.calNode1.characteristics.NewArray, 0, 0, 69.0)
+writeInfo(ans.backPhyValue)
+
+8. 其他
+(无其他相关内容)

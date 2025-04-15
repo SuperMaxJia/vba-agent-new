@@ -1,0 +1,54 @@
+##功能##
+周期报文发送函数，用于通过TCP连接周期性发送报文。主要用于在自动化测试或通信系统中，按照固定时间间隔持续发送TCP数据包。
+
+##vba规范##
+函数定义：taskid = sendPeriodTCPMessage(network, socketid, payload, cycletime)
+返回值：int类型，-1表示调用错误
+参数：
+- network: Network类型，网段信息
+- socketid: int类型，连接对应的socketid
+- payload: list类型，报文载荷
+- cycletime: 毫秒单位，发送周期
+
+##capl规范##
+函数定义：long tcpSendCyclic(byte networkId, long socketId, byte data[], dword cycleTime)
+返回值：long类型，-1表示错误
+参数：
+- networkId: byte类型，网络标识符
+- socketId: long类型，TCP连接ID
+- data: byte数组，发送数据
+- cycleTime: dword类型，周期时间(毫秒)
+
+示例1：
+byte data[8] = {0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08};
+long taskId = tcpSendCyclic(1, 1001, data, 100);
+
+示例2：
+byte msgData[4] = {0xAA,0xBB,0xCC,0xDD};
+long result = tcpSendCyclic(2, 2002, msgData, 500);
+
+##capl名##
+tcpSendCyclic
+
+##转换须知##
+1. 参数类型差异：VBA使用Network对象和list，CAPL使用byte和byte数组
+2. 网络标识方式不同：VBA用Network对象，CAPL用byte类型的networkId
+3. 数据格式差异：VBA用list，CAPL用byte数组
+4. 错误返回值相同：都是-1表示错误
+
+##转换示例##
+CAPL原始代码：
+byte payload[3] = {0x11,0x22,0x33};
+long taskID = tcpSendCyclic(1, 1234, payload, 200);
+
+转换后的VBA代码：
+Dim payload As Variant
+payload = Array(&H11, &H22, &H33)
+Dim taskID As Integer
+taskID = sendPeriodTCPMessage(network, 1234, payload, 200)
+
+关键转换步骤：
+1. 将CAPL的byte数组转换为VBA的Array
+2. 将CAPL的networkId(1)转换为VBA的network对象
+3. 保持socketId和cycleTime参数不变
+4. 返回值类型从long改为Integer

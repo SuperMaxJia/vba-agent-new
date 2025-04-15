@@ -1,0 +1,66 @@
+##功能##
+该函数用于发送原始以太网报文，支持多种协议类型（如IPv4、UDP、TCP等）和VLAN标签配置。主要用于汽车电子测试中模拟网络通信场景，验证ECU的以太网通信功能。
+
+##vba规范##
+函数定义：`sendETHBasicMsg(network, EthernetPacket/IPv4Packet/ARPPacket/UDPPacket/TCPPacket/SOMEIPPacket/DOIPPacket/ETHDBCCommand/ETHDBCPDU, VLAN=['0x88A8:0x0003', '0x8100:0x0002'])`
+参数：
+- network: Network类型，指定目标网段
+- 报文参数: 多种以太网协议报文类型
+- VLAN: 列表类型，可选参数，配置单/双VLAN标签
+返回值: int类型，1表示成功，0表示失败
+
+##capl规范##
+函数定义：`ethernetPacketSend(byte data[], dword length, long channel)`
+参数：
+- data: byte数组，包含完整的以太网帧数据
+- length: dword类型，数据长度
+- channel: long类型，CANoe通道号
+返回值: int类型，1表示成功，0表示失败
+
+示例1（发送简单以太网帧）：
+```capl
+byte frame[64] = {0x00, 0x11, 0x22, 0x33, 0x44, 0x55, ...};
+ethernetPacketSend(frame, elcount(frame), 1);
+```
+
+示例2（带VLAN标签）：
+```capl
+byte vlanFrame[68] = {0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x81, 0x00, 0x00, 0x03, ...};
+ethernetPacketSend(vlanFrame, elcount(vlanFrame), 1);
+```
+
+##capl名##
+ethernetPacketSend
+
+##转换须知##
+1. CAPL需要手动构建完整的以太网帧数据，而VBA提供协议封装对象
+2. CAPL使用通道号指定网络，VBA使用Network对象
+3. VLAN处理方式不同：CAPL需在数据中直接包含VLAN标签，VBA通过参数配置
+4. CAPL不直接支持协议封装，需要手动构造协议头
+
+##转换示例##
+1. CAPL原始代码：
+```capl
+byte udpFrame[] = {
+    // 以太网头
+    0x00, 0x11, 0x22, 0x33, 0x44, 0x55, // 目标MAC
+    0x00, 0x66, 0x77, 0x88, 0x99, 0xAA, // 源MAC
+    0x81, 0x00, 0x00, 0x03, // VLAN标签
+    0x08, 0x00, // 以太网类型(IPv4)
+    // IP头
+    0x45, 0x00, ...
+    // UDP头和数据
+    ...
+};
+ethernetPacketSend(udpFrame, elcount(udpFrame), 1);
+```
+
+2. 转换后的VBA代码：
+```vba
+sendETHBasicMsg(network, UDPPacket, VLAN=['0x8100:0x0003'])
+```
+
+3. 关键转换说明：
+- CAPL中需要手动构造完整的UDP/IP/以太网帧结构
+- VBA中直接使用UDPPacket对象，系统自动封装协议头
+- VLAN配置在VBA中通过参数传递，而在CAPL中需要直接写入帧数据

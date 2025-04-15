@@ -1,0 +1,50 @@
+##功能##
+该函数用于等待指定的信号、系统变量、标定或测量量等于输入的值。主要用于测试场景中，当需要等待某个特定信号值出现时，可以设置超时时间进行阻塞等待。典型应用包括ECU测试、总线信号监控等场景。
+
+##vba规范##
+函数定义：testWaitForSignalMatch(object, value, timeout)
+参数：
+- object: 信号或变量对象，系统变量必须是数值类型
+- value: int类型，定义的目标值
+- timeout: int类型，超时时间(毫秒)
+返回值：
+- int类型：0(超时)，1(事件发生)，-1(错误)
+
+##capl规范##
+函数定义：testWaitForSignal(object, value, timeout)
+参数：
+- object: 信号或系统变量
+- value: long类型，目标值
+- timeout: long类型，超时时间(毫秒)
+返回值：
+- int类型：0(超时)，1(匹配成功)，-1(错误)
+
+示例1：
+// 等待EngineSpeed信号等于3000，超时5秒
+int result = testWaitForSignal(EngineSpeed, 3000, 5000);
+
+示例2：
+// 等待系统变量SysVar等于1，超时2秒
+int result = testWaitForSignal(SysVar, 1, 2000);
+
+##capl名##
+testWaitForSignal
+
+##转换须知##
+1. 参数类型差异：VBA使用variant对象，CAPL直接使用信号/变量名
+2. 返回值相同：都是int类型返回0/1/-1
+3. 行为差异：CAPL版本直接操作信号，VBA需要通过COM接口
+4. 错误处理：CAPL版本错误可能来自总线，VBA可能来自COM异常
+
+##转换示例##
+1. CAPL原始代码：
+int res = testWaitForSignal(EngineRPM, 2500, 3000);
+
+2. 转换后VBA代码：
+Dim res As Integer
+res = testWaitForSignalMatch(CAN1.Message.EngineRPM, 2500, 3000)
+
+3. 关键转换说明：
+- CAPL直接使用信号名，VBA需要通过CAN1.Message对象访问
+- 参数类型和顺序保持一致
+- 返回值处理方式相同

@@ -1,0 +1,59 @@
+##功能##
+该函数用于创建和配置UDS诊断参数对象，设置各种诊断通信参数如ID、时间参数、帧类型等，用于后续发送诊断PDU。适用于汽车电子诊断通信场景，如ECU刷写、故障诊断等。
+
+##vba规范##
+函数名：UDSConfig
+返回值：udsConfig (UDSConfig对象)
+参数：无构造函数参数，通过setter方法配置参数
+方法：包含25个getter和setter方法，用于设置/获取诊断参数如ID、时间参数、帧类型等
+属性：可配置17个诊断参数，包括id、extend、time、size等
+
+##capl规范##
+在CAPL中对应诊断配置主要通过DiagSetParameter函数实现：
+1. 设置请求ID：DiagSetParameter(parameterName, value)
+2. 获取参数：DiagGetParameter(parameterName)
+
+完整示例1：
+// 设置标准帧请求ID
+DiagSetParameter("ReqId", 0x700);
+DiagSetParameter("ReqIdExtend", 0);
+// 设置时间参数
+DiagSetParameter("P2Timeout", 150);
+
+完整示例2：
+// 配置CANFD诊断
+DiagSetParameter("CanType", 1);
+DiagSetParameter("DLC", 64);
+// 设置功能寻址
+DiagSetParameter("Mode", 1);
+
+##capl名##
+DiagSetParameter
+
+##转换须知##
+1. CAPL使用分散的函数调用，而VBA使用对象封装
+2. CAPL参数名与VBA属性名存在差异需要映射
+3. CAPL没有直接的对象返回值概念
+4. 时间参数单位在CAPL中可能不同（如微秒vs毫秒）
+5. CANFD配置在CAPL中需要额外启用CANFD支持
+
+##转换示例##
+CAPL原始代码：
+DiagSetParameter("ReqId", 0x700);
+DiagSetParameter("ReqIdExtend", 0);
+DiagSetParameter("P2Timeout", 150);
+DiagSetParameter("Mode", 0);
+
+转换后的VBA代码：
+Dim udsConfig As UDSConfig
+Set udsConfig = UDSConfig()
+udsConfig.setReqId(&H700)
+udsConfig.setReqIdExtend(0)
+udsConfig.setP2Timeout(150)
+udsConfig.setMode(0)
+
+关键转换说明：
+1. CAPL的DiagSetParameter调用转换为VBA的对象方法调用
+2. 参数名从字符串形式变为明确的setter方法
+3. 十六进制表示法保持相同
+4. 需要先创建UDSConfig对象实例

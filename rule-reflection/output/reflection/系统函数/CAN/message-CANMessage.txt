@@ -1,0 +1,85 @@
+##功能##
+该函数用于创建和配置CAN/CANFD报文对象，设置报文的各种参数（如ID、类型、数据等），并支持通过内置函数获取和设置报文属性。主要用于CAN总线通信测试中动态创建和发送自定义报文。
+
+##vba规范##
+函数名：CANMessage
+返回值：CANDBCMessage对象
+参数：
+- timestamp: float (时间戳)
+- msgID: int (报文ID)
+- idType: int (扩展帧标识:0标准/1扩展)
+- canType: int (报文类型:0CAN/1CANFD/2CANRemote)
+- dlc: int (数据长度)
+- data: list[byte] (数据场)
+- brs: list[byte] (速率切换标识)
+- dir: list[byte] (方向:0Tx/1Rx)
+- channel: String (通道)
+内置函数：
+- get/set系列函数用于获取/设置报文属性
+- getSignalVal/setSignalVal用于信号值操作
+
+##capl规范##
+在CAPL中，对应功能主要通过message结构体和相关函数实现：
+1. 创建报文：
+message msg;
+msg.id = 0x12;  // 设置ID
+msg.dlc = 8;    // 设置DLC
+msg.byte(0) = 0x11; // 设置数据
+msg.can = 1;    // 设置CAN通道
+
+2. 发送报文：
+output(msg);
+
+示例1：创建标准CAN报文
+message msg;
+msg.id = 0x123;
+msg.dlc = 8;
+msg.byte(0) = 0x11;
+msg.byte(1) = 0x22;
+output(msg);
+
+示例2：创建扩展帧CANFD报文
+message * msg;
+msg = createMessage(0x123);
+msg.extendedId = 1;
+msg.fd = 1;
+msg.dlc = 15;
+msg.brs = 1;
+setMessageData(msg, {0x11,0x22,0x33});
+output(msg);
+
+##capl名##
+message
+
+##转换须知##
+1. CAPL使用结构体而非对象，属性直接访问
+2. CAPL中通道设置方式不同（通过.can属性）
+3. CAPL中扩展帧标识是布尔值而非数字
+4. CAPL中数据设置使用byte()或setMessageData
+5. CAPL没有直接的get/set方法，而是直接访问属性
+6. 信号操作需通过数据库关联实现
+
+##转换示例##
+CAPL原始代码：
+message msg;
+msg.id = 0x12;
+msg.dlc = 8;
+msg.byte(0) = 0x11;
+msg.byte(1) = 0x22;
+output(msg);
+
+转换后的VBA代码：
+msg = CANMessage()
+msg.setId(0x12)
+msg.setExtend(0)
+msg.setCanType(0)
+msg.setDlc(8)
+msg.setData([0x11, 0x22, 0, 0, 0, 0, 0, 0])
+sendMsg(msg, CAN1)
+
+关键转换说明：
+1. CAPL的message结构体转换为CANMessage对象
+2. 直接属性赋值转换为set方法调用
+3. output()转换为sendMsg()
+4. 隐式的标准帧设置需要显式调用setExtend(0)
+5. 数据设置从byte索引改为列表形式

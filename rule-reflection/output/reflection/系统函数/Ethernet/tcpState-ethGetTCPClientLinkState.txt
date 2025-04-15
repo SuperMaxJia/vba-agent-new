@@ -1,0 +1,65 @@
+##功能##
+该函数用于客户端获取TCP连接状态，主要用途是监控TCP客户端连接状态。在实际应用中，常用于诊断网络连接问题或确认通信链路是否正常建立。
+
+##vba规范##
+函数定义：ethGetTCPClientLinkState(network, socketid)
+参数：
+- network: NetworkI类型，表示网段信息
+- socketid: int类型，表示连接对应的socketid
+返回值：int类型，0表示未连接，1表示已连接，-1表示错误（可能socketid与network不匹配）
+
+##capl规范##
+函数定义：tcpState(network, socketid)
+参数：
+- network: byte类型，表示网段ID
+- socketid: dword类型，表示socket标识符
+返回值：int类型，0表示未连接，1表示已连接，-1表示错误
+
+示例1：
+```capl
+byte network = 1;
+dword socketid = 12345;
+int state;
+state = tcpState(network, socketid);
+```
+
+示例2：
+```capl
+on key 't'
+{
+  int result = tcpState(1, 54321);
+  write("TCP connection state: %d", result);
+}
+```
+
+##capl名##
+tcpState
+
+##转换须知##
+1. 参数类型差异：VBA使用NetworkI类型表示网络，CAPL使用byte类型
+2. 参数数量相同，但CAPL的socketid使用dword类型而非int
+3. 返回值类型相同，但CAPL可能返回更多错误代码
+4. 在CAPL中网络参数通常用数字ID表示，而非对象
+
+##转换示例##
+CAPL原始代码：
+```capl
+byte net = 2;
+dword sock = 67890;
+int status = tcpState(net, sock);
+```
+
+转换后的VBA代码：
+```vba
+Dim network As NetworkI
+Dim socketid As Integer
+Dim state As Integer
+socketid = 67890
+state = ethGetTCPClientLinkState(network, socketid)
+```
+
+关键转换步骤：
+1. 将CAPL的byte类型网络ID转换为VBA的NetworkI对象
+2. 将CAPL的dword类型socketid转换为VBA的Integer
+3. 函数名从tcpState改为ethGetTCPClientLinkState
+4. 保持返回值处理逻辑一致

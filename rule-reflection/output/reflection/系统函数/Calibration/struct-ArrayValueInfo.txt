@@ -1,0 +1,70 @@
+##功能##
+创建一个自定义的数组结构对象，用于配置和操作二维数组参数，包括设置行列维数和数值列表，主要用于CAN通信中的数组标定量配置。
+
+##vba规范##
+函数名：ArrayValueInfo
+描述：创建并返回一个数组结构对象，包含行列维数和数值列表属性
+返回值：ArrayValueInfo对象
+方法：
+- getColumnNumber(): 返回int类型列数
+- getRowNumber(): 返回int类型行数 
+- getValue(): 返回float列表类型数值
+- getInfo(): 返回错误信息
+- setColumnNumber(int columnNumber): 设置列数
+- setRowNumber(int rowNumber): 设置行数
+- setValue(float[] value): 设置数值列表
+
+##capl规范##
+在CAPL中对应使用二维数组和结构体实现类似功能：
+1. 定义数组结构：
+struct ArrayInfo {
+  int columns;
+  int rows;
+  float values[];
+};
+
+2. 示例1：创建并设置数组
+struct ArrayInfo arr;
+arr.columns = 2;
+arr.rows = 2;
+arr.values[4] = {0.1, 0.2, 0.3, 0.4};
+writeArrayValue(CAN1::Calibrations::calNode1, "NewArray", arr);
+
+3. 示例2：读取数组信息
+struct ArrayInfo arr = readArrayValue(CAN1::Calibrations::calNode1, "ExistingArray");
+write("Columns: %d", arr.columns);
+write("Rows: %d", arr.rows);
+
+##capl名##
+struct
+
+##转换须知##
+1. CAPL使用结构体而非对象，需手动管理内存
+2. CAPL数组是静态分配的，需预先确定大小
+3. CAPL没有内置的错误信息获取方法
+4. 数值设置需直接赋值而非调用方法
+5. CAPL使用双冒号(::)作为命名空间分隔符
+
+##转换示例##
+1. CAPL原始代码：
+struct ArrayInfo {
+  int cols;
+  int rows;
+  float vals[4];
+};
+struct ArrayInfo myArr;
+myArr.cols = 2;
+myArr.rows = 2;
+myArr.vals = {1.1, 1.2, 1.3, 1.4};
+
+2. 转换后的VBA代码：
+arrayValueInfo = ArrayValueInfo()
+arrayValueInfo.setColumnNumber(2)
+arrayValueInfo.setRowNumber(2) 
+arrayValueInfo.setValue([1.1, 1.2, 1.3, 1.4])
+
+3. 关键转换说明：
+- CAPL结构体转换为VBA对象
+- 直接成员赋值转换为方法调用
+- 静态数组转换为动态列表
+- 添加了对象实例化步骤

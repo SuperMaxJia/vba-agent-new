@@ -1,0 +1,66 @@
+1. 函数名
+onMessage
+
+2. 函数描述
+接收到指定报文时会触发onMessage事件的执行，支持同时定义多个onMessage事件（函数名称不能相同）
+
+3. 函数体
+@onMessage(onmsg)
+def onMessageEvent(canMsg):
+    pass
+
+4. 返回值
+无返回值
+
+5. 参数
+| 名称         | 类型                     | 描述                                                                 |
+|--------------|--------------------------|----------------------------------------------------------------------|
+| message_id   | int                      | 可以输入十进制，如：100；十六进制,如：0x10；扩展帧则须以字符串的形式输入，如：'100x'或 '0x10x' |
+| canmessage   | CANMessage/CANDBCMessage | 自定义的CANMessage对象或者DBC数据库中的CANDBCMessage对象             |
+| '*'          | str                      | 代表该网段下所有的报文                                              |
+| ID范围字符串 | str                      | 表示报文ID范围字符串，比如‘0x12-0x16’                               |
+| ID列表       | list[str]                | 表示报文ID列表，比如[0x10,‘0x12-0x16’,‘0x20x’]                      |
+| 网段         | NetWork                  | 默认不显示，代表从所有网段匹配数据，如需要设置网段则写网段对象，如：CAN1 |
+| 报文方向     | int                      | 默认为None，为0代表Tx发送方向，为1代表Rx接收方向                    |
+
+6. 接受参数
+| 名称   | 类型          | 描述                                                                 |
+|--------|---------------|----------------------------------------------------------------------|
+| canMsg | CANMessage类型 | 包含属性：id, extend, canType, dlc, data, dir, brs。属性值的设置和获取可以用对应的setXxx(value)或getXxx()方法 |
+
+7. 示例
+示例1：当出现报文的ID为0x132的报文时触发，并打印该报文数据场
+@onMessage(0x132)
+def onMessageEvent(canMsg):
+    writeInfo(canMsg.getData())
+
+示例2：出现CAN报文就触发，并打印所有CAN报文ID
+@onMessage('*')
+def onMessageEvent(canMsg):
+    writeInfo(canMsg.getId())
+
+示例3：出现DBC数据库中名为'VehicleSpeed'的CAN报文时触发，并打印该CAN报文的dlc
+@onMessage(CAN.VehicleSpeed)
+def onMessageEvent(canMsg):
+    writeInfo(canMsg.getDlc())
+
+示例4：出现CAN报文ID满足0x12-0x16时触发，并打印该CAN报文的类型
+@onMessage('0x12-0x16')
+def onMessageEvent(canMsg):
+    writeInfo(canMsg.getCanType())
+
+示例5：出现CAN报文ID在列表中的时候触发，并打印该CAN报文的时间戳
+@onMessage([0x01,0x02,0x03])
+def onMessageEvent(canMsg):
+    writeInfo(canMsg.getTimestamp())
+
+示例6：出现在CAN1网段，且报文ID为0x01时触发，并打印该CAN报文的通道
+@onMessage(0x01, CAN1)
+def onMessageEvent(canMsg):
+    writeInfo(canMsg.getChannel())
+
+8. 其他
+- 该函数为事件触发函数，用于在接收到指定CAN报文时执行自定义操作
+- 支持多种报文ID匹配方式：单个ID、通配符、ID范围、ID列表、DBC报文对象
+- 可以通过网段参数限定监控范围
+- 可以通过方向参数区分发送/接收报文

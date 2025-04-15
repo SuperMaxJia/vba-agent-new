@@ -1,0 +1,43 @@
+##功能##
+该函数用于设置ECU节点下特定信号的值，可以指定设置总线值或物理值。主要用于在CAN通信测试中模拟或修改信号值，例如设置轮胎压力信号值进行相关测试。
+
+##vba规范##
+函数名：setSignalVal
+参数：
+- canDBCSignal: CANDBCSiganl类型，表示从CAN数据库映射的信号对象
+- signalValue: float类型，表示要设置的信号值
+- valType: int类型（可选，默认1），0表示总线值，1表示物理值
+返回值：无
+示例：setSignalVal(CAN1.BCM_383.BCM_TyrePressure_LF, 10.0, 1)
+
+##capl规范##
+函数名：setSignal
+参数：
+- message: 报文对象或报文ID
+- signal: 信号名称或信号对象
+- value: float类型，要设置的信号值
+- mode: int类型（可选），0表示原始值，1表示物理值
+返回值：无
+示例1：setSignal(BCM_383, "BCM_TyrePressure_LF", 10.0, 1);
+示例2：setSignal(0x123, "EngineSpeed", 2000, 0);
+
+##capl名##
+setSignal
+
+##转换须知##
+1. 参数顺序不同：CAPL先指定报文后信号，VBA直接使用完整信号路径
+2. CAPL需要单独指定报文和信号，VBA使用点语法访问信号
+3. CAPL的mode参数与VBA的valType参数含义相同但顺序不同
+4. 当使用报文ID时，CAPL需要转换为16进制格式
+
+##转换示例##
+1. CAPL原始代码：
+setSignal(BCM_383, "BCM_TyrePressure_LF", 10.0, 1);
+
+2. 转换后的VBA代码：
+setSignalVal(CAN1.BCM_383.BCM_TyrePressure_LF, 10.0, 1)
+
+3. 关键转换说明：
+- 将CAPL的报文对象和信号名称组合为VBA的点语法路径
+- 保持值和类型参数不变
+- 注意CAPL中信号名称为字符串，VBA中为对象属性

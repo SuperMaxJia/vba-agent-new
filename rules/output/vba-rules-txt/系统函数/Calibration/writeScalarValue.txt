@@ -1,0 +1,35 @@
+1. 函数名
+writeScalarValue
+
+2. 函数描述
+单值标定量标定
+
+3. 函数体
+writeScalarValue(calNode, variable, value)
+
+4. 返回值
+名称：ans
+类型：ResultInfo
+描述：ans.errorInfo为标定失败时返回的错误信息，ans.backPhyValue为标定成功时回读的值
+
+5. 参数
+名称        | 类型           | 描述
+-----------|----------------|--------------------------------
+calNode    | CalNode        | 标定节点对象
+variable   | str/CalVariable| 读取的变量，可以是变量名称或者变量对象
+value      | double         | 标定值
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：标定CAN1网段下calNode1标定节点中名称为"KeEOL_Ctrl"的标定量的值为1.0
+
+示例代码：
+ans = writeScalarValue(CAN1.Calibrations.calNode1, 'KeEOL_Ctrl', 1.0)
+# 或者
+# ans = writeScalarValue(CAN1.Calibrations.calNode1, CAN1.Calibrations.calNode1.characteristics.KeEOL_Ctrl, 1.0)
+writeInfo(ans.backPhyValue)
+
+8. 其他
+无其他相关信息

@@ -1,0 +1,41 @@
+1. 函数名  
+onSOMEIPMessage  
+
+2. 函数描述  
+当接收到指定的数据库中定义的服务的以太网数据包时触发。  
+
+3. 函数体  
+```vba  
+onSOMEIPMessage(DB_SOMEIPPacket, network=None, VLAN=['0x88A8:0x0003', '0x8100:0x0002'])  
+```  
+
+4. 返回值  
+无返回值（事件触发函数）。  
+
+5. 参数  
+| 名称           | 类型             | 描述                                                                 |  
+|----------------|------------------|----------------------------------------------------------------------|  
+| DB_SOMEIPPacket | ETHDBCCommand    | 数据库对象，包含SOME/IP协议定义的服务信息。                          |  
+| network        | NetworkI         | 网段对象，可选参数，默认为None。                                     |  
+| VLAN           | str, list        | VLAN配置，可选参数，默认值为['0x88A8:0x0003', '0x8100:0x0002']。     |  
+
+6. 内置函数  
+无内置函数说明。  
+
+7. 示例  
+**示例功能**：当接收到指定的SOME/IP消息ID的以太网数据包时触发事件。  
+**示例代码**：  
+```vba  
+@onSOMEIPMessageID(DB_SOMEIPPacket)  
+def onEthernetPacketEvent(ETHFrame):  
+    ETHFrame.gettimestamp()  
+```  
+**代码注释**：  
+- `@onSOMEIPMessageID(DB_SOMEIPPacket)`：装饰器，指定触发事件的SOME/IP消息ID。  
+- `onEthernetPacketEvent(ETHFrame)`：事件处理函数，参数`ETHFrame`为接收到的以太网数据帧。  
+- `ETHFrame.gettimestamp()`：获取数据帧的时间戳。  
+
+8. 其他相关说明  
+- 该函数用于监听SOME/IP协议的数据包，适用于车载以太网通信场景。  
+- VLAN参数支持多种格式，包括字符串或列表形式，用于指定VLAN标签。  
+- 该函数通常与数据库配置（`DB_SOMEIPPacket`）配合使用，确保正确解析SOME/IP消息。

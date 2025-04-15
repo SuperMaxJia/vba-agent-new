@@ -1,0 +1,40 @@
+1. 函数名
+readScalarValue
+
+2. 函数描述
+读取单值变量的测量值
+
+3. 函数体
+readScalarValue(calNode, variable, isMeasurement)
+
+4. 返回值
+名称      类型        描述
+ans       ResultInfo  ans.errorInfo为读取失败时返回的错误信息，ans.backPhyValue为读取成功时获取的测量值
+
+5. 参数
+名称          类型          描述
+calNode       CalNode       标定节点对象
+variable      str/CalVariable 读取的变量，可以是变量名称或者变量对象
+isMeasurement bool          是否为测量量，True为测量量，False为标定量
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：读取CAN1网段下calNode1标定节点中名称为"KeEOL_Ctrl"的标定量的测量值
+
+示例代码：
+ans = readScalarValue(CAN1.Calibrations.calNode1, 'KeEOL_Ctrl', False)
+#or
+#ans = readScalarValue(CAN1.Calibrations.calNode1, CAN1.Calibrations.calNode1.characteristics.KeEOL_Ctrl, False)
+writeInfo(ans.backPhyValue)
+
+代码注释：
+- 第一行演示使用变量名作为参数
+- 注释部分演示使用变量对象作为参数
+- 最后使用writeInfo输出读取到的测量值
+
+8. 其他说明
+- 该函数属于Calibration类别下的函数
+- 需要配合标定节点对象使用
+- 返回值是一个包含错误信息和测量值的复合对象

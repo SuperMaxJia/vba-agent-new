@@ -1,0 +1,54 @@
+##功能##
+停止指定的logger模块的录制功能。当loggerConfig参数为空时，根据logger_name和file_name停止VBA中Loggers模块下配置的节点录制；当loggerConfig参数不为空时，忽略logger_name和file_name参数，根据loggerConfig的属性停止自定义录制文件的录制。
+
+##vba规范##
+函数定义：stopLogging(logger_name, file_name, loggerConfig)
+参数：
+- logger_name: String类型，工程Loggers模块下配置的logger节点名称
+- file_name: String类型，录制文件的名称
+- loggerConfig: String类型，logger的配置，用于自定义录制文件
+返回值：无
+
+##capl规范##
+函数定义：loggerStop(loggerName, fileName, config)
+参数：
+- loggerName: char[]类型，logger节点名称
+- fileName: char[]类型，录制文件名称
+- config: char[]类型，logger配置
+返回值：void
+
+示例1：
+```capl
+loggerStop("CAN1_Logger");
+```
+
+示例2：
+```capl
+loggerStop("CAN2_Logger", "logfile.blf", "Config1");
+```
+
+##capl名##
+loggerStop
+
+##转换须知##
+1. 参数类型差异：VBA使用String类型，CAPL使用char[]类型
+2. 参数顺序一致，但CAPL参数名采用驼峰命名法
+3. 函数行为相同，都是停止指定的logger录制
+4. 在CAPL中，空参数可以直接省略，而VBA中可能需要显式传递None
+
+##转换示例##
+1. CAPL原始代码：
+```capl
+loggerStop("MainLogger", "output.asc");
+```
+
+2. 转换后的VBA代码：
+```vba
+stopLogging("MainLogger", "output.asc", None)
+```
+
+3. 关键转换步骤说明：
+- 将CAPL的loggerStop函数名改为VBA的stopLogging
+- 保持参数顺序不变
+- 在VBA中需要显式处理None参数
+- 参数名从驼峰式改为下划线式

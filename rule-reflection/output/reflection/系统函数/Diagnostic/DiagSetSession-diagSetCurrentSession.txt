@@ -1,0 +1,72 @@
+##功能##
+设置诊断节点的当前会话模式，用于配置诊断节点的会话参数，适用于CAN总线诊断场景。主要用途包括激活特定会话模式、处理诊断服务请求和响应。
+
+##vba规范##
+函数名：diagSetCurrentSession  
+参数：
+- diagNode: DiagNode类型，诊断节点对象  
+- sessionId: int类型，会话ID  
+- res_flag: bool类型（可选，默认False）  
+- mode: int类型（可选，默认0）  
+返回值：
+- 成功时返回List类型  
+- 失败时返回int类型错误码（-1到4）  
+
+##capl规范##
+函数名：DiagSetSession  
+参数：
+- node: char[]类型，诊断节点名称  
+- session: int类型，会话ID  
+- flags: dword类型（可选，默认0）  
+返回值：
+- 成功时返回1  
+- 失败时返回0  
+
+示例1：
+```capl
+DiagSetSession("ACU", 1, 0);
+```
+
+示例2：
+```capl
+if(DiagSetSession("ECU", 2) == 0)
+{
+  write("Session activation failed");
+}
+```
+
+##capl名##
+DiagSetSession
+
+##转换须知##
+1. CAPL使用字符串指定节点名，VBA使用DiagNode对象  
+2. CAPL返回值是简单状态码，VBA返回复杂类型  
+3. CAPL的flags参数对应VBA的res_flag和mode组合  
+4. CAPL没有直接对应的错误码细分，需额外处理  
+
+##转换示例##
+CAPL原始代码：
+```capl
+int result = DiagSetSession("ACU", 1, 0);
+if(result == 0) {
+  write("Error: Session activation failed");
+}
+```
+
+转换后的VBA代码：
+```vba
+Dim result As Variant
+result = diagSetCurrentSession(CAN1.DiagNodes.ACU, 1, False, 0)
+If VarType(result) = vbInteger Then
+    Select Case result
+        Case -1: Debug.Print "Error: Diagnostic channel activation failed"
+        Case 1: Debug.Print "Error: Service execution failed"
+        '...其他错误处理
+    End Select
+End If
+```
+
+关键转换说明：
+1. 将CAPL的字符串节点名转换为VBA的DiagNode对象引用  
+2. CAPL的简单状态检查转换为VBA的类型检查和错误码处理  
+3. CAPL的flags参数被拆分为VBA的res_flag和mode参数

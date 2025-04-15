@@ -1,0 +1,55 @@
+##功能##
+该函数用于通过文件句柄获取刷写文件的大小，单位为字节。常用于诊断和刷写流程中，用于检查文件大小是否符合预期或进行内存分配。
+
+##vba规范##
+函数名：diagGetFlashFileSize  
+参数：handle（文件句柄，类型为file）  
+返回值：size（文件大小，类型为int，单位为byte）  
+功能：通过文件句柄获取刷写文件的大小  
+
+##capl规范##
+函数名：fileSize  
+参数：handle（文件句柄，类型为dword）  
+返回值：size（文件大小，类型为long）  
+示例1：  
+```capl
+dword fileHandle;
+long size;
+fileHandle = openFile("flash_drive.s19");
+size = fileSize(fileHandle);
+```  
+示例2：  
+```capl
+on key 's'
+{
+  long size = fileSize(flashHandle);
+  write("Flash file size: %d bytes", size);
+}
+```
+
+##capl名##
+fileSize
+
+##转换须知##
+1. 参数类型差异：VBA使用file类型句柄，CAPL使用dword类型句柄  
+2. 返回值差异：VBA返回int，CAPL返回long  
+3. 函数行为：两者功能一致，但CAPL可能需要额外的文件打开操作  
+4. 特殊情况：CAPL中需确保文件已正确打开并获取有效句柄  
+
+##转换示例##
+CAPL原始代码：  
+```capl
+dword handle = openFile("test.s19");
+long size = fileSize(handle);
+```  
+转换后的VBA代码：  
+```vba
+Dim handle As file
+Dim size As Integer
+handle = diagLoadFlashFile("test.s19")
+size = diagGetFlashFileSize(handle)
+```  
+关键转换步骤：  
+1. 将CAPL的openFile替换为VBA的diagLoadFlashFile  
+2. 将CAPL的fileSize替换为VBA的diagGetFlashFileSize  
+3. 调整变量类型声明（dword→file，long→Integer）

@@ -1,0 +1,52 @@
+##功能##
+判断输入的字符串是否为None或者空字符，返回布尔值。常用于表单验证、数据清洗等场景，确保字符串有效。
+
+##vba规范##
+函数名：strIsBlank
+参数：sourceStr (String类型)
+返回值：flag (Boolean类型)
+功能：检查字符串是否为None或空，返回True/False
+
+##capl规范##
+函数定义：int isStrEmpty(char str[])
+参数：str (char数组)
+返回值：int (1表示空，0表示非空)
+示例1:
+```
+char testStr[10] = "";
+int result = isStrEmpty(testStr);  // 返回1
+```
+示例2:
+```
+char testStr[10] = "hello";
+int result = isStrEmpty(testStr);  // 返回0
+```
+
+##capl名##
+isStrEmpty
+
+##转换须知##
+1. CAPL使用int而非boolean作为返回类型
+2. CAPL参数为char数组而非String对象
+3. CAPL中空字符串判断包含'\0'终止符检查
+4. VBA的None判断在CAPL中不适用
+
+##转换示例##
+CAPL原始代码:
+```
+char input[20] = "";
+if(isStrEmpty(input)) {
+    write("Empty string");
+}
+```
+转换后的VBA代码:
+```
+If strIsBlank("") Then
+    Debug.Print "Empty string"
+End If
+```
+关键转换:
+1. char数组改为String参数
+2. isStrEmpty改为strIsBlank
+3. int返回值改为Boolean
+4. write改为Debug.Print

@@ -1,0 +1,38 @@
+1. 函数名
+readCurveValue
+
+2. 函数描述
+读取Curve变量值信息
+
+3. 函数体
+readCurveValue(calNode, variable)
+
+4. 返回值
+名称      类型            描述
+ans       CurveValueInfo  ans.axisNumber为Curve变量轴点个数, ans.axisValue为Curve变量轴点区域数值列表（个数=AxisNumber），ans.value为Curve变量数值列表（个数=AxisNumber），ans.info为接口执行执行失败的原因
+
+5. 参数
+名称      类型            描述
+calNode   CalNode         标定节点对象
+variable  str/CalVariable 读取的变量，可以是变量名称或者变量对象
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：读取CAN1网段下calNode1标定节点中名称为"ResistTemp_Y"的Curve变量值信息
+
+示例代码：
+ans = readCurveValue(CAN1.Calibrations.calNode1, "ResistTemp_Y")
+#or
+#ans = readCurveValue(CAN1.Calibrations.calNode1, CAN1.Calibrations.calNode1.characteristics.ResistTemp_Y)
+writeInfo(ans.value)
+
+代码注释：
+- 第一行演示通过变量名读取Curve值
+- 注释部分演示通过变量对象读取Curve值
+- 最后一行将读取的值通过writeInfo函数输出
+
+8. 其他说明
+- 返回值CurveValueInfo包含axisNumber、axisValue、value和info四个属性
+- 该函数属于Calibration类函数，用于标定相关操作

@@ -1,0 +1,48 @@
+1. 函数名
+onVariable
+
+2. 函数描述
+指定的系统变量值发生改变时触发此函数，支持同时定义多个onVariable事件（函数名称不能相同）
+
+3. 函数体
+@onVariable(onvariable)
+def onVariableEvent(variable):
+    pass
+
+4. 返回值
+无
+
+5. 参数
+名称          类型            描述
+onvariable    VariableEntity  系统中预定义或用户创建的系统变量，格式：变量组.变量名 如：A.a(A为变量组名，a为变量名)
+variable      VariableEntity  变化后的变量对象，包含属性：oldVal(旧值),newVal（新值）,initVal（初始值）,其属性值得获取可以通过getXxx()方法
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：当监听到变量VehicleGroup.VehicleSpeed值发送改变时触发，并将触发的变量的更改后的值输出到控制台上
+
+示例代码：
+@onVariable(VehicleGroup.VehicleSpeed)
+def onVariableEvent(variable):
+    writeInfo(variable.getInitVal())
+    writeInfo(variable.getNewVal())
+    writeInfo(variable.getOldVal())
+
+代码注释：
+- @onVariable(VehicleGroup.VehicleSpeed) 装饰器用于指定要监听的变量
+- onVariableEvent 是事件处理函数名称
+- variable 参数包含变化后的变量对象
+- writeInfo() 函数用于将值输出到控制台
+- getInitVal() 获取变量初始值
+- getNewVal() 获取变量新值
+- getOldVal() 获取变量旧值
+
+8. 其他说明
+- 可以同时定义多个onVariable事件，但函数名称不能相同
+- 变量对象VariableEntity包含以下属性方法：
+  - oldVal(旧值)
+  - newVal(新值)
+  - initVal(初始值)
+  - getXxx()方法用于获取属性值

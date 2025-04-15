@@ -1,0 +1,30 @@
+1. 函数名
+diagIsPositiveResponse
+
+2. 函数描述
+判断诊断PDU是否是肯定响应
+
+3. 函数体
+diagIsPositiveResponse(pdu)
+
+4. 返回值
+名称    | 类型    | 描述
+-------|---------|---------
+ans    | boolean | True 或者 False
+
+5. 参数
+名称 | 类型 | 描述
+-----|------|-----
+pdu  | List | 诊断PDU数组列表
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：判断诊断PDU是否是否定响应
+示例代码：
+pdu = diagSendRequest(CAN1.DiagNodes.EMS.TesterPresent_Process, False, 0)
+diagIsPositiveResponse(pdu)
+
+8. 其他
+无其他相关信息

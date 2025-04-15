@@ -1,0 +1,31 @@
+1. 函数名
+testStepPass
+
+2. 函数描述
+用于报告测试步骤结果通过，满足期望结果，并将成功的信息输出在测试报告中。
+
+3. 函数体
+testStepPass(levelOfDetail, 'description')
+
+4. 返回值
+无
+
+5. 参数
+名称           类型   描述
+levelOfDetail  str    可以用一个数字来表示这个测试步骤有多重要。在测试报告中，有可能只显示达到某一重要性的测试步骤。0表示"非常重要"，数字越大，重要程度越低。没有明确的规范
+description    str    表示此测试用例步骤的描述信息，字符串类型，也可以不写，默认是空字符，会写在测试报告中
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：当测试结果res等于1时，表明该测试用例通过。
+示例代码：
+@testcase
+def checkUndefinedMessage():
+    res = ...
+    if (res == 1):
+        testStepPass(2.0, 'Communication prepared pass')
+
+8. 其他
+无其他相关信息

@@ -1,0 +1,68 @@
+##功能##
+该函数用于在接收到指定IP地址的以太网数据包时触发事件处理。主要应用于网络通信监控、特定IP数据包捕获和分析等场景，支持IP地址通配符匹配和VLAN过滤功能。
+
+##vba规范##
+函数定义：onEthernetPacketByIP(ipaddress, network=None, VLAN=['0x88A8:*', '0x8100:0x0002-0x0005'])
+参数：
+- ipaddress: list类型，包含IP地址或通配符的列表（如['192.168.1.*', '192.168.1.2']）
+- network: NetworkI类型（可选），指定网段对象
+- VLAN: str或list类型，指定VLAN过滤规则
+返回值：无（事件触发函数）
+调用方式：通过装饰器方式注册IP过滤规则
+
+##capl规范##
+CAPL中没有完全对应的内置函数，但可以通过以下方式实现类似功能：
+1. 使用on ethernetPacket事件处理所有以太网数据包
+2. 在事件处理函数中手动检查IP地址和VLAN标签
+
+示例1：
+on ethernetPacket
+{
+  if(ipMatch(this.dst, "192.168.1.*") || ipMatch(this.dst, "192.168.1.2"))
+  {
+    // 处理匹配的报文
+    write("Received packet for IP %s", this.dst);
+  }
+}
+
+示例2：
+on ethernetPacket
+{
+  if(ipMatch(this.dst, "192.168.1.*") && 
+     (this.vlanId == 0x88A8 || (this.vlanId >= 0x0002 && this.vlanId <= 0x0005)))
+  {
+    // 处理匹配的报文
+    write("Received VLAN filtered packet");
+  }
+}
+
+##capl名##
+on
+
+##转换须知##
+1. CAPL中没有直接的IP过滤装饰器，需要手动实现过滤逻辑
+2. CAPL中的IP匹配需要使用ipMatch函数而非通配符
+3. VLAN过滤需要在事件处理函数中显式检查
+4. CAPL中的以太网帧访问方式与VBA不同（使用this关键字）
+5. 时间戳获取方式不同（CAPL使用timeNow()函数）
+
+##转换示例##
+CAPL原始代码：
+on ethernetPacket
+{
+  if(ipMatch(this.dst, "192.168.1.*"))
+  {
+    write("Packet received at %f", timeNow());
+  }
+}
+
+转换后的VBA代码：
+@onEthernetPacketByIP(['192.168.1.*'])
+def onEthernetPacketEvent(ethFrame):
+    ethFrame.getTimestamp()
+
+关键转换说明：
+1. CAPL的on ethernetPacket事件转换为VBA的装饰器方式
+2. ipMatch函数转换为VBA的IP通配符列表
+3. timeNow()转换为getTimestamp()方法
+4. CAPL的write输出在VBA中可能需要其他日志记录方式

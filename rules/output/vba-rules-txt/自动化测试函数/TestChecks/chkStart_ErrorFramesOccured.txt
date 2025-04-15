@@ -1,0 +1,41 @@
+1. 函数名  
+chkStart_ErrorFramesOccured  
+
+2. 函数描述  
+该函数用于启动错误帧检测功能，用于自动化测试中监控总线上的错误帧发生情况。  
+
+3. 函数体  
+chkStart_ErrorFramesOccured 是自动化测试函数的一部分，用于在测试过程中启动错误帧的检测。当总线通信中出现错误帧时，该函数会记录错误帧的发生情况，并可用于后续的测试结果分析和报告。  
+
+4. 返回值  
+无明确返回值说明（根据上下文推断可能返回操作状态或布尔值，但文档未明确说明）。  
+
+5. 参数  
+无明确输入参数说明（根据上下文推断可能无需参数，但文档未明确说明）。  
+
+6. 内置函数  
+无直接关联的内置函数说明（需结合其他错误帧检测相关函数使用，如 `chkCreate_ErrorFramesOccured`）。  
+
+7. 示例  
+示例功能：启动错误帧检测并记录测试结果。  
+示例代码：  
+```vba
+Sub TestErrorFrames()  
+    ' 启动错误帧检测  
+    chkStart_ErrorFramesOccured  
+    ' 其他测试逻辑...  
+    If chkQuery_NumEvents("ErrorFrames") > 0 Then  
+        testStepFail "检测到错误帧"  
+    Else  
+        testStepPass "未检测到错误帧"  
+    End If  
+End Sub  
+```  
+代码注释：  
+- `chkStart_ErrorFramesOccured` 启动错误帧监控。  
+- `chkQuery_NumEvents` 查询错误帧事件数量。  
+- `testStepFail` 和 `testStepPass` 为测试结果记录函数。  
+
+8. 其他相关说明  
+- 需与 `chkCreate_ErrorFramesOccured` 配合使用以创建检测条件。  
+- 属于自动化测试函数集（TestChecks），通常用于总线通信可靠性验证场景。

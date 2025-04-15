@@ -1,0 +1,28 @@
+1. 函数名
+ethGetLinkStatus
+
+2. 函数描述
+用于获取通道Link状态
+
+3. 函数体
+ethGetLinkStatus(network)
+
+4. 返回值
+名称: res
+类型: int
+描述: int类型，0代表未Link，1代表Link，-1代表获取失败
+
+5. 参数
+名称       类型     描述
+network    Network  网段对象
+
+6. 内置函数
+无
+
+7. 示例
+示例功能: 用于获取通道Link状态
+示例代码: ethGetLinkStatus(network)
+代码注释: 无
+
+8. 其他和函数或变量强相关的内容
+无

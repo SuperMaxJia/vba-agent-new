@@ -1,0 +1,69 @@
+##功能##
+该函数用于启动自动化检测CAN/LIN消息中DLC（数据长度码）不一致的功能。通过持续监控总线消息，比对实际接收到的消息DLC与数据库配置的DLC是否一致，若不一致则记录违规事件。适用于测试验证阶段，确保消息长度符合规范。
+
+##vba规范##
+函数名：chkStart_InconsistentDLC  
+函数类型：Sub（无返回值）  
+参数：无  
+内置依赖：  
+- getMessageData  
+- getNodeMessageData  
+- writeWarningInfo  
+行为：启动后台检测进程，通过测试报告输出结果  
+
+##capl规范##
+函数名：checkDLC  
+参数：无  
+返回值：void  
+内置依赖：  
+- on message（消息处理事件）  
+- write（日志输出）  
+- $DLC（内置DLC变量）  
+示例1：  
+```capl
+on start {
+  checkDLC();
+  write("DLC不一致检测已启动");
+}
+```  
+示例2：  
+```capl
+on message * {
+  if (this.dlc != $DLC) {
+    write("DLC不一致，ID:0x%x", this.id);
+  }
+}
+```
+
+##capl名##
+checkDLC
+
+##转换须知##
+1. CAPL使用事件驱动模型（on message），VBA需主动轮询或回调  
+2. CAPL直接访问$DLC系统变量，VBA需通过getMessageData获取  
+3. CAPL的write对应VBA的writeWarningInfo  
+4. CAPL无显式启动函数，检测逻辑通常直接嵌入事件处理  
+
+##转换示例##
+CAPL原始代码：  
+```capl
+on message 0x100 {
+  if (this.dlc != 8) {
+    write("Error: DLC mismatch on ID 0x100");
+  }
+}
+```  
+转换后的VBA代码：  
+```vba
+Sub chkMsg_0x100()
+  Dim msgData As Variant
+  msgData = getMessageData(0x100)
+  If UBound(msgData) + 1 <> 8 Then
+    writeWarningInfo "Error: DLC mismatch on ID 0x100"
+  End If
+End Sub
+```  
+关键转换说明：  
+1. CAPL的on message事件转换为VBA的主动查询函数  
+2. this.dlc替换为UBound计算数组长度  
+3. write改为writeWarningInfo保持输出一致性

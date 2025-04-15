@@ -1,0 +1,32 @@
+1. 函数名
+setNodeSignalVal
+
+2. 函数描述
+设置ECU仿真节点下该信号的值
+
+3. 函数体
+setNodeSignalVal(DBSignal, signalValue, valType=1)
+
+4. 返回值
+无
+
+5. 参数
+名称        类型                          描述
+dbSignal    CANDBCSiganl类型或LINDBCSignal类型  数据库中映射出来的信号对象
+signalValue int                            信号值
+valType     int                            0代表设置总线值，1代表设置物理值（默认值1）
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：设置报文Message的信号signal的物理值为10.0
+示例代码：
+@onKey('K')
+def onKeyEvent():
+    setNodeSignalVal(CAN1.BCM.BCM_383.BCM_TyrePressure_LF, 10.0, valType=1)
+
+8. 其他说明
+- 该函数用于ECU仿真环境中的信号值设置
+- valType参数默认为1（物理值），如需设置总线值需显式指定valType=0
+- 信号对象需要通过数据库映射获取（如示例中的CAN1.BCM.BCM_383.BCM_TyrePressure_LF）

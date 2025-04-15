@@ -1,0 +1,47 @@
+##功能##
+该函数用于设置ECU仿真节点中报文的激活状态，可以针对特定节点下的所有报文或指定报文列表进行操作。主要用于测试环境中动态控制ECU节点的报文发送状态。
+
+##vba规范##
+函数定义：setNodeMsgsActiveState(ecuNode, active, msgs=[])
+参数：
+- ecuNode: ECUNode类型，表示目标节点对象
+- active: boolean类型，设置激活状态(True/False)
+- msgs: list[CANDBCMessage]类型，可选参数，默认空列表。当值为1时操作节点全部报文
+返回值：无
+
+##capl规范##
+函数定义：setNodeMsgState(nodeName, state, messageName="")
+参数：
+- nodeName: char[]类型，表示目标节点名称
+- state: int类型，0表示非激活，1表示激活
+- messageName: char[]类型，可选参数，默认空字符串。当空字符串时操作节点全部报文
+返回值：void
+
+示例1：
+// 激活Node1节点的所有报文
+setNodeMsgState("Node1", 1);
+
+示例2：
+// 停用Node2节点的特定报文
+setNodeMsgState("Node2", 0, "MsgName1");
+
+##capl名##
+setNodeMsgState
+
+##转换须知##
+1. 参数类型差异：VBA使用对象类型，CAPL使用字符串和整型
+2. 参数数量差异：VBA的msgs参数特殊值1对应CAPL空字符串
+3. 状态表示差异：VBA用boolean，CAPL用0/1整型
+4. 节点指定方式：VBA通过对象层级访问，CAPL直接使用节点名称字符串
+
+##转换示例##
+1. CAPL原始代码：
+setNodeMsgState("RDC", 1, "");
+
+2. 转换后的VBA代码：
+setNodeMsgsActiveState(CAN1.RDC, True, 1)
+
+3. 关键转换说明：
+- 节点名称"RDC"转换为对象访问方式CAN1.RDC
+- 状态1转换为True
+- 空字符串参数转换为特殊值1表示操作所有报文

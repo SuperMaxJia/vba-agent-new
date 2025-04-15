@@ -1,0 +1,70 @@
+1. 函数名
+onLINMessage
+
+2. 函数描述
+接收到指定LIN报文时会触发onLINMessage事件的执行，支持同时定义多个onLINMessage事件（函数名称不能相同）。
+
+3. 函数体
+@onLINMessage(onmsg)
+def onLINMessageEvent(linMsg):
+    pass
+
+4. 返回值
+无返回值。
+
+5. 参数
+情况1：入参只有一个
+| 名称        | 类型       | 描述                                                                 |
+|-------------|------------|----------------------------------------------------------------------|
+| message_id  | int        | 报文ID：指定报文的id，可以输入十进制，如：100；十六进制,如：0x10     |
+| ID范围字符串| str        | ID范围字符串:比如‘0x12-0x16’                                        |
+| ID列表      | list[str]  | ID列表:比如[0x10,‘0x12-0x16’]                                       |
+| LIN报文对象 | 报文对象   | 可以是LINMsg对象或者报文对象:可以是LINDBCMessage对象 , '*', str      |
+|             |            | 代表该网段下所有的报文                                              |
+
+情况2：入参有两个（不影响第一个参数类型）
+| 名称        | 类型       | 描述                                                                 |
+|-------------|------------|----------------------------------------------------------------------|
+| 第一个参数  | NetWork    | 隐藏网段参数:默认不显示，代表从所有网段匹配数据，如果需要设置网段，可以写上网段对象 |
+
+接受参数：
+| 名称   | 类型     | 描述                                                                 |
+|--------|----------|----------------------------------------------------------------------|
+| linMsg | linMsg   | 从总线上接收到的报文对象（LINMsg类），包含属性：id, dlc, datas, timestamp, frametype, startTimestamp |
+
+6. 内置函数
+无内置函数。
+
+7. 示例
+示例1：当出现报文的ID为10（十进制）的报文时触发，并将'收到错误帧'输出到控制台上
+@onLINMessage(10)
+def onLINMessageEvent(linMsg):
+    writeInfo(linMsg.getData())
+
+示例2：出现LIN报文就触发
+@onLINMessage('*')
+def onLINMessageEvent(linMsg):
+    writeInfo(linMsg.getData())
+
+示例3：出现来自DBC中定义的报文对象的ID就触发
+@onLINMessage(LIN.VehicleSpeed)
+def onLINMessageEvent(linMsg):
+    writeInfo(linMsg.getData())
+
+示例4：出现LinMsg对象定义的报文ID就触发
+@onLINMessage(linMsg)
+def onLINMessageEvent(linMsg):
+    writeInfo(linMsg.getData())
+
+示例5：任意网段出现符合上述的报文ID就触发
+@onLINMessage([0x11, '0x100-0x120'])
+def onLINMessageEvent(linMsg):
+    writeInfo(linMsg.getData())
+
+示例6：LIN1网段上出现ID为0x11的报文就触发
+@onLINMessage(0x11, LIN1)
+def onLINMessageEvent(linMsg):
+    writeInfo(linMsg.getData())
+
+8. 其他和函数或变量强相关的内容
+- 属性值的获取可以用对应的getXxx()方法，代码提示需要输入get字符后会出现。

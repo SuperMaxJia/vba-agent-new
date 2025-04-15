@@ -1,0 +1,60 @@
+##功能##
+该函数用于动态配置LIN网络的调度表，支持预定义报文和自定义报文的混合调度。在实际应用中，常用于LIN网络的初始化配置或运行时调度表更新，确保LIN网络按照指定的报文周期进行通信。
+
+##vba规范##
+函数名：setLINSchedulerService  
+参数：  
+- scheduler_list：List类型，包含要调度的LIN报文对象列表  
+- lin_network：NetworkI类型，指定目标LIN网段对象  
+返回值：无  
+功能：将指定的LIN报文列表设置为目标LIN网段的调度表  
+
+##capl规范##
+在CAPL中，可以使用`linSetSchedule`函数来设置LIN调度表。该函数需要指定LIN通道和调度表名称。  
+示例1：  
+```capl
+linSetSchedule(1, "MasterSchedule");
+```  
+示例2：  
+```capl
+// 先定义调度表
+variables {
+  msTimer timer1;
+  message LIN1.Msg1 msg1;
+  message LIN1.Msg2 msg2;
+}
+
+on timer timer1 {
+  output(msg1);
+  output(msg2);
+  setTimer(timer1, 10);
+}
+
+// 设置调度表
+linSetSchedule(1, "CustomSchedule");
+```  
+
+##capl名##
+linSetSchedule
+
+##转换须知##
+1. CAPL使用通道号(1,2等)指定LIN网络，而VBA使用LIN网段对象(LIN1等)  
+2. CAPL需要预定义调度表，而VBA可以直接传入报文列表  
+3. CAPL的调度表设置是静态的，而VBA可以动态修改  
+4. 在CAPL中自定义报文需要先定义message变量  
+
+##转换示例##
+CAPL原始代码：  
+```capl
+linSetSchedule(1, "MasterSchedule");
+```  
+转换后的VBA代码：  
+```vba
+linframer1 = LIN1.Msg1
+linframer2 = LIN1.Msg2
+setLINSchedulerService([linframer1, linframer2], LIN1)
+```  
+关键转换步骤：  
+1. 将CAPL的通道号1对应到VBA的LIN1网段  
+2. 将CAPL的调度表名称转换为VBA的报文对象列表  
+3. 注意VBA需要显式创建报文对象列表

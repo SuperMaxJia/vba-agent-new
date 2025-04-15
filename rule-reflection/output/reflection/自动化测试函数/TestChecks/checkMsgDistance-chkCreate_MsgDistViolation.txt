@@ -1,0 +1,71 @@
+##功能##
+该函数用于检测在参考报文发送后，观测报文的接收时间是否在指定的最小和最大时间间隔范围内。主要用于验证报文时序是否符合预期，常见于汽车网络通信测试中，如CAN或LIN总线消息的时序验证。
+
+##vba规范##
+函数名：chkCreate_MsgDistViolation  
+返回值：int（返回创建的检测对象ID，-1表示失败）  
+参数：  
+- refmessage: CANDBCMessage, str, int, LINDBCMessage, CANMessage, LINMsg（参考报文对象）  
+- obsmessage: CANDBCMessage, str, int, LINDBCMessage, CANMessage, LINMsg（观测报文对象）  
+- netWork: Network（网段对象）  
+- aMinDistance: int（最小间隔时间，毫秒）  
+- aMaxDistance: int（最大间隔时间，毫秒）  
+内置函数：  
+- chkControl_Start: 启动检测对象  
+- testAddCondition: 将统计信息加入测试报告  
+- testWaitForTimeout: 等待指定时间（毫秒）  
+- testRemoveCondition: 移除统计信息  
+
+##capl规范##
+函数名：checkMsgDistance  
+返回值：int（返回检测对象ID，-1表示失败）  
+参数：  
+- refMsg: message（参考报文）  
+- obsMsg: message（观测报文）  
+- minTime: int（最小间隔时间，毫秒）  
+- maxTime: int（最大间隔时间，毫秒）  
+示例1：  
+```capl
+int checkId;
+checkId = checkMsgDistance(ReferenceMsg, MsgToObserve, 90, 110);
+testAddCondition(checkId);
+testWaitForTimeout(1000);
+testRemoveCondition(checkId);
+```
+示例2：  
+```capl
+int checkId;
+checkId = checkMsgDistance(RefMsg, ObsMsg, 50, 100);
+chkControl_Start(checkId);
+```
+
+##capl名##
+checkMsgDistance
+
+##转换须知##
+1. 参数类型差异：VBA支持多种报文类型（如CANDBCMessage、LINMsg等），而CAPL仅使用message类型。  
+2. 返回值类型：两者均为int，但CAPL可能更严格依赖特定环境。  
+3. 函数行为：VBA需要显式调用chkControl_Start启动检测，CAPL可能隐式启动。  
+4. 特殊情况：CAPL可能不支持直接传递字符串或整数作为报文参数，需先转换为message对象。  
+
+##转换示例##
+CAPL原始代码：  
+```capl
+int checkId;
+checkId = checkMsgDistance(RefMsg, ObsMsg, 90, 110);
+testAddCondition(checkId);
+testWaitForTimeout(1000);
+testRemoveCondition(checkId);
+```
+转换后的VBA代码：  
+```vba
+Dim checkId As Integer
+checkId = chkStart_MsgDistViolation(RefMsg, ObsMsg, 90, 110)
+testAddCondition checkId
+testWaitForTimeout 1000
+testRemoveCondition checkId
+```
+关键转换步骤：  
+1. 函数名从checkMsgDistance改为chkStart_MsgDistViolation。  
+2. 参数顺序和类型保持一致。  
+3. VBA中调用语法改为使用括号和逗号分隔参数。

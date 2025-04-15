@@ -1,0 +1,60 @@
+##功能##
+向指定的以太网通道发送一条自定义的以太网报文，常用于发送ARP等自定义协议报文。
+
+##vba规范##
+函数名：sendETHMsg  
+参数：  
+- datas(bytes类型)：要发送的字节数组  
+- eth_network(Network对象)：目标以太网通道如ETH1  
+返回值：无  
+
+##capl规范##
+函数名：output  
+参数：  
+- data(byte数组)：要发送的字节数据  
+- channel(以太网通道标识符)：如"ETH1"  
+返回值：无  
+
+示例1：发送ARP报文  
+```capl
+byte arpData[64];
+// 填充ARP数据
+output(arpData, "ETH1");
+```
+
+示例2：发送自定义以太网帧  
+```capl
+byte ethFrame[14] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0x11,0x22,0x33,0x44,0x55,0x66,0x08,0x06};
+output(ethFrame, "ETH2");
+```
+
+##capl名##
+output
+
+##转换须知##
+1. CAPL使用字符串指定通道名，VBA使用Network对象
+2. CAPL的output函数是通用输出函数，而VBA的sendETHMsg是专用函数
+3. CAPL需要手动构造完整以太网帧，VBA可通过对象方法构造
+4. 字节数组在两种语言中的表示方式不同
+
+##转换示例##
+CAPL原始代码：
+```capl
+byte arpFrame[42] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0x11,0x22,0x33,0x44,0x55,0x66,0x08,0x06};
+output(arpFrame, "ETH1");
+```
+
+转换后的VBA代码：
+```vba
+Dim arpMsg As ARPMsg
+Set arpMsg = New ARPMsg
+arpMsg.setEtherDHost(&HFFFFFFFFFFFF)
+arpMsg.setEtherSHost(&H112233445566)
+' 设置其他ARP字段
+sendETHMsg arpMsg.getARPData(), ETH1
+```
+
+关键转换说明：
+1. CAPL的字节数组转换为VBA的ARPMsg对象
+2. CAPL的output调用转换为sendETHMsg调用
+3. 通道标识符从字符串"ETH1"转换为ETH1对象

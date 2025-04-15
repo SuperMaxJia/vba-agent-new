@@ -1,0 +1,71 @@
+##功能##
+读取Map变量指定区域内指定索引处的测量值。用于从标定节点的Map类型变量中获取特定行列索引处的物理值，支持值区域、X轴区域和Y轴区域三种区域类型。
+
+##vba规范##
+函数定义：readMapValueByIndex(calNode, variable, columnIndex, rowIndex, region)
+参数：
+- calNode: CalNode类型，标定节点对象
+- variable: str或CalVariable类型，变量名或变量对象
+- columnIndex: int类型，列索引(x方向)
+- rowIndex: int类型，行索引(y方向)
+- region: int类型，区域类型(0:值区域,1:X轴区域,2:Y轴区域)
+返回值：ResultInfo类型，包含errorInfo(错误信息)和backPhyValue(物理值)
+
+##capl规范##
+函数定义：getMapValue(node, variable, xIndex, yIndex, area)
+参数：
+- node: 标定节点引用
+- variable: char[]或变量引用，变量名或变量对象
+- xIndex: dword类型，列索引
+- yIndex: dword类型，行索引
+- area: int类型，区域类型(0:值区域,1:X轴区域,2:Y轴区域)
+返回值：float类型，直接返回物理值，错误时返回0xFFFFFFFF
+
+示例1：
+```capl
+float value;
+value = getMapValue(CAN1::Calibrations::calNode1, "NewMap", 0, 0, 0);
+write("Value: %f", value);
+```
+
+示例2：
+```capl
+float xAxisValue;
+xAxisValue = getMapValue(CAN1::Calibrations::calNode1, CAN1::Calibrations::calNode1::NewMap, 1, 0, 1);
+if(xAxisValue != 0xFFFFFFFF) {
+  write("X-Axis Value: %f", xAxisValue);
+}
+```
+
+##capl名##
+getMapValue
+
+##转换须知##
+1. 参数差异：CAPL使用::作为命名空间分隔符，VBA使用.
+2. 返回值差异：CAPL直接返回float值，错误时返回0xFFFFFFFF；VBA返回包含错误信息的结构体
+3. 错误处理：CAPL需要手动检查0xFFFFFFFF，VBA通过结构体判断
+4. 变量引用：CAPL支持字符串和直接引用两种方式，VBA也类似
+
+##转换示例##
+1. CAPL原始代码：
+```capl
+float val = getMapValue(CAN1::Calibrations::calNode1, "EngineMap", 2, 3, 0);
+if(val != 0xFFFFFFFF) {
+  write("Map value: %f", val);
+}
+```
+
+2. 转换后VBA代码：
+```vba
+Dim result As ResultInfo
+result = readMapValueByIndex(CAN1.Calibrations.calNode1, "EngineMap", 2, 3, 0)
+If result.errorInfo = "" Then
+    writeInfo "Map value: " & result.backPhyValue
+End If
+```
+
+3. 关键转换说明：
+- 将::替换为.访问操作符
+- 添加错误处理逻辑
+- 返回值从直接获取改为结构体访问
+- 输出函数从write改为writeInfo

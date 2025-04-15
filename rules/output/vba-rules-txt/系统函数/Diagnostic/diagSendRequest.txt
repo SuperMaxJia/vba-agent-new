@@ -1,0 +1,38 @@
+1. 函数名
+diagSendRequest
+
+2. 函数描述
+发送诊断服务
+
+3. 函数体
+diagSendRequest(service, res_flag=False, mode=0)
+
+4. 返回值
+情况1：正确读值
+名称  类型  描述
+list  List  正常pdu返回List类型
+
+情况2：异常情况
+名称  类型  描述
+res   int   返回-1，代表诊断通道激活失败
+            返回1，代表服务执行失败（其他情况)
+            返回2，代表服务发送失败
+            返回3，代表服务响应超时
+            返回4，代表响应PDU解析失败
+
+5. 参数
+名称        类型        描述
+service     DiagService 诊断服务对象，DiagService类
+res_flag    boolean     是否禁止肯定响应，布尔类型
+mode        int         发送模式，0代表物理寻址，1代表功能寻址
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：发送CAN1网段中ACU诊断节点的EnableRxAndEnableTx_Control服务
+示例代码：
+diagSendRequest(CAN1.DiagNodes.ACU.EnableRxAndEnableTx_Control, False, 0)
+
+8. 其他
+无

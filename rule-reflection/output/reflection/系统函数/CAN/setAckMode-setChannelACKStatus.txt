@@ -1,0 +1,57 @@
+##功能##
+设置CAN通道的ACK（应答）状态，用于控制节点是否对接收到的报文发送ACK应答。常用于CAN总线仿真或测试场景。
+
+##vba规范##
+函数定义：setChannelACKStatus(network, status=True)
+参数：
+- network: Network类型，表示目标CAN网段对象（如CAN1、CAN2）
+- status: bool类型，表示ACK开关状态（True为打开）
+返回值：无（Void）
+默认值：status参数默认为True
+
+##capl规范##
+函数定义：setAckMode(channel, mode)
+参数：
+- channel: 整数类型，表示CAN通道号（如1表示CAN1）
+- mode: 整数类型，0表示关闭ACK，1表示打开ACK
+返回值：无（Void）
+
+示例1：
+```capl
+// 设置CAN1通道ACK为打开
+setAckMode(1, 1);
+```
+
+示例2：
+```capl
+// 设置CAN2通道ACK为关闭
+setAckMode(2, 0);
+```
+
+##capl名##
+setAckMode
+
+##转换须知##
+1. 参数差异：VBA使用Network对象，CAPL使用整数通道号
+2. 状态表示：VBA用布尔值，CAPL用0/1整数
+3. 默认值：VBA有默认True值，CAPL无默认值需显式指定
+4. 通道表示：VBA用CAN1/CAN2对象，CAPL用1/2数字
+
+##转换示例##
+CAPL原始代码：
+```capl
+// 设置CAN1通道ACK为打开
+setAckMode(1, 1);
+```
+
+转换后的VBA代码：
+```vba
+' 设置CAN1通道ACK为打开
+setChannelACKStatus CAN1, True
+```
+
+关键转换步骤：
+1. 通道表示：将数字1转换为CAN1对象
+2. 状态值：将1转换为True
+3. 函数名：setAckMode改为setChannelACKStatus
+4. 参数格式：CAPL用括号，VBA用空格分隔

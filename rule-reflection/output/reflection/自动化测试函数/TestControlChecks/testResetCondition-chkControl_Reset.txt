@@ -1,0 +1,55 @@
+##功能##
+该函数用于重置检测事件的统计状态，使其重新开始计数。主要用于自动化测试中需要分段统计或重置统计的场景，例如在测试过程中需要清除之前的统计结果重新开始计数。
+
+##vba规范##
+函数名：chkControl_Reset
+参数：object（检测对象）
+返回值：int（0表示成功，-1表示失败）
+功能：初始化检测事件状态
+
+##capl规范##
+函数名：testResetCondition
+参数：long conditionId（检测条件ID）
+返回值：int（0表示成功，-1表示失败）
+功能：重置指定检测条件的统计状态
+
+示例1：
+// 创建检测条件
+long checkId = testCreateMsgOccurrenceCondition(CAN1::Message1, 2);
+// 重置统计
+testResetCondition(checkId);
+
+示例2：
+// 创建错误帧检测
+long errCheck = testCreateErrorFrameCondition(CAN1, 5);
+// 测试过程中重置
+testResetCondition(errCheck);
+
+##capl名##
+testResetCondition
+
+##转换须知##
+1. 参数差异：VBA使用object类型，而CAPL使用long类型的conditionId
+2. 返回值相同：都是int类型，0成功-1失败
+3. 行为差异：CAPL中需要先显式创建检测条件，而VBA可能封装了更多内部逻辑
+4. 异常处理：CAPL中需要确保conditionId有效，否则返回-1
+
+##转换示例##
+1. CAPL原始代码：
+long checkId = testCreateMsgOccurrenceCondition(CAN1::Message1, 2);
+testWaitForTimeout(1000);
+testResetCondition(checkId);
+testWaitForTimeout(1000);
+testRemoveCondition(checkId);
+
+2. 转换后的VBA代码：
+checkId = chkStart_MsgOccurrenceCount(CAN, CAN.MSG, 2)
+testWaitForTimeout(1000)
+chkControl_Reset(checkId)
+testWaitForTimeout(1000)
+testRemoveCondition(checkId)
+
+3. 关键转换说明：
+- testCreateMsgOccurrenceCondition → chkStart_MsgOccurrenceCount
+- testResetCondition → chkControl_Reset
+- 保持相同的超时和条件移除逻辑

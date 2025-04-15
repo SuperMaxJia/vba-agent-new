@@ -1,0 +1,35 @@
+1. 函数名
+ethUDPSetConfig
+
+2. 函数描述
+建立UDP的Client或者Sever模块，打开UDP监听
+
+3. 函数体
+ethUDPSetConfig(network, source_mac_str, source_ip_str, gateway_str, netmask_str, vlan, src_port, as_server)
+
+4. 返回值
+socketid (int) - 如果建立错误返回错误码，-1代表该接口调用时出现错误
+
+5. 参数
+| 名称           | 类型     | 描述                          |
+|----------------|----------|-------------------------------|
+| network        | NetworkI | 网段信息                      |
+| source_mac_str | str      | 本地mac地址                   |
+| source_ip_str  | str      | 本地IP地址                    |
+| gateway_str    | str      | 本地网关                      |
+| netmask_str    | str      | 本地子网掩码                  |
+| vlan           | int      | 本地vlan                      |
+| src_port       | int      | 本地端口号                    |
+| as_server      | bool     | 是否将90A设备配置为服务器     |
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：建立UDP的Client或者Sever模块，打开UDP监听
+示例代码：
+ethUDPSetConfig(network, source_mac_str, source_ip_str, gateway_str, netmask_str, vlan, src_port, as_server)
+代码注释：无
+
+8. 其他和函数或变量强相关的内容
+无

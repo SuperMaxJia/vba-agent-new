@@ -1,0 +1,42 @@
+1. 函数名  
+sendETHMsg  
+
+2. 函数描述  
+向指定的通道发送一条以太网报文。  
+
+3. 函数体  
+```vba
+sendETHMsg(datas, eth_network)
+```  
+
+4. 返回值  
+无返回值（void）。  
+
+5. 参数  
+
+| 名称         | 类型      | 描述                         |  
+|--------------|-----------|------------------------------|  
+| datas        | bytes     | 发送的字节数组               |  
+| eth_network  | Network   | 网段对象，如ETH1             |  
+
+6. 内置函数  
+无。  
+
+7. 示例  
+**示例功能**：创建一条自定义的ARP报文，并将其发到总线上。  
+
+**示例代码**：  
+```vba
+arpMsg = ARPMsg()  
+arpMsg.setEtherDHost(0xFFFFFFFFFFFF)  '设置目的Mac地址  
+arpMsg.setEtherSHost(0x112233445566)  '设置源Mac地址  
+arpMsg.setARPop(0x0002)               '设置ARP操作字段,1：ARP请求 2：ARP应答 3：RARP请求 4：RARP应答  
+arpMsg.setARPSMacAddress(0x112233445566)  '设置ARP Mac地址  
+arpMsg.setARPSIPAddress("192.168.1.0")    '设置ARP IP地址  
+arpMsg.setARPCMacAddress(0x223344554455)  '设置客户端ARP MAC地址  
+arpMsg.setARPCIPAddress("192.168.1.10")   '设置客户端ARP IP地址  
+sendETHMsg(arpMsg.getARPData(), ETH1)  
+```  
+
+8. 其他和函数或变量强相关的内容  
+无。

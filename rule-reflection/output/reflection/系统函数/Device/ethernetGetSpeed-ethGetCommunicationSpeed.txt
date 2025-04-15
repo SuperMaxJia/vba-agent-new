@@ -1,0 +1,51 @@
+##功能##
+该函数用于获取指定以太网通道的通信速率，返回值为100（100Mbps）、1000（1000Mbps）、0（自适应速率）或-1（获取失败）。主要用于网络诊断和配置验证场景。
+
+##vba规范##
+函数定义：ethGetCommunicationSpeed(network)
+参数：network（Network类型，表示目标网段对象）
+返回值：int类型（100/1000/0/-1）
+行为：同步调用，立即返回当前速率状态
+
+##capl规范##
+函数定义：ethernetGetSpeed(channel)
+参数：channel（long类型，表示CANoe以太网通道号）
+返回值：long类型（100/1000/0/-1）
+示例1：
+```capl
+long speed;
+speed = ethernetGetSpeed(1); // 获取通道1的速率
+write("Current speed: %d Mbps", speed);
+```
+示例2：
+```capl
+if(ethernetGetSpeed(ethGetChannel("ETH1")) == 1000) {
+    write("Gigabit Ethernet detected");
+}
+```
+
+##capl名##
+ethernetGetSpeed
+
+##转换须知##
+1. 参数差异：VBA使用Network对象，CAPL使用通道编号
+2. 返回值类型相同但含义需注意：0在VBA表示自适应，CAPL可能表示未知
+3. CAPL需要预定义通道映射关系
+4. 错误处理：CAPL需额外检查通道有效性
+
+##转换示例##
+1. CAPL原始代码：
+```capl
+long result = ethernetGetSpeed(1);
+```
+
+2. 转换后VBA代码：
+```vba
+Dim result As Integer
+result = ethGetCommunicationSpeed(network)
+```
+
+3. 关键转换说明：
+- 将CAPL的通道数字1替换为VBA的network对象
+- 保持相同的返回值处理逻辑
+- 注意VBA的Integer类型对应CAPL的long类型

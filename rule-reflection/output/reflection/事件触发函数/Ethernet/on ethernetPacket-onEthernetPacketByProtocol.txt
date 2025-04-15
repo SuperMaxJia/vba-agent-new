@@ -1,0 +1,59 @@
+##功能##
+该函数用于在接收到指定协议的以太网数据包时触发回调函数。主要用于网络通信监控、协议分析和数据包捕获等场景，可以监听特定协议（如TCP/UDP）的数据包并处理其内容。
+
+##vba规范##
+函数名：onEthernetPacketByProtocol
+参数：
+- protocol: 字符串或列表，指定要监听的协议类型，如['TCP','UDP']
+- network: NetworkI类型对象，指定网段
+- VLAN: 字符串或列表，指定VLAN配置，默认值为['0x88A8:0x0003','0x8100:0x0002']
+返回值：无（事件回调函数）
+特性：使用装饰器语法，需要配合回调函数使用
+
+##capl规范##
+在CAPL中，对应功能通过on ethernetPacket事件实现：
+on ethernetPacket([protocol], [VLAN])
+参数：
+- protocol: 整数或枚举，指定协议类型（如ipPROTOCOL_TCP）
+- VLAN: 整数，指定VLAN ID
+返回值：无
+
+示例1：
+on ethernetPacket(ipPROTOCOL_TCP)
+{
+  write("Received TCP packet at %f", this.time);
+}
+
+示例2：
+on ethernetPacket(ipPROTOCOL_UDP, 0x8100)
+{
+  write("Received UDP packet on VLAN 0x8100");
+  message(this); // 输出完整报文
+}
+
+##capl名##
+on ethernetPacket
+
+##转换须知##
+1. CAPL使用枚举值表示协议类型，而VBA使用字符串
+2. CAPL的VLAN参数是单个值，VBA支持列表配置
+3. CAPL直接通过this访问报文对象，VBA通过回调参数
+4. CAPL没有装饰器语法，直接在事件中实现处理逻辑
+
+##转换示例##
+CAPL原始代码：
+on ethernetPacket(ipPROTOCOL_TCP)
+{
+  write("TCP packet timestamp: %f", this.time);
+}
+
+转换后的VBA代码：
+@onEthernetPacketByProtocol('TCP')
+def onEthernetPacketEvent(ETHFrame):
+    print("TCP packet timestamp:", ETHFrame.gettimestamp())
+
+关键转换说明：
+1. 将CAPL事件转换为VBA装饰器语法
+2. 协议类型从枚举值ipPROTOCOL_TCP转换为字符串'TCP'
+3. this.time转换为ETHFrame.gettimestamp()
+4. CAPL的write函数转换为Python的print

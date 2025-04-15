@@ -1,0 +1,38 @@
+1. 函数名  
+getVariableByName  
+
+2. 函数描述  
+根据变量组的名称和变量名称获取变量对象。  
+
+3. 函数体  
+```vba  
+getVariableByName(groupName, variableName)  
+```  
+
+4. 返回值  
+| 名称      | 类型   | 描述       |  
+|-----------|--------|------------|  
+| variable  | String | 变量对象   |  
+
+5. 参数  
+| 名称          | 类型   | 描述           |  
+|---------------|--------|----------------|  
+| groupName     | String | 变量组名称     |  
+| variableName  | String | 变量名称       |  
+
+6. 内置函数  
+无  
+
+7. 示例  
+**功能**：根据变量组‘Vehicle_Flash’的名称和变量‘speed’名称，获取变量对象。  
+**示例代码**：  
+```vba  
+variable = getVariableByName("Vehicle_Flash", "speed")  
+```  
+**代码注释**：  
+- `groupName` 参数为变量组名称，此处为 `"Vehicle_Flash"`。  
+- `variableName` 参数为变量名称，此处为 `"speed"`。  
+- 返回的 `variable` 为对应的变量对象。  
+
+8. 其他和函数或变量强相关的内容  
+无

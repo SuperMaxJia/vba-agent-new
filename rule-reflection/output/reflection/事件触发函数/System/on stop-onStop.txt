@@ -1,0 +1,61 @@
+##功能##
+onStop函数用于在工程停止运行时触发特定操作，常用于资源清理、状态记录或通知输出等场景。例如在测试结束后自动保存日志、释放设备连接或发送测试完成通知。
+
+##vba规范##
+1. 使用@onStop装饰器标记事件处理函数
+2. 函数名自定义但需唯一
+3. 无参数和返回值
+4. 通过writeInfo()等内置函数实现输出功能
+5. 支持多事件处理器并行定义
+
+##capl规范##
+1. 使用on stop预定义事件块
+2. 无参数和返回值
+3. 通过write()函数实现控制台输出
+4. 整个CAPL程序中只能定义一个on stop块
+
+示例1：
+on stop
+{
+    write("工程停止事件触发");
+}
+
+示例2：
+on stop
+{
+    sysSetVariable("G_StopFlag", 1);
+    write("全局停止标志已设置");
+}
+
+##capl名##
+on stop
+
+##转换须知##
+1. CAPL仅支持单一on stop块，而VBA支持多个处理器
+2. CAPL使用write()而非writeInfo()进行输出
+3. VBA需要显式添加装饰器，CAPL为关键字语法
+4. CAPL的on stop是程序级事件，VBA是工程级事件
+
+##转换示例##
+1. CAPL原始代码：
+on stop
+{
+    write("Measurement stopped");
+    setTimer(0, 1000);
+}
+
+2. 转换后VBA代码：
+@onStop
+def stopHandler1():
+    writeInfo("Measurement stopped")
+    setTimer(0, 1000)
+
+@onStop 
+def stopHandler2():
+    logToFile("stop_log.txt")
+
+3. 关键转换说明：
+- 将CAPL的on stop块拆分为多个VBA装饰函数
+- write()改为writeInfo()
+- 定时器函数保持相同参数
+- 新增的日志功能展示多处理器特性

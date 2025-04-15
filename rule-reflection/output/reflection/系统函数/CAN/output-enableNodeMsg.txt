@@ -1,0 +1,47 @@
+##功能##
+该函数用于使能指定节点发送特定的CAN报文。在实际应用中，常用于测试环境中控制ECU节点发送特定报文，用于验证总线通信或模拟特定场景。
+
+##vba规范##
+函数名：enableNodeMsg
+参数：
+- node: ECUNode类型，表示目标节点对象
+- message/id: 可以是CANDBCMessage对象或报文ID(数字或字符串)
+返回值：int类型，0表示成功，-1表示失败
+功能：使能节点发送指定报文
+
+##capl规范##
+函数名：output
+参数：
+- message: 可以是message对象或报文ID(long类型)
+返回值：void
+功能：使能当前节点发送指定报文
+
+示例1：
+message 0x100 msg1;
+output(msg1);
+
+示例2：
+output(0x100);
+
+##capl名##
+output
+
+##转换须知##
+1. CAPL的output函数没有返回值，而VBA版本返回执行状态
+2. CAPL中报文ID只能是数字类型，而VBA支持字符串形式的扩展帧ID
+3. CAPL中隐含使用当前节点，而VBA需要显式指定节点
+4. 在CAPL中需要先定义message对象，而VBA可以直接使用ID
+
+##转换示例##
+1. CAPL原始代码：
+message 0x101 msg1;
+output(msg1);
+
+2. 转换后的VBA代码：
+Dim res As Integer
+res = enableNodeMsg(node1, &H101)
+
+3. 关键转换说明：
+- CAPL的message定义和output调用合并为VBA的单个函数调用
+- 添加了返回值处理
+- 需要额外提供node参数

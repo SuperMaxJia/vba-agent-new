@@ -1,0 +1,50 @@
+1. 函数名  
+chkCreate_Timeout  
+
+2. 函数描述  
+用于检测超时并产生事件。  
+
+3. 函数体  
+所有检测函数都有对应的chkStart_xxxx()和chkCreate_xxxx()。  
+chkCreate_xxxx()只创建检测对象但不开始检测，需要调用chkControl_Start；  
+chkStart_xxxx()创建检测对象同时直接开始检测。  
+
+4. 返回值  
+名称：res  
+类型：int  
+描述：代表创建的对象，-1代表创建失败  
+
+5. 参数  
+名称 | 类型 | 描述  
+timeout | Number | 超时时间  
+
+6. 内置函数  
+函数名称 | 函数描述 | 参数说明  
+chkControl_Start | 启动检测对象 | 无  
+testAddCondition | 将统计信息加入自动化测试报告 | checkId（检测对象ID）  
+testWaitForTimeout | 等待超时 | 等待时间（毫秒）  
+testRemoveCondition | 结束统计 | checkId（检测对象ID）  
+
+7. 示例  
+示例功能：检测超时并产生事件。  
+示例代码：  
+```vba  
+#设置2000ms后，触发一次事件  
+checkId = chkStart_Timeout(2000);  
+#调用该方法后，统计信息将加入到自动化测试报告  
+testAddCondition(checkId);  
+#共统计1000ms,也就是表示在统计期间，事件不会触发，因此自动化报告中将不会有记录。  
+testWaitForTimeout(1000);  
+#结束统计  
+testRemoveCondition(checkId);  
+```  
+代码注释：  
+- `chkStart_Timeout(2000)` 设置2000毫秒后触发超时事件。  
+- `testAddCondition(checkId)` 将检测对象加入测试报告。  
+- `testWaitForTimeout(1000)` 等待1000毫秒，期间不会触发超时事件。  
+- `testRemoveCondition(checkId)` 结束统计并移除检测对象。  
+
+8. 其他和函数或变量强相关的内容  
+- 该函数通常用于自动化测试场景，结合其他测试函数（如`testWaitForTimeout`）使用。  
+- 超时时间单位为毫秒（ms）。  
+- 若需手动启动检测，需调用`chkControl_Start`。

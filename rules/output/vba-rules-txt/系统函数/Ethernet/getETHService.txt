@@ -1,0 +1,28 @@
+1. 函数名
+getETHService
+
+2. 函数描述
+用于获取以太网服务实例对象
+
+3. 函数体
+getETHService(nameOrID, network)
+
+4. 返回值
+名称  类型  描述
+res   Object  服务对象，没有找到返回None
+
+5. 参数
+名称      类型      描述
+nameOrID  int,str  ECU节点名称或者id
+network   Network  网段对象
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：用于获取以太网服务实例对象
+示例代码：
+getETHService(nameOrID, network)
+
+8. 其他和函数或变量强相关的内容
+无

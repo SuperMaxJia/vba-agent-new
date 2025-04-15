@@ -1,0 +1,52 @@
+##功能##
+该函数用于在指定CAN网络通道上周期性地发送CAN报文。适用于需要定时发送固定内容报文的场景，如ECU通信测试、总线负载测试等。
+
+##vba规范##
+函数定义：sendPeriodMsg(msg, network, cycle_time)
+参数：
+- msg: CANMessage类型，可通过CANMessage类创建或来自DBC的报文对象
+- network: Network类型，指定目标网段
+- cycle_time: int类型，发送周期（毫秒）
+返回值：无
+
+##capl规范##
+函数定义：output(msg)
+参数：
+- msg: message类型，可通过message结构体定义或dbMessage引用
+周期设置：通过setTimerCyclic()函数单独设置
+示例1：
+message 0x10 msg = {dlc=2, data=[0x10,0x12]};
+setTimerCyclic(10);
+output(msg);
+
+示例2：
+dbMessage EMS.Message1 msg;
+setTimerCyclic(10);
+output(msg);
+
+##capl名##
+output
+
+##转换须知##
+1. CAPL需要分开设置周期和发送函数
+2. CAPL的message类型直接对应VBA的CANMessage
+3. CAPL通过dbMessage引用DBC报文
+4. 网络通道在CAPL中通过硬件配置隐式指定
+
+##转换示例##
+CAPL原始代码：
+message 0x100 msg = {dlc=8, data=[0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08]};
+setTimerCyclic(50);
+output(msg);
+
+转换后的VBA代码：
+msg = CANMessage()
+msg.setId(0x100)
+msg.setDlc(8)
+msg.setData([0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08])
+sendPeriodMsg(msg, CAN1, 50)
+
+关键转换说明：
+1. 将CAPL的message定义转换为VBA的CANMessage对象创建
+2. CAPL的setTimerCyclic+output组合转换为VBA的sendPeriodMsg
+3. 网络通道参数在VBA中需要显式指定

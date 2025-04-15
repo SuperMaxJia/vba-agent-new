@@ -1,0 +1,57 @@
+##功能##
+计算CRC校验值，返回一个整形数值。该函数用于数据通信中验证数据的完整性，常用于CAN、LIN等车载网络协议的报文校验。
+
+##vba规范##
+函数定义：getCRCData(datas, width=32, poly=0x04C11DB7, reflect_in=True, xor_in=0xFFFFFFFF, reflect_out=True, xor_out=0xFFFFFFFF)
+参数：
+- datas: byte数组，需要校验的数据字节
+- width: int，CRC算法的宽度，默认32
+- poly: int，多项式的值，默认0x04C11DB7
+- reflect_in: Boolean，初始字节翻转，默认True
+- xor_in: int，初始异或值，默认0xFFFFFFFF
+- reflect_out: Boolean，输出字节翻转，默认True
+- xor_out: int，输出异或值，默认0xFFFFFFFF
+返回值：int，计算出的CRC校验值
+
+##capl规范##
+CAPL中没有直接对应的CRC计算函数，但可以使用内置的crc32函数实现类似功能：
+```c
+// 示例1：使用默认参数计算CRC32
+byte data[] = {0x10, 0x12};
+dword crcValue = crc32(data, elcount(data));
+
+// 示例2：自定义多项式计算CRC
+byte data[] = {0x10, 0x12};
+dword crcValue = crc32(data, elcount(data), 0x04C11DB7);
+```
+参数：
+- data: byte数组，需要校验的数据
+- count: int，数据长度
+- poly: dword（可选），多项式的值
+返回值：dword，计算出的CRC校验值
+
+##capl名##
+crc32
+
+##转换须知##
+1. CAPL的crc32函数参数较少，不支持reflect_in/out和xor_in/out参数
+2. CAPL返回值是dword类型，VBA是int类型
+3. CAPL需要显式传递数据长度参数
+4. 多项式参数在CAPL中是可选参数，在VBA中是必选参数
+
+##转换示例##
+1. CAPL原始代码：
+```c
+byte data[] = {0x10, 0x12};
+dword crcValue = crc32(data, elcount(data));
+```
+
+2. 转换后的VBA代码：
+```vba
+CRCValue = getCRCData([0x10, 0x12])
+```
+
+3. 关键转换说明：
+- CAPL的byte数组转换为VBA的字节列表
+- CAPL的elcount(data)在VBA中不需要显式指定
+- CAPL的dword返回值直接对应VBA的int返回值

@@ -1,0 +1,81 @@
+##功能##
+该函数用于创建和配置DOIP（Diagnostic over IP）诊断参数对象，通过设置目标地址、功能地址、超时时间等参数，为后续的诊断PDU发送提供配置支持。主要用于车辆诊断通信中，通过IP网络进行诊断消息的发送和接收配置。
+
+##vba规范##
+函数名：DOIPConfig
+返回值：DOIPConfig对象（包含多个可配置属性）
+参数：
+- destAddr: int (0-0xFFFF)
+- funcAddr: int (0-0xFFFF) 
+- p6_timeout: int (0-1000000)
+- p6_extend_timeout: int (0-1000000)
+- s3_time: int (0-10000)
+- mode: int (0=物理寻址，1=功能寻址)
+- res_flag: boolean
+
+方法：
+- get/setDestAddr()
+- get/setFuncAddr() 
+- get/setP6Timeout()
+- get/setP6ExtendTimeout()
+- get/setS3Timeout()
+- get/setMode()
+- get/setResFlag()
+
+##capl规范##
+在CAPL中，DOIP配置通常通过DiagSetParameter函数实现，参数通过预定义的常量或直接数值设置。
+
+示例1：
+// 设置DOIP参数
+DiagSetParameter(DIAG_PARAM_DOIP_DEST_ADDR, 0x700);
+DiagSetParameter(DIAG_PARAM_DOIP_FUNC_ADDR, 0x7DF);
+DiagSetParameter(DIAG_PARAM_DOIP_P6_TIMEOUT, 100);
+DiagSetParameter(DIAG_PARAM_DOIP_P6_EXT_TIMEOUT, 100);
+DiagSetParameter(DIAG_PARAM_DOIP_S3_TIMEOUT, 4000);
+DiagSetParameter(DIAG_PARAM_DOIP_ADDR_MODE, 0);
+DiagSetParameter(DIAG_PARAM_DOIP_RES_FLAG, 0);
+
+// 发送诊断PDU
+byte data[2] = {0x3E, 0x80};
+DiagSendRequest(connectHandle, data, elCount(data));
+
+示例2：
+// 批量设置DOIP参数
+on start {
+  DiagSetParameter(DIAG_PARAM_DOIP_DEST_ADDR, 0x710);
+  DiagSetParameter(DIAG_PARAM_DOIP_P6_TIMEOUT, 200);
+  // 其他参数保持默认
+  byte request[] = {0x22, 0xF1, 0x8C};
+  DiagSendRequest(handle, request, elCount(request));
+}
+
+##capl名##
+DiagSetParameter
+
+##转换须知##
+1. CAPL使用离散函数调用设置每个参数，而VBA使用对象属性方式
+2. CAPL中参数通过常量标识，VBA使用方法名区分
+3. CAPL的DiagSendRequest直接发送数据，VBA需要单独调用diagDOIPSendPDU
+4. CAPL中布尔值用0/1表示，VBA用True/False
+5. CAPL需要显式设置所有参数，VBA对象可能有默认值
+
+##转换示例##
+CAPL原始代码：
+DiagSetParameter(DIAG_PARAM_DOIP_DEST_ADDR, 0x700);
+DiagSetParameter(DIAG_PARAM_DOIP_FUNC_ADDR, 0x7DF);
+DiagSetParameter(DIAG_PARAM_DOIP_P6_TIMEOUT, 100);
+byte data[2] = {0x3E, 0x80};
+DiagSendRequest(connectHandle, data, elCount(data));
+
+转换后的VBA代码：
+Set doipConfig = DOIPConfig()
+doipConfig.setDestAddr(&H700)
+doipConfig.setFuncAddr(&H7DF)
+doipConfig.setP6Timeout(100)
+diagDOIPSendPDU(doipConfig, connectHandle, Array(&H3E, &H80))
+
+关键转换步骤：
+1. 将DiagSetParameter调用转换为DOIPConfig对象方法
+2. 将十六进制值转换为VBA的&H前缀格式
+3. 将CAPL数组初始化转换为VBA的Array函数
+4. 保持参数顺序和值不变

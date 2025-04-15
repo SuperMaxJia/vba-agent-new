@@ -1,0 +1,45 @@
+1. 函数名
+testStepWarning
+
+2. 函数描述
+用于报告测试步骤的警告信息，并将警告信息的内容输出在测试报告中。
+
+3. 函数体
+testStepWarning(levelOfDetail, 'description')
+
+4. 返回值
+无
+
+5. 参数
+| 名称           | 类型 | 描述                                                                 |
+|----------------|------|----------------------------------------------------------------------|
+| levelOfDetail  | str  | 可以用一个数字来表示这个测试步骤有多重要。0表示"非常重要"，数字越大，重要程度越低。没有明确的规范 |
+| description    | str  | 表示此测试用例步骤的描述信息，字符串类型，也可以不写，默认是空字符，会写在测试报告中 |
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：当lRet的结果不等于0或1时，调用该函数表明该测试步骤是警告状态。
+
+示例代码：
+@testcase
+def checkUndefinedMessage():
+    switch(lRet):
+        case 0: // timeout, reporting of failed action
+            testStepFail("3.1", "WaitForResponse: Expected message did not occur. Timeout.");
+            break;
+        case 1: // ok, reporting of passed action
+            testStepPass("3.0", "WaitForResponse: Received message ok.");
+            break;
+        default: // unknown error, test case fails
+            testStepWarning("3.2", "WaitForResponse: Unknown error occurred.");
+            break;
+
+代码注释：
+- 当lRet为0时表示超时，报告失败动作
+- 当lRet为1时表示正常，报告通过动作
+- 其他情况表示未知错误，报告警告状态
+
+8. 其他说明
+该函数属于自动化测试函数中的TestStructuring类别，用于测试过程中的状态报告。

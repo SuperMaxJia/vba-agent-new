@@ -1,0 +1,51 @@
+##功能##
+该函数用于重置指定变量组中所有环境变量的值为其初始值。如果没有设置初始值，则数值类型变量设置为0，字符串类型变量设置为空字符串""。常用于测试环境初始化或状态重置场景。
+
+##vba规范##
+函数定义：resetGroupVarValue(group)
+参数：
+- group: VariableGroup类型，表示要重置的变量组对象
+返回值：无
+行为：直接修改组内变量的值
+注意事项：需确保传入有效的变量组对象
+
+##capl规范##
+函数定义：resetEnvVar(group)
+参数：
+- group: char[]类型，表示变量组名称
+返回值：无
+行为：重置指定组内所有环境变量
+示例1：
+```capl
+resetEnvVar("EngineParams");
+```
+示例2：
+```capl
+char groupName[] = "SensorData";
+resetEnvVar(groupName);
+```
+
+##capl名##
+resetEnvVar
+
+##转换须知##
+1. 参数类型不同：VBA使用对象引用，CAPL使用字符串名称
+2. CAPL需要明确指定组名而不是对象引用
+3. CAPL中环境变量管理方式与VBA不同
+4. 在CAPL中需要确保组名存在且有效
+
+##转换示例##
+1. CAPL原始代码：
+```capl
+resetEnvVar("VehicleSettings");
+```
+
+2. 转换后的VBA代码：
+```vba
+resetGroupVarValue(groupVehicleSettings)
+```
+
+3. 关键转换说明：
+- 将CAPL的字符串参数转换为VBA的对象引用
+- 函数名从resetEnvVar变为resetGroupVarValue
+- VBA需要预先定义groupVehicleSettings变量组对象

@@ -1,0 +1,58 @@
+##功能##
+该函数用于在测试用例中添加自定义描述信息，这些信息会被写入测试报告中，帮助理解测试用例的目的和内容。主要用于测试框架中增强测试报告的可读性。
+
+##vba规范##
+函数名：testcaseDescription
+参数：description (str类型)，表示测试用例的描述信息
+返回值：无
+调用要求：必须在@testcase装饰的测试用例函数内调用
+输出效果：描述信息会出现在测试报告中
+
+##capl规范##
+在CAPL中，可以使用testCaseDescription函数实现相同功能：
+1. 函数定义：void testCaseDescription(char description[]);
+2. 参数：description (char数组)，测试用例描述文本
+3. 返回值：无
+4. 调用位置：必须在测试用例函数内调用
+
+示例1：
+testcase test_checkSignal()
+{
+    testCaseDescription("验证CAN信号阈值");
+    // 测试代码...
+}
+
+示例2：
+testcase verify_ECU_Response()
+{
+    testCaseDescription("ECU对0x100报文的响应测试");
+    // 测试代码...
+}
+
+##capl名##
+testCaseDescription
+
+##转换须知##
+1. 参数类型：VBA使用str类型，CAPL使用char数组
+2. 函数名大小写差异：VBA是全小写，CAPL是驼峰式
+3. 调用上下文要求相同：都必须在测试用例函数内调用
+4. 字符串格式：CAPL需要双引号，VBA需要单引号
+
+##转换示例##
+1. CAPL原始代码：
+testcase checkEngineTemp()
+{
+    testCaseDescription("发动机温度传感器测试");
+    // 测试逻辑...
+}
+
+2. 转换后的VBA代码：
+@testcase
+def checkEngineTemp()
+    testcaseDescription('发动机温度传感器测试')
+    ' 测试逻辑...
+
+3. 关键转换说明：
+- 函数名从testCaseDescription改为testcaseDescription
+- 字符串引号从双引号改为单引号
+- 保持相同的测试用例上下文结构

@@ -1,0 +1,40 @@
+1. 函数名
+getSignalVal
+
+2. 函数描述
+获取该信号上一次收到的值
+
+3. 函数体
+getSignalVal(canDBCSignal, valType=1)
+
+4. 返回值
+情况1：正确读值
+名称   类型   描述
+value  float  总线值或物理值
+
+情况2：异常情况
+名称   类型   描述
+info   String 错误信息：
+              'Unresolved channel':代表指定的报文信号所在的通道没有报文
+              'Unresolved Message':未解析到信号所在的报文'Unresolvedsignal':未解析到信号
+
+5. 参数
+名称         类型           描述
+canDBCSignal CANDBCSiganl  从数据库中映射出来的信号对象
+valType      int           信号量值类型，0：总线值，1：物理值，2获取总线值和物理值元组。默认为1
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：获取CAN1网段下EMS节点ABS报文最近一次收到carSpeed信号的物理值
+示例代码：
+value = getSignalVal(CAN1.EMS.ABS.carSpeed, valType=1)
+代码注释：
+- CAN1.EMS.ABS.carSpeed 指定要获取的信号路径
+- valType=1 表示获取物理值
+
+8. 其他说明
+- 该函数用于从CAN数据库信号对象中获取最新接收到的信号值
+- 可以通过valType参数选择获取总线值、物理值或两者
+- 如果信号未解析或通道/报文不存在，会返回错误信息字符串

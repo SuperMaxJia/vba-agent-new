@@ -1,0 +1,49 @@
+##功能##
+该函数用于在ECU仿真环境中设置指定节点下信号的值，可以设置总线值或物理值。主要用于测试和仿真场景中模拟信号值的变化，验证ECU对不同信号值的响应。
+
+##vba规范##
+函数名：setNodeSignalVal
+参数：
+- dbSignal: CANDBCSiganl或LINDBCSignal类型，从数据库映射的信号对象
+- signalValue: int类型，要设置的信号值
+- valType: int类型（可选，默认1），0表示设置总线值，1表示设置物理值
+返回值：无
+示例：setNodeSignalVal(CAN1.BCM.BCM_383.BCM_TyrePressure_LF, 10.0, valType=1)
+
+##capl规范##
+函数名：setSignal
+参数：
+- message: 报文对象或报文ID
+- signal: 信号名称字符串
+- value: 要设置的信号值
+- physical: 布尔值（可选，默认true），true表示设置物理值，false表示总线值
+返回值：无
+示例1：setSignal(Message0.Signal1, 10.0); // 设置物理值
+示例2：setSignal(0x100, "EngineSpeed", 2000, 0); // 设置总线值
+
+##capl名##
+setSignal
+
+##转换须知##
+1. CAPL使用报文对象或ID+信号名的方式指定信号，而VBA使用数据库映射的完整路径
+2. CAPL的physical参数是布尔值，VBA的valType是整型
+3. 两者默认都是设置物理值
+4. CAPL没有返回值，VBA也没有返回值
+5. 在转换时需要特别注意信号路径的表示方式差异
+
+##转换示例##
+1. CAPL原始代码：
+on key 'k' {
+    setSignal(EngineMsg.EngineSpeed, 2000);
+}
+
+2. 转换后的VBA代码：
+@onKey('K')
+def onKeyEvent():
+    setNodeSignalVal(CAN1.ECU.EngineMsg.EngineSpeed, 2000, valType=1)
+
+3. 关键转换说明：
+- 将CAPL的on key事件转换为VBA的@onKey装饰器
+- 将CAPL的setSignal调用转换为setNodeSignalVal
+- 将信号路径从简单表示转换为完整数据库路径
+- 保持物理值设置的默认行为

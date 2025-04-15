@@ -1,0 +1,68 @@
+##功能##
+该函数用于周期性发送原始以太网报文，支持多种以太网协议类型（如IPv4、ARP、UDP等）和VLAN配置。适用于测试和模拟网络通信场景，如ECU通信测试、网络协议验证等。
+
+##vba规范##
+函数定义：sendPeriodETHBasicMsg(network, packet, VLAN, cycleTime)
+参数：
+- network: Network类型，指定网段对象
+- packet: 多种以太网报文类型（EthernetPacket/IPv4Packet等）
+- VLAN: list类型，配置VLAN参数（如['0x88A8:0x0003', '0x8100:0x0002']）
+- cycleTime: int类型，发送周期时间（0表示停止）
+返回值：
+- taskid: int类型，小于0表示发送失败
+
+##capl规范##
+函数定义：outputEthPacket(ethChannel, ethFrame, cycleTime)
+参数：
+- ethChannel: 以太网通道标识符（如1表示CANoe的Eth1）
+- ethFrame: 以太网帧数据（byte数组或预定义结构体）
+- cycleTime: 发送周期（ms）
+返回值：
+- messageId: dword类型，0表示失败
+
+示例1：
+```capl
+byte ethFrame[64] = {0x00, 0x11, 0x22...};
+messageId = outputEthPacket(1, ethFrame, 100);
+```
+
+示例2：
+```capl
+EthernetFrame frame;
+frame.VLAN[0] = 0x88A8;
+frame.VLAN[1] = 0x0003;
+messageId = outputEthPacket(2, frame, 200);
+```
+
+##capl名##
+outputEthPacket
+
+##转换须知##
+1. CAPL使用通道号而非network对象
+2. VLAN配置在CAPL中需要手动构建到帧结构中
+3. CAPL的返回值类型为dword而非int
+4. CAPL需要预定义以太网帧结构或字节数组
+5. 周期时间单位在CAPL中固定为毫秒
+
+##转换示例##
+CAPL原始代码：
+```capl
+EthernetFrame frame;
+frame.destMac = {0x00,0x11,0x22,0x33,0x44,0x55};
+frame.VLAN[0] = 0x88A8;
+frame.VLAN[1] = 0x0003;
+dword taskId = outputEthPacket(1, frame, 100);
+```
+
+转换后的VBA代码：
+```vba
+frame = CreateEthernetPacket()
+frame.SetDestMac("00:11:22:33:44:55")
+taskid = sendPeriodETHBasicMsg(network1, frame, VLAN=['0x88A8:0x0003'], cycleTime=100)
+```
+
+关键转换步骤：
+1. 将CAPL的通道号1转换为VBA的network对象
+2. 将CAPL的VLAN数组转换为VBA的list格式
+3. 保持相同的周期时间值（100ms）
+4. 处理返回值类型转换（dword→int）

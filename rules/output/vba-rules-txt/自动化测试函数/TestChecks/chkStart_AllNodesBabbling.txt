@@ -1,0 +1,39 @@
+1. 函数名  
+chkStart_AllNodesBabbling  
+
+2. 函数描述  
+该函数用于启动自动化测试中所有节点的“Babbling”检查。Babbling检查通常用于检测网络中是否存在异常通信节点（如持续发送无效数据的节点）。  
+
+3. 函数体  
+函数属于自动化测试函数中的“TestControlChecks”类别，用于控制测试检查的启动。具体实现逻辑需结合硬件和网络配置，确保所有节点的通信状态被监控。  
+
+4. 返回值  
+无明确返回值说明（根据上下文推断为无返回值或返回操作状态布尔值）。  
+
+5. 参数  
+无显式参数（可能依赖全局配置或通过其他函数设置）。  
+
+6. 内置函数  
+无直接关联的内置函数（但可能依赖以下函数组）：  
+- TestControlChecks 中的其他控制函数（如 `chkControl_Start`、`chkControl_Reset`）。  
+- 通信监控相关函数（如 `getNode`、`getMsgs`）。  
+
+7. 示例  
+**示例功能**：启动所有节点的Babbling检查并记录测试结果。  
+**示例代码**：  
+```vba
+Sub Example_StartBabblingCheck()
+    ' 启动所有节点的Babbling检查
+    Call chkStart_AllNodesBabbling()
+    ' 记录测试步骤状态
+    Call testStepPass("Babbling检查已启动")
+End Sub
+```  
+**代码注释**：  
+- `chkStart_AllNodesBabbling` 触发检查后，需结合其他测试函数（如 `chkQuery_NumEvents`）获取结果。  
+- `testStepPass` 用于标记测试步骤通过。  
+
+8. 其他相关内容  
+- 需在测试配置中预先定义节点和通信规则。  
+- 通常与 `chkCreate_AllNodesBabbling` 配对使用（创建检查实例后再启动）。  
+- 属于自动化测试流程中的“总线监控”环节，可能涉及 CAN/LIN/ETH 等总线协议。

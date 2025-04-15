@@ -1,0 +1,38 @@
+1. 函数名
+diagGetSeedKey
+
+2. 函数描述
+计算安全认证密钥
+
+3. 函数体
+diagGetSeedKey(seedFilePath, respPDU)
+
+4. 返回值
+名称 | 类型 | 描述
+---|---|---
+ans | List | 返回计算后的密钥数值列表
+
+5. 参数
+名称 | 类型 | 描述
+---|---|---
+seedFilePath | String | 安全认证文件的绝对路径，字符串类型
+respPDU | List | 安全认证请求后的ECU响应PDU，列表类型
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：根据安全认证请求回复的种子，通过安全认证文件计算安全秘钥，并完成安全认证
+
+示例代码：
+respPDU = diagSendPDU(udsConfig, [0x27, 0x01], CAN1)
+key = diagGetSeedKey(r'D://seedkey.dll', respPDU)
+diagSendPDU(udsConfig, [0x27, 0x02] + key, CAN1)
+
+代码注释：
+- 第一行：发送安全认证请求PDU
+- 第二行：使用响应PDU和安全认证文件计算密钥
+- 第三行：发送包含计算密钥的认证PDU
+
+8. 其他
+无其他相关信息

@@ -1,0 +1,53 @@
+##功能##
+该函数用于在接收到指定HeaderID的PDU以太网数据包时触发事件处理，主要用于实时监控和处理以太网通信中的PDU数据包，适用于车载网络开发和测试场景。
+
+##vba规范##
+函数定义：onETHPDUMessage(PDUMessage, network=None, VLAN=['0x88A8:0x0003', '0x8100:0x0002'])
+参数：
+- PDUMessage: ETHDBCPDU类型，包含接收到的PDU以太网数据包信息
+- network: NetWork类型，可选参数，默认为None
+- VLAN: list类型，可选参数，默认值为['0x88A8:0x0003', '0x8100:0x0002']
+返回值：无（事件触发函数）
+
+##capl规范##
+在CAPL中，可以使用on message或on ethernetFrame事件处理程序来实现类似功能：
+1. 基本示例：
+on message 0x10020001
+{
+  write("Received PDU with ID 0x10020001 at %f", this.time);
+}
+
+2. 带VLAN过滤的示例：
+on ethernetFrame VLAN(0x88A8, 0x0003), VLAN(0x8100, 0x0002)
+{
+  if (this.id == 0x10020001)
+  {
+    write("Received PDU with matching VLAN at %f", this.time);
+  }
+}
+
+##capl名##
+on message
+
+##转换须知##
+1. CAPL使用单独的事件处理程序(on message/on ethernetFrame)而非装饰器语法
+2. VLAN过滤在CAPL中需要单独的事件处理程序或条件判断
+3. CAPL中时间戳通过this.time获取，而非显式方法调用
+4. 网络参数在CAPL中通常通过通道(channel)配置而非函数参数
+
+##转换示例##
+1. CAPL原始代码：
+on message 0x10020001
+{
+  write("PDU received at %f", this.time);
+}
+
+2. 转换后的VBA代码：
+@onETHPDUMessage(0x10020001)
+def onEthernetPacketEvent(ETHFrame):
+    ETHFrame.gettimestamp()
+
+3. 关键转换说明：
+- CAPL的on message事件转换为VBA的装饰器语法
+- this.time转换为gettimestamp()方法调用
+- 隐式的消息过滤转换为显式的HeaderID参数

@@ -1,0 +1,71 @@
+##功能##
+该函数用于向文件中写入一系列字符串，并在每个字符串后添加指定的换行符。常用于日志记录、数据导出等需要按行写入文本的场景。
+
+##vba规范##
+函数定义：fileWriteLines(file, seq)
+参数：
+- file: 文件对象，表示要写入的文件
+- seq: 字符串序列，可以是元组、列表或单个字符串
+返回值：int类型，表示写入的字符长度
+
+##capl规范##
+CAPL中没有直接对应的多行写入函数，但可以通过循环和filePutString实现类似功能。
+函数定义：filePutString(file, string)
+参数：
+- file: 文件句柄
+- string: 要写入的字符串
+返回值：写入的字节数
+
+示例1：
+variables {
+  dword file;
+  char lines[2][20] = {"第一行", "第二行"};
+}
+file = openFile("D:\\demo.txt", 0);
+for(int i=0; i<elCount(lines); i++) {
+  filePutString(file, lines[i]);
+  filePutString(file, "\n");
+}
+closeFile(file);
+
+示例2：
+variables {
+  dword file;
+}
+file = openFile("D:\\log.txt", 0);
+filePutString(file, "Error 1\n");
+filePutString(file, "Error 2\n");
+closeFile(file);
+
+##capl名##
+filePutString
+
+##转换须知##
+1. CAPL需要手动添加换行符\n，而VBA会自动处理
+2. CAPL需要循环处理字符串数组，VBA可以直接传入序列
+3. CAPL的文件操作返回dword类型句柄，VBA使用文件对象
+4. CAPL中字符串数组需要预定义大小，VBA可以动态处理
+
+##转换示例##
+CAPL原始代码：
+variables {
+  dword file;
+  char data[3][10] = {"line1", "line2", "line3"};
+}
+file = openFile("log.txt", 0);
+for(int i=0; i<3; i++) {
+  filePutString(file, data[i]);
+  filePutString(file, "\n");
+}
+closeFile(file);
+
+转换后的VBA代码：
+Set file = openFile("log.txt", mode:="w")
+fileWriteLines file, Array("line1", "line2", "line3")
+closeFile file
+
+关键转换步骤：
+1. 将CAPL的数组声明转换为VBA的Array函数
+2. 将循环写入改为直接调用fileWriteLines
+3. 移除手动添加的换行符
+4. 调整文件打开模式参数格式

@@ -1,0 +1,40 @@
+1. 函数名  
+sendTCPMessage  
+
+2. 函数描述  
+报文发送函数，用于通过TCP协议发送报文。  
+
+3. 函数体  
+```vba
+res = sendTCPMessage(network, socketid, payload)
+```  
+
+4. 返回值  
+| 名称 | 类型 | 描述 |  
+|------|------|------|  
+| res  | int  | 0代表发送成功，-1代表发送错误 |  
+
+5. 参数  
+| 名称     | 类型    | 描述               |  
+|----------|---------|--------------------|  
+| network  | Network | 网段信息           |  
+| socketid | int     | 连接对应的socketid |  
+| payload  | list    | 报文载荷           |  
+
+6. 内置函数  
+无  
+
+7. 示例  
+**示例功能**：通过TCP协议发送报文。  
+**示例代码**：  
+```vba
+res = sendTCPMessage(network, socketid, payload)
+```  
+**代码注释**：  
+- `network`：指定网段信息。  
+- `socketid`：指定连接的socketid。  
+- `payload`：指定要发送的报文载荷。  
+- `res`：返回发送结果，0表示成功，-1表示失败。  
+
+8. 其他和函数或变量强相关的内容  
+无

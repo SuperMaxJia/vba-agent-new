@@ -1,0 +1,69 @@
+##功能##
+该函数用于检测数据库中定义的周期性报文的实际周期是否在指定的相对范围内。通过比较报文实际周期与数据库定义周期的比值，确保其在最小和最大相对周期范围内。适用于CAN总线测试中验证周期性报文的时间特性是否符合规范。
+
+##vba规范##
+函数名：chkCreate_MsgRelCycleTimeViolation  
+返回值：int类型，返回创建的检测对象ID，-1表示创建失败  
+参数：  
+- message：object类型，数据库定义的报文对象  
+- aMinRelCycleTime：Number类型，0 < x < 1，最小相对周期系数  
+- aMaxRelCycleTime：Number类型，1 < x < ∞，最大相对周期系数  
+相关函数：  
+- chkControl_Start：启动检测  
+- testAddCondition：添加统计到测试报告  
+- testWaitForTimeout：设置统计时长  
+- testRemoveCondition：结束统计  
+
+##capl规范##
+函数名：checkCreateMsgRelCycleTime  
+返回值：long类型，检测对象ID，-1表示失败  
+参数：  
+- message：message类型，CAN报文对象  
+- minRel：float类型，最小相对周期(0-1)  
+- maxRel：float类型，最大相对周期(>1)  
+示例1：  
+```capl
+long checkId;
+checkId = checkCreateMsgRelCycleTime(CAN1::MsgToObserve, 0.9, 1.1);
+checkStart(checkId);
+testAddCondition(checkId);
+testWaitForTimeout(1000);
+testRemoveCondition(checkId);
+```
+示例2：  
+```capl
+long checkId = checkStartMsgRelCycleTime(CAN1::MsgToMonitor, 0.8, 1.2);
+```
+
+##capl名##
+checkCreateMsgRelCycleTime
+
+##转换须知##
+1. CAPL使用::作为命名空间分隔符，VBA使用.  
+2. CAPL的checkStart对应VBA的chkControl_Start  
+3. CAPL的long类型对应VBA的int类型  
+4. CAPL函数名采用驼峰命名，VBA使用下划线分隔  
+5. CAPL需要显式调用checkStart，VBA的chkStart_xxxx自动启动  
+
+##转换示例##
+CAPL原始代码：  
+```capl
+long checkId = checkCreateMsgRelCycleTime(CAN1::Msg1, 0.95, 1.05);
+checkStart(checkId);
+testAddCondition(checkId);
+testWaitForTimeout(500);
+testRemoveCondition(checkId);
+```
+转换后的VBA代码：  
+```vba
+checkId = chkCreate_MsgRelCycleTimeViolation(CAN1.Msg1, 0.95, 1.05)
+chkControl_Start
+testAddCondition(checkId)
+testWaitForTimeout(500)
+testRemoveCondition(checkId)
+```
+关键转换说明：  
+1. 将::替换为.访问报文对象  
+2. 拆分checkCreate和checkStart为两个独立调用  
+3. 保持相同的参数顺序和测试流程  
+4. 函数名按VBA规范改为下划线格式

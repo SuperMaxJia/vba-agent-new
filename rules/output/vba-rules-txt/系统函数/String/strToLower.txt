@@ -1,0 +1,28 @@
+1. 函数名
+strToLower
+
+2. 函数描述
+将字符串sourceStr所有大写字符替换为小写的新字符串
+
+3. 函数体
+strToLower(sourceStr)
+
+4. 返回值
+名称: str
+类型: String
+描述: 返回替换后的字符串
+
+5. 参数
+名称       类型    描述
+sourceStr  String  字符串
+
+6. 内置函数
+无
+
+7. 示例
+示例功能: 将字符串'ABCdedf'中大写字符变成小写，返回'abcdedf'
+示例代码: strToLower('ABCdedf')
+代码注释: 无
+
+8. 其他
+无其他相关信息

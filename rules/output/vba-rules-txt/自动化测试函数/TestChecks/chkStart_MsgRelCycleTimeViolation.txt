@@ -1,0 +1,38 @@
+1. 函数名  
+chkStart_MsgRelCycleTimeViolation  
+
+2. 函数描述  
+用于启动对消息相对周期时间违规的检查。该函数属于自动化测试函数中的检查控制类，用于监控总线消息的实际周期时间是否符合预期配置的周期时间范围。  
+
+3. 函数体  
+函数功能：启动对指定消息的相对周期时间违规检查。  
+使用场景：在总线测试中，当需要验证消息是否按照预设的周期时间稳定发送时调用此函数。  
+关联函数：需与`chkCreate_MsgRelCycleTimeViolation`配合使用，先创建检查实例再启动监控。  
+
+4. 返回值  
+无显式返回值，但会通过测试框架内部记录违规事件。  
+
+5. 参数  
+无输入参数（依赖前置的`chkCreate`函数配置）。  
+
+6. 内置函数  
+无直接调用的内置函数，但依赖以下关联函数：  
+- `chkCreate_MsgRelCycleTimeViolation`：创建检查实例并配置消息ID、允许的周期时间偏差等参数。  
+
+7. 示例  
+示例功能：监控CAN总线ID为0x101的消息周期时间是否超出±10%的允许偏差。  
+示例代码：  
+```vba
+' 创建检查实例  
+chkCreate_MsgRelCycleTimeViolation msgId:=0x101, tolerance:=0.1  
+' 启动监控  
+chkStart_MsgRelCycleTimeViolation  
+```  
+代码注释：  
+- `msgId`参数指定待监控的CAN消息ID  
+- `tolerance`参数设置允许的周期时间偏差比例（此处为±10%）  
+
+8. 其他相关内容  
+- 该检查通常用于汽车电子测试中ECU通信协议的稳定性验证  
+- 违规事件会触发测试框架的`onErrorFrame`或自定义回调函数  
+- 检查结果可通过`chkQuery_NumEvents`查询违规次数

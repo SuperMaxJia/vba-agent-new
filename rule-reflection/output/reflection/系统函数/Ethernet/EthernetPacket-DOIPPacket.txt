@@ -1,0 +1,59 @@
+##功能##
+用于创建一条DOIP以太网报文，设置协议版本、协议类型、传输层协议包和数据负载。主要用于汽车电子诊断通信中基于以太网的DOIP协议实现。
+
+##vba规范##
+函数名：DOIPPacket
+返回值：DOIPPacket对象
+参数：
+  protocol_version: int (16位无符号整数)
+  protocol_type: int (16位无符号整数)
+  transport_packet: object (TCPPacket/UDPPacket/TCPMessage/UDPMessage)
+  payload: list
+内置方法：
+  setProtocolVersion(int)
+  setProtocolType(int)
+  setTransportPacket(object)
+  setPayload(list)
+
+##capl规范##
+在CAPL中，DOIP报文通常通过EthernetPacket结构体实现。示例：
+1. 创建基本DOIP报文：
+EthernetPacket doipPacket;
+doipPacket.sourceAddress = 0x000000000001;
+doipPacket.destinationAddress = 0x000000000002;
+doipPacket.etherType = 0x0001; // DOIP协议类型
+doipPacket.payload = {0x01, 0x00, 0x00, 0x00}; // 协议版本+类型+payload
+
+2. 完整DOIP报文设置：
+EthernetPacket doipMsg;
+doipMsg.setProtocol(0x0001); // DOIP协议标识
+byte payload[4] = {0x01, 0x00, 0x02, 0x8001}; // 版本1 + 类型0x8001
+doipMsg.setPayload(payload);
+
+##capl名##
+EthernetPacket
+
+##转换须知##
+1. CAPL使用结构体而非对象，需要手动设置各字段
+2. CAPL中协议版本和类型通常合并到payload中
+3. CAPL没有直接的setProtocolVersion等方法，需直接操作结构体成员
+4. 传输层协议在CAPL中通常分开处理
+5. CAPL使用字节数组而非列表作为payload
+
+##转换示例##
+1. CAPL原始代码：
+EthernetPacket doipTest;
+byte testPayload[6] = {0x01, 0x00, 0x00, 0x00, 0xAA, 0xBB};
+doipTest.etherType = 0x0001;
+doipTest.payload = testPayload;
+
+2. 转换后的VBA代码：
+Set doipTest = DOIPPacket()
+doipTest.setProtocolVersion(&H0001)
+doipTest.setProtocolType(&H0000)
+doipTest.setPayload(Array(&HAA, &HBB))
+
+3. 关键说明：
+- CAPL的字节数组转换为VBA的Array
+- CAPL的etherType映射为VBA的setProtocolVersion/Type组合
+- CAPL直接结构体赋值对应VBA的方法调用

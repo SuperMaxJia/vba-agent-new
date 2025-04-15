@@ -1,0 +1,44 @@
+##功能##
+该函数用于启动诊断节点的3E诊断在线功能（Tester Present），保持诊断会话活动状态。在实际应用中，通常用于维持与ECU的诊断会话不被自动关闭，常见于需要长时间进行诊断操作的场景。
+
+##vba规范##
+函数定义：diagStartTesterPresent(diagNode, res_flag=False, mode=0)
+参数：
+- diagNode: DiagNode类型，表示目标诊断节点
+- res_flag: 布尔类型（可选，默认False），控制是否禁止肯定响应
+- mode: 整型（可选，默认0），0=物理寻址，1=功能寻址
+返回值：无
+
+##capl规范##
+在CAPL中对应的功能通常通过诊断服务请求实现：
+- 物理寻址模式：diagRequest <node>.TP.Start
+- 功能寻址模式：diagRequest <node>.TP.StartFunctional
+
+示例1：
+// 启动物理寻址的TesterPresent
+diagRequest ECU1.TP.Start;
+
+示例2：
+// 启动功能寻址的TesterPresent，禁止响应
+diagRequest ECU1.TP.StartFunctional suppressPosResponse;
+
+##capl名##
+diagRequest
+
+##转换须知##
+1. CAPL使用不同的请求对象（TP.Start/TP.StartFunctional）区分寻址模式，而非参数
+2. CAPL通过suppressPosResponse关键字控制响应禁止，而非布尔参数
+3. CAPL需要预定义诊断对象（如ECU1），而VBA使用运行时节点引用
+4. CAPL的diagRequest是同步操作，可能需要配合事件处理
+
+##转换示例##
+CAPL原始代码：
+diagRequest ACU.TP.Start;
+
+转换后的VBA代码：
+diagStartTesterPresent(CAN1.DiagNodes.ACU, False, 0)
+
+关键转换说明：
+1. CAPL的ACU对象对应VBA的CAN1.DiagNodes.ACU
+2. 默认情况（不禁止响应+物理寻址）对应CAPL的TP.Start请求
+3. VBA的mode参数0对应CAPL的物理寻址模式

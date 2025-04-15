@@ -1,0 +1,60 @@
+##功能##
+用于销毁检测事件对象，释放相关资源并使所有相关统计失效。常用于停止并清理之前启动的检测功能，如错误帧检测。
+
+##vba规范##
+函数名：chkControl_Destroy  
+参数：object（检测对象）  
+返回值：int（0成功，-1失败）  
+功能：销毁指定的检测对象  
+
+##capl规范##
+函数名：checkStop  
+参数：long checkId（检测ID）  
+返回值：int（0成功，-1失败）  
+功能：停止并销毁指定的检测实例  
+
+示例1：  
+```capl
+long checkId;
+checkId = checkStart_ErrorFrames();
+// 停止检测
+checkStop(checkId);
+```
+
+示例2：  
+```capl
+on key 'd'
+{
+    checkStop(activeCheckId);
+}
+```
+
+##capl名##
+checkStop
+
+##转换须知##
+1. 参数类型差异：VBA使用object类型，CAPL使用long类型作为检测ID
+2. 函数命名差异：VBA使用"Destroy"后缀，CAPL使用"Stop"前缀
+3. 功能相似性：两者都用于终止检测并释放资源
+4. 返回值一致：都返回0表示成功，-1表示失败
+
+##转换示例##
+CAPL原始代码：
+```capl
+long errCheck;
+errCheck = checkStart_ErrorFrames();
+checkStop(errCheck);
+```
+
+转换后的VBA代码：
+```vba
+Dim errCheck As Object
+Set errCheck = chkStart_ErrorFramesOccured()
+chkControl_Destroy(errCheck)
+```
+
+关键转换步骤：
+1. 将CAPL的long类型变量改为VBA的Object类型
+2. 将checkStart_ErrorFrames改为chkStart_ErrorFramesOccured
+3. 将checkStop改为chkControl_Destroy
+4. 在VBA中需要使用Set关键字初始化对象

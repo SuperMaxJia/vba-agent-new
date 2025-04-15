@@ -1,0 +1,46 @@
+1. 函数名  
+onETHPDUMessage  
+
+2. 函数描述  
+当接收到指定HeaderID的PDU以太网数据包时触发该函数。  
+
+3. 函数体  
+```vba  
+onETHPDUMessage(PDUMessage, network=None, VLAN=['0x88A8:0x0003', '0x8100:0x0002'])  
+```  
+
+4. 返回值  
+无返回值（事件触发函数）。  
+
+5. 参数  
+
+| 名称        | 类型          | 描述                                                                 |  
+|-------------|---------------|----------------------------------------------------------------------|  
+| PDUMessage  | ETHDBCPDU     | ETHDBCPDU对象信息，包含接收到的PDU以太网数据包的相关信息。           |  
+| network     | NetWork       | 网段对象，可选参数，默认为None。                                     |  
+| VLAN        | list          | VLAN列表，可选参数，默认值为['0x88A8:0x0003', '0x8100:0x0002']。     |  
+
+6. 内置函数  
+无内置函数说明。  
+
+7. 示例  
+
+**示例功能**  
+当接收到HeaderID为0x10020001的PDU以太网数据包时，触发事件并获取时间戳。  
+
+**示例代码**  
+```vba  
+@onETHPDUMessage(0x10020001)  
+def onEthernetPacketEvent(ETHFrame):  
+    ETHFrame.gettimestamp()  
+```  
+
+**代码注释**  
+- `@onETHPDUMessage(0x10020001)`：指定触发事件的HeaderID为0x10020001。  
+- `def onEthernetPacketEvent(ETHFrame):`：定义事件处理函数，参数为接收到的以太网数据包对象。  
+- `ETHFrame.gettimestamp()`：调用`gettimestamp()`方法获取数据包的时间戳。  
+
+8. 其他相关说明  
+- 该函数为事件触发函数，无显式返回值。  
+- 主要用于以太网PDU数据包的实时监控和处理。  
+- VLAN参数支持自定义配置，默认包含两种常见的VLAN类型。

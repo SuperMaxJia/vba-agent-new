@@ -1,0 +1,60 @@
+1. 函数名
+SOMEIPPacket
+
+2. 函数描述
+用于创建一条SOMEIP报文
+
+3. 函数体
+SOMEIPPacket()
+
+4. 返回值
+返回一个SOMEIPPacket对象
+
+5. 参数
+名称            类型    描述
+messageID       int     SOME/IP报文的ID值
+requestID       int     标识请求的ID值
+protocolVersion int     协议版本
+interfaceVersion int    接口版本
+messageType     int     SOME/IP报文的类型
+returnCode      int     ReturnCode值，例如0x00
+sdFlag          int     SD报文的标志位
+reserved        int     SD报文的保留值
+entrylength     int     SD报文的Entry长度
+optionlength    int     SD报文的Option长度
+transportPacket object  传输层协议类型
+entries         list    SOMEIPSD的Entries对象的列表
+options         list    Options列表
+payload         list    数据
+
+6. 内置函数
+setMesssageID()      设置MessageID
+setRequestId()       设置RequestId
+setProtocolVersion() 设置协议版本
+setInterfaceVersion()设置接口版本
+setMessageType()     设置报文类型
+setReturnCode()      设置ReturnCode
+setTransportPacket() 设置传输层协议
+setEntries()         设置Entries列表
+setOptions()         设置Options列表
+setPayload()         设置Payload数据
+
+7. 示例
+示例功能：创建一条SOMEIP报文
+示例代码：
+someipPacketPacket = SOMEIPPacket()
+someipPacketPacket.setMesssageID(0x00010002)
+someipPacketPacket.setRequestId(0x00000000)
+someipPacketPacket.setProtocolVersion(0x01)
+someipPacketPacket.setInterfaceVersion(0x01)
+someipPacketPacket.setMessageType(0x80)
+someipPacketPacket.setReturnCode(0x00)
+someipPacketPacket.setTransportPacket(TCPPacket/UDPPacket/TCPMessage/UDPMessage)
+someipPacketPacket.setEntries([]) // 如果不为空，要校验MessageID是否是0xFFFF8100，传入的对应的对象
+someipPacketPacket.setOptions([]) // 如果不为空，要校验MessageID是否是0xFFFF8100
+someipPacketPacket.setPayload([]) // 如果是SD报文，数据场就是SD报头后的数据，如果是普通SOMEIP报文，则是其SOMEIP后的数据场
+
+8. 其他说明
+- 如果是SD报文，需要校验MessageID是否为0xFFFF8100
+- transportPacket参数可以是TCPPacket、UDPPacket、TCPMessage或UDPMessage类型
+- 数据场(payload)的处理方式取决于报文类型(SD报文或普通SOMEIP报文)

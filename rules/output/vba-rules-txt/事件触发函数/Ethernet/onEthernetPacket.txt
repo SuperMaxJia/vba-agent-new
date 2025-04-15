@@ -1,0 +1,39 @@
+1. 函数名  
+onEthernetPacket  
+
+2. 函数描述  
+用于当接收到符合触发条件的以太网报文时触发。  
+
+3. 函数体  
+```vba  
+onEthernetPacket('*', network=None)  
+onEthernetPacket(bytes, network=None)  
+```  
+
+4. 返回值  
+无明确返回值，触发后执行绑定的回调函数。  
+
+5. 参数  
+| 名称     | 类型         | 描述                                                                 |  
+|----------|--------------|----------------------------------------------------------------------|  
+| bytes    | *, list      | 指定数据字节匹配触发，格式为 `[[startbyte,0x80,0x01],[startbyte,0x80,0x01]]` |  
+| network  | NetworkI     | 网段对象（可选）                                                     |  
+
+6. 内置函数  
+无直接关联的内置函数。  
+
+7. 示例  
+**示例功能**：监听所有以太网报文并打印时间戳。  
+**示例代码**：  
+```vba  
+@onEthernetPacket('*')  
+def onEthernetPacketEvent(ethFrame):  
+    ethFrame.getTimestamp()  
+```  
+**代码注释**：  
+- `@onEthernetPacket('*')`：监听所有以太网报文。  
+- `ethFrame.getTimestamp()`：获取报文的时间戳。  
+
+8. 其他说明  
+- 参数 `bytes` 支持通配符 `*` 或字节列表匹配。  
+- 回调函数需接收 `ethFrame` 参数，用于操作报文数据。

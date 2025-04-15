@@ -1,0 +1,42 @@
+1. 函数名
+cycleFunction
+
+2. 函数描述
+设置函数指定的周期运行
+
+3. 函数体
+cycleFunction(cycle_time, func, *parm)
+
+4. 返回值
+名称         类型           描述
+cycleFunc    cycleFunction  周期函数对象，包含三个方法：
+                            startSchedule():开始执行周期函数
+                            stop():停止周期函数执行
+                            setCycleTime(cycle_time):设置运行的周期
+
+5. 参数
+名称         类型       描述
+cycle_time   int        周期运行的时间，int类型，单位是毫秒
+func         function  函数名称
+*parm        *parm     函数的参数
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：演示如何使用cycleFunction周期执行函数
+示例代码：
+global demoFunction
+def demoFunction(m, n):
+    writeInfo(m + n)
+cycle = cycleFunction(100, demoFunction, 1, 2)
+cycle.startSchedule()
+代码注释：
+- 定义了一个全局函数demoFunction，接收两个参数并输出它们的和
+- 使用cycleFunction创建周期函数，设置周期为100毫秒
+- 调用startSchedule()方法开始周期执行
+
+8. 其他说明
+- 周期函数对象包含三个控制方法：startSchedule、stop和setCycleTime
+- 周期时间单位为毫秒
+- 可以传递任意数量的参数给被周期调用的函数

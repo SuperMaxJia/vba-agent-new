@@ -1,0 +1,57 @@
+##功能##
+该函数用于在工程运行前执行特定操作，常用于初始化设置或输出启动信息等场景。在实际应用中，可用于检查环境配置、加载必要数据或显示启动状态。
+
+##vba规范##
+函数定义：使用@onPreStart装饰器标记的无参数无返回值函数
+参数：无
+返回值：无
+特性：支持多个同名装饰器标记不同函数，但函数名必须唯一
+内置函数：writeInfo()用于控制台输出
+
+##capl规范##
+CAPL中使用on preStart事件处理程序实现类似功能：
+1. 无参数无返回值
+2. 通过system关键字声明
+3. 支持多个on preStart块
+示例1：
+on preStart
+{
+  write("工程正在启动！");
+}
+
+示例2：
+on preStart
+{
+  setTimer(msTimer1, 100);
+  write("定时器已初始化");
+}
+
+##capl名##
+on preStart
+
+##转换须知##
+1. CAPL使用事件块而非函数定义
+2. CAPL输出函数为write()而非writeInfo()
+3. CAPL不需要装饰器语法
+4. 多个处理程序直接在同一个事件块内或分多个块编写
+5. CAPL中系统事件处理程序必须使用on关键字
+
+##转换示例##
+1. CAPL原始代码：
+on preStart
+{
+  write("系统初始化中...");
+  setSignal(sig_EngineStart, 1);
+}
+
+2. 转换后的VBA代码：
+@onPreStart
+def initSystem():
+    writeInfo('系统初始化中...')
+    setSignal(sig_EngineStart, 1)
+
+3. 关键转换说明：
+- 将on preStart块转换为@onPreStart装饰函数
+- write()改为writeInfo()
+- 保持相同的业务逻辑顺序
+- 函数需要赋予唯一名称

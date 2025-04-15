@@ -1,0 +1,53 @@
+##功能##
+该函数用于创建LIN报文对象，主要用于LIN总线仿真场景。通过指定报文ID、数据长度和数据内容，可以构建自定义的LIN报文，并配合调度服务函数实现LIN报文的自动发送。
+
+##vba规范##
+函数名：LINMsg
+参数：
+- id (int): LIN报文ID，范围0-63(0x3F)
+- dlc (int): 报文数据长度
+- datas (List): 报文数据场列表，元素为字节数据
+返回值：
+- linMsg (LINMsg): 返回创建的LIN报文对象
+
+##capl规范##
+在CAPL中，可以使用linCreateFrame函数创建LIN帧对象，并使用linSetFrameData设置数据内容。
+函数定义：
+message linCreateFrame(int id, int dlc);
+void linSetFrameData(message msg, byte data[]);
+
+示例1：
+message msg1;
+byte data1[4] = {0x01, 0x11, 0x12, 0x13};
+msg1 = linCreateFrame(0x10, 4);
+linSetFrameData(msg1, data1);
+
+示例2：
+message msg2;
+byte data2[8] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
+msg2 = linCreateFrame(0x20, 8);
+linSetFrameData(msg2, data2);
+
+##capl名##
+linCreateFrame
+
+##转换须知##
+1. CAPL需要分两步创建和设置LIN帧数据，而VBA一步完成
+2. CAPL使用byte数组存储数据，VBA使用List
+3. CAPL的linCreateFrame只创建空帧，需要额外调用linSetFrameData设置数据
+4. CAPL中报文ID范围与VBA相同(0-63)
+
+##转换示例##
+CAPL原始代码：
+message msg;
+byte data[4] = {0x01, 0x11, 0x12, 0x13};
+msg = linCreateFrame(0x10, 4);
+linSetFrameData(msg, data);
+
+转换后的VBA代码：
+linframe = LINMsg(0x10, 4, [0x01, 0x11, 0x12, 0x13])
+
+关键转换步骤说明：
+1. 将CAPL的两步操作合并为VBA的一步操作
+2. 将CAPL的byte数组转换为VBA的List形式
+3. 保持相同的报文ID和数据长度参数

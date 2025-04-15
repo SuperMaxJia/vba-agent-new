@@ -1,0 +1,67 @@
+##功能##
+该函数用于等待一个指定的信号在指定的时间内出现在总线上。主要用于测试环境中验证信号是否按预期出现，常用于自动化测试脚本中检测信号的有效性。
+
+##vba规范##
+函数定义：testWaitForSignalAvailable(signal, timeout = 1000)
+参数：
+- signal：object类型，表示需要等待的信号对象
+- timeout：int类型，表示超时时间（毫秒），默认值为1000
+返回值：int类型，0表示超时，1表示事件发生，-1表示出现错误
+
+##capl规范##
+函数定义：waitForSignal(signal, timeout)
+参数：
+- signal：message*类型，表示需要等待的信号
+- timeout：int类型，表示超时时间（毫秒）
+返回值：int类型，0表示超时，1表示事件发生，-1表示出现错误
+
+示例1：
+```capl
+message* msg;
+int result = waitForSignal(msg, 1000);
+if (result == 1) {
+  write("Signal received");
+} else {
+  write("Timeout or error");
+}
+```
+
+示例2：
+```capl
+on message CAN1.*
+{
+  message* currentMsg = this;
+  int status = waitForSignal(currentMsg, 500);
+  if (status == 1) {
+    write("Expected message received");
+  }
+}
+```
+
+##capl名##
+waitForSignal
+
+##转换须知##
+1. 参数类型差异：VBA使用object类型表示信号，而CAPL使用message*类型
+2. 返回值含义一致，但CAPL中可能需要额外处理消息指针
+3. 函数行为：CAPL版本直接操作CAN消息，而VBA版本可能通过COM接口访问
+4. 特殊情况：CAPL中0超时表示立即返回，而VBA中0表示无限等待
+
+##转换示例##
+CAPL原始代码：
+```capl
+message CAN1.EMS* emsMsg;
+int waitResult = waitForSignal(emsMsg, 2000);
+```
+
+转换后的VBA代码：
+```vba
+Dim emsSignal As Object
+Dim waitResult As Integer
+waitResult = testWaitForSignalAvailable(emsSignal, 2000)
+```
+
+关键转换步骤：
+1. 将CAPL的message*类型转换为VBA的Object类型
+2. 保持相同的超时参数值
+3. 返回值处理方式保持一致

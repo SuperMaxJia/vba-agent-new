@@ -1,0 +1,78 @@
+##功能##
+该函数用于获取以太网通道的主从模式（Master/Slave），主要用于网络配置和状态监测场景。在实际应用中，常用于诊断和调试网络通信问题，确保主从设备正确配置。
+
+##vba规范##
+函数名：ethGetOperationMode  
+参数：  
+- network（Network类型）：网段对象  
+返回值：  
+- int类型：0表示Master模式，1表示Slave模式，-1表示获取失败  
+内置函数：无  
+示例：  
+```vba  
+Dim mode As Integer  
+mode = ethGetOperationMode(network)  
+If mode = 0 Then  
+    WriteInfo "当前模式: Master"  
+ElseIf mode = 1 Then  
+    WriteInfo "当前模式: Slave"  
+Else  
+    WriteWarningInfo "模式获取失败"  
+End If  
+```  
+
+##capl规范##
+CAPL中没有直接对应的函数，但可以通过以下方式模拟：  
+1. 使用`EthernetGetMode`获取模式  
+2. 返回值：0表示Master，1表示Slave，-1表示失败  
+示例1：  
+```capl  
+int mode;  
+mode = EthernetGetMode(network);  
+if (mode == 0) {  
+    write("当前模式: Master");  
+} else if (mode == 1) {  
+    write("当前模式: Slave");  
+} else {  
+    write("模式获取失败");  
+}  
+```  
+示例2：  
+```capl  
+on key 'm' {  
+    int mode = EthernetGetMode(network);  
+    if (mode != -1) {  
+        write("模式: %d", mode);  
+    }  
+}  
+```  
+
+##capl名##
+EthernetGetMode  
+
+##转换须知##
+1. 参数类型：VBA使用Network对象，CAPL使用network变量  
+2. 返回值：两者一致，但CAPL需显式检查-1  
+3. 函数行为：CAPL需手动处理错误，VBA可能内置异常处理  
+4. 特殊情况：CAPL需确保network已初始化  
+
+##转换示例##
+CAPL原始代码：  
+```capl  
+int mode = EthernetGetMode(network);  
+if (mode == 0) {  
+    write("Master");  
+}  
+```  
+转换后的VBA代码：  
+```vba  
+Dim mode As Integer  
+mode = ethGetOperationMode(network)  
+If mode = 0 Then  
+    WriteInfo "Master"  
+End If  
+```  
+关键转换步骤：  
+1. 函数名替换为`ethGetOperationMode`  
+2. 返回值处理逻辑保持一致  
+3. 输出函数从`write`改为`WriteInfo`

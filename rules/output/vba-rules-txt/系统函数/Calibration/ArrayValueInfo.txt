@@ -1,0 +1,45 @@
+1. 函数名
+ArrayValueInfo
+
+2. 函数描述
+创建一个自定义的数组结构对象，然后通过修改其对象的属性值来设置相应的数组参数。
+
+3. 函数体
+ArrayValueInfo()
+
+4. 返回值
+名称         类型          描述
+arrayValueInfo  ArrayValueInfo  返回一个数组结构对象，该对象包含以下属性，可分别给下面的属性进行赋值
+
+5. 内置函数
+函数名称              描述
+getColumnNumber()     获取数组列(x)方向维数,整数类型
+getRowNumber()        获取数组行(y)方向维数,整数类型
+getValue()            获取数组值列表，float列表类型
+getInfo()             获取调用接口返回的错误信息
+setColumnNumber(columnNumber)  设置数组列(x)方向维数，整数类型
+setRowNumber(rowNumber)        设置数组行(y)方向维数，整数类型
+setValue(value)                设置数组值列表
+
+参数或返回值
+名称           类型     描述
+columnNumber   int     数组列(x)方向维数
+rowNumber      int     数组行(y)方向维数
+value          int     数组值列表
+info           int     错误信息
+value          int     数组值
+
+6. 示例
+示例功能：创建一个自定义的标定数组结构对象，并基于此配置参数对数组标定量进行标定
+
+示例代码：
+arrayValueInfo = ArrayValueInfo()
+arrayValueInfo.setColumnNumber(2)  # 设置数组列(x)方向维数，整数类型
+arrayValueInfo.setRowNumber(2)     # 设置数组行(y)方向维数，整数类型
+arrayValueInfo.setValue([0.1, 0.2, 0.3, 0.4])  # 设置数组值列表
+writeArrayValue(CAN1.Calibrations.calNode1, "NewArray", arrayValueInfo)
+
+7. 其他信息
+版权信息：北京经纬恒润股份有限公司
+版本信息：VBA V3.0.0R
+修订时间：2025-01-22 16:07:29

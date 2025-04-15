@@ -1,0 +1,44 @@
+1. 函数名
+CurveValueInfo
+
+2. 函数描述
+创建一个自定义的Curve结构对象，然后通过修改其对象的属性值来设置相应的Curve参数。
+
+3. 函数体
+CurveValueInfo()
+
+4. 返回值
+名称           类型           描述
+curveValueInfo  CurveValueInfo  返回一个Curve结构对象，该对象包含以下属性，可分别给下面的属性进行赋值
+
+5. 内置函数
+函数名称                描述
+getAxisNumber()        获取curve变量轴点个数
+getAxisValue()         获取Curve轴区域数值列表
+getValue()             获取Curve值区域数值列表，元素为float类型
+getInfo()              获取调用接口返回的错误信息
+setAxisNumber(axisNumber)  设置轴点个数，整数类型
+setAxisValue(axisValue)    设置Curve轴区域数值列表
+setValue(value)            设置Curve值区域数值列表
+
+参数或返回值
+名称         类型   描述
+axisNumber   int    轴点个数
+axisValue    list   轴区域数值列表
+value        list   值区域数值列表
+info         str    错误信息
+
+6. 示例
+示例功能：创建一个自定义的Curve结构对象，并基于此配置参数对Curve标定量进行标定
+
+示例代码：
+curveValueInfo = CurveValueInfo()
+curveValueInfo.setAxisNumber(1)        # 设置轴点个数
+curveValueInfo.setAxisValue([2.0])     # 设置Curve轴区域数值列表
+curveValueInfo.setValue([3.0])         # 设置Curve值区域数值列表
+writeCurveValue(CAN1.Calibrations.calNode1, "ResistTemp_Y", curveValueInfo)
+
+7. 其他信息
+- 该函数属于Calibration类别
+- 需要配合writeCurveValue函数使用来完成标定操作
+- 返回的curveValueInfo对象可以设置轴点个数、轴区域数值和值区域数值

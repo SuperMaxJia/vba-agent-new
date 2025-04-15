@@ -1,0 +1,42 @@
+1. 函数名
+writeCurveValueByIndex
+
+2. 函数描述
+向Curve变量指定区域的指定索引处写入标定值
+
+3. 函数体
+writeCurveValueByIndex(calNode, variable, index, region, value)
+
+4. 返回值
+名称 | 类型 | 描述
+ans | ResultInfo | ans.errorInfo为标定失败时返回的错误信息，ans.backPhyValue为标定成功时回读的值
+
+5. 参数
+名称 | 类型 | 描述
+calNode | CalNode | 标定节点对象
+variable | str/CalVariable | 读取的变量，可以是变量名称或者变量对象
+index | int | 索引值
+region | int | 区域类型（0：值区域，1：X轴区域，2：Y轴区域）
+value | double | 标定值
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：标定CAN1网段下calNode1标定节点中名称为"ResistTemp_Y"的标定量值区域0索引处的值为1.0
+
+示例代码：
+ans = writeCurveValueByIndex(CAN1.Calibrations.calNode1, 'ResistTemp_Y', 0, 0, 1.0)
+#or
+#ans = writeCurveValueByIndex(CAN1.Calibrations.calNode1, CAN1.Calibrations.calNode1.characteristics.ResistTemp_Y, 0, 0, 1.0)
+writeInfo(ans.backPhyValue)
+
+代码注释：
+- 第一行代码演示了使用变量名称作为参数
+- 第二行是被注释掉的代码，演示了使用变量对象作为参数
+- 最后一行输出标定成功时回读的值
+
+8. 其他说明
+- 该函数属于Calibration类函数
+- region参数取值说明：0表示值区域，1表示X轴区域，2表示Y轴区域
+- 函数返回的ResultInfo对象包含错误信息和回读值

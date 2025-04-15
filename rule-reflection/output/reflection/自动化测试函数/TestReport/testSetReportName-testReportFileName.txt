@@ -1,0 +1,44 @@
+##功能##
+该函数用于设置或修改测试报告的文件名称。如果提供了名称参数，则使用该名称作为测试报告文件名；如果不提供参数，则使用默认文件名。适用于需要动态生成测试报告名称的场景。
+
+##vba规范##
+函数名：testReportFileName
+参数：
+- name: String类型，可选参数，指定测试报告的文件名
+返回值：无
+功能：设置测试报告文件名
+示例：testReportFileName("DynamicName")
+
+##capl规范##
+在CAPL中，可以使用testSetReportName函数来设置测试报告名称。
+参数：
+- name: char数组，指定测试报告的文件名
+返回值：无
+示例1：
+testSetReportName("DynamicReport"); // 设置测试报告名为DynamicReport
+
+示例2：
+char reportName[50] = "CustomReport";
+testSetReportName(reportName); // 通过变量设置测试报告名
+
+##capl名##
+testSetReportName
+
+##转换须知##
+1. 参数类型差异：VBA使用String类型，CAPL使用char数组
+2. 参数数量：两者都支持单个参数
+3. 返回值：两者都无返回值
+4. 函数行为：两者功能完全一致
+5. 特殊情况：CAPL中字符串需要使用双引号，且需要注意字符数组长度限制
+
+##转换示例##
+1. CAPL原始代码：
+testSetReportName("CAPL_Test_Report");
+
+2. 转换后的VBA代码：
+testReportFileName "VBA_Test_Report"
+
+3. 关键转换说明：
+- 函数名从testSetReportName改为testReportFileName
+- 参数从CAPL的char数组改为VBA的String类型
+- 调用语法从CAPL的分号结尾改为VBA的无符号结尾

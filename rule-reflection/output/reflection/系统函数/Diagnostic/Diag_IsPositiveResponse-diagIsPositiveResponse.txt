@@ -1,0 +1,58 @@
+##功能##
+该函数用于判断诊断PDU（协议数据单元）是否是肯定响应。主要用于汽车诊断通信中，当发送诊断请求后，通过检查返回的PDU数据来判断是否为肯定响应（如0x7E8响应）。
+
+##vba规范##
+函数名：diagIsPositiveResponse
+参数：
+- pdu：List类型，包含诊断PDU数据的数组列表
+返回值：boolean类型，True表示是肯定响应，False表示是否定响应或无效响应
+功能：检查诊断PDU数据是否符合肯定响应的标准（通常检查第一个字节是否为0x7E8）
+
+##capl规范##
+在CAPL中，可以使用内置的诊断响应检查函数：
+函数定义：int Diag_IsPositiveResponse(byte data[], dword size)
+参数：
+- data[]：byte数组，包含诊断响应数据
+- size：dword类型，数据长度
+返回值：int类型，1表示肯定响应，0表示否定响应或无效响应
+
+示例1：
+byte response[8];
+Diag_GetLastResponse(ECU1, response, elcount(response));
+if (Diag_IsPositiveResponse(response, elcount(response))) {
+  write("Positive response received");
+}
+
+示例2：
+on diagResponse ECUDiag.* {
+  if (Diag_IsPositiveResponse(this.OBDBytes, this.DLC)) {
+    write("Positive response for service %02X", this.ServiceId);
+  }
+}
+
+##capl名##
+Diag_IsPositiveResponse
+
+##转换须知##
+1. 参数差异：VBA使用List类型，而CAPL使用byte数组和长度参数
+2. 返回值差异：VBA返回boolean，CAPL返回int（1/0）
+3. 数据获取方式不同：VBA可能需要先调用发送函数，CAPL可以直接使用诊断事件
+4. 在CAPL中需要明确指定ECU和获取响应数据的方式
+
+##转换示例##
+1. CAPL原始代码：
+byte respData[8];
+Diag_GetLastResponse(EngineControl, respData, elcount(respData));
+int isPositive = Diag_IsPositiveResponse(respData, elcount(respData));
+
+2. 转换后的VBA代码：
+Dim pdu As Variant
+pdu = diagSendRequest(CAN1.DiagNodes.EMS.ReadDataByIdentifier, False, 0)
+Dim ans As Boolean
+ans = diagIsPositiveResponse(pdu)
+
+3. 关键转换说明：
+- CAPL的byte数组转换为VBA的List
+- CAPL的显式数据获取改为VBA的隐式返回
+- 返回值从int(1/0)改为boolean(True/False)
+- CAPL需要指定ECU，VBA通过诊断节点隐式指定

@@ -1,0 +1,66 @@
+##功能##
+该函数用于刷新当前DOIP连接中的以太网节点信息，重新识别所有可用节点并返回其详细信息，包括逻辑地址、IP地址、VID车辆识别号、GID通用识别号和EID实体识别号。适用于需要动态获取车辆网络拓扑或诊断会话中节点变更的场景。
+
+##vba规范##
+函数名：diagDOIPRefreshVehicleAddress
+参数：connectHandle (int类型，表示DOIP连接句柄)
+返回值：二维数组，每行包含5个元素(逻辑地址,IP地址,VID,GID,EID)，若无节点信息则返回空数组
+行为：强制刷新当前连接的以太网节点信息
+
+##capl规范##
+函数定义：long refreshDoipNodes(long handle, dword& nodesArray[])
+参数：
+  - handle: 输入参数，DOIP连接句柄
+  - nodesArray: 输出参数，预分配的二维数组缓冲区
+返回值：实际填充的节点数量，错误返回-1
+备注：需要预先分配足够大的数组空间
+
+示例1:
+dword nodes[10][5];
+long count = refreshDoipNodes(connectHandle, nodes);
+if(count > 0){
+  write("Found %d nodes", count);
+}
+
+示例2:
+dword dynamicNodes[][5];
+long nodeCount = refreshDoipNodes(connHandle, dynamicNodes);
+for(int i=0; i<nodeCount; i++){
+  write("Node %d - IP: %d.%d.%d.%d", 
+    i+1,
+    (dynamicNodes[i][1]>>24)&0xFF,
+    (dynamicNodes[i][1]>>16)&0xFF,
+    (dynamicNodes[i][1]>>8)&0xFF,
+    dynamicNodes[i][1]&0xFF);
+}
+
+##capl名##
+refreshDoipNodes
+
+##转换须知##
+1. CAPL需要预分配数组空间而VBA自动管理内存
+2. CAPL返回节点数量，VBA返回完整数组
+3. CAPL使用引用参数返回数据，VBA直接返回数组
+4. 错误处理方式不同：CAPL通过返回值-1，VBA返回空数组
+5. IP地址在CAPL中需要手动转换格式
+
+##转换示例##
+CAPL原始代码:
+dword nodeInfo[5][5];
+long result = refreshDoipNodes(hConn, nodeInfo);
+if(result > 0){
+  // 处理节点信息
+}
+
+转换后的VBA代码:
+Dim nodeInfo As Variant
+nodeInfo = diagDOIPRefreshVehicleAddress(hConn)
+If Not IsEmpty(nodeInfo) Then
+  ' 处理节点信息
+End If
+
+关键转换说明:
+1. 将CAPL的显式数组声明改为VBA的动态数组
+2. CAPL的返回值检查改为VBA的IsEmpty判断
+3. 移除CAPL中的手动内存管理代码
+4. 保持核心业务逻辑不变

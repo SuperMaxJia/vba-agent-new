@@ -1,0 +1,60 @@
+##功能##
+将字符串写入文件，并返回写入的字符长度。用于在文件中记录数据或日志信息。
+
+##vba规范##
+函数名：fileWriteLine  
+参数：  
+- file: 文件对象  
+- str: 要写入的字符串  
+返回值：写入的字符长度（int）  
+内置函数：无  
+
+##capl规范##
+函数名：filePutString  
+参数：  
+- fileHandle: 文件句柄（dword）  
+- string: 要写入的字符串（char[]）  
+返回值：写入的字节数（int）  
+示例1：  
+```capl
+dword file;
+int result;
+file = openFile("C:\\demo.txt", 1);
+result = filePutString(file, "test");
+closeFile(file);
+```
+示例2：  
+```capl
+dword logFile;
+logFile = openFile("C:\\log.txt", 1);
+filePutString(logFile, "Error: Sensor timeout");
+closeFile(logFile);
+```
+
+##capl名##
+filePutString
+
+##转换须知##
+1. CAPL使用文件句柄(dword)而不是文件对象
+2. CAPL返回的是字节数而非字符长度
+3. CAPL需要显式调用closeFile关闭文件
+4. CAPL文件打开模式使用数字代码(1=写入)
+
+##转换示例##
+CAPL原始代码：  
+```capl
+dword file;
+file = openFile("C:\\data.txt", 1);
+filePutString(file, "Hello World");
+closeFile(file);
+```
+转换后的VBA代码：  
+```vba
+file = openFile("C:\data.txt", mode="w")
+fileWriteLine(file, "Hello World")
+closeFile(file)
+```
+关键转换步骤：  
+1. 将openFile的数字模式1转换为"w"  
+2. filePutString改为fileWriteLine  
+3. 移除dword类型声明

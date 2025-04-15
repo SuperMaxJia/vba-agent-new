@@ -1,0 +1,68 @@
+##功能##
+该函数用于监控信号、系统变量、标定或测量量，当这些值超出指定的数值范围时停止等待。主要用于测试场景中需要检测信号是否超出允许范围的情况。
+
+##vba规范##
+函数名：testWaitForSignalOutsideRange
+参数：
+- object：信号或变量对象（必须为数值类型）
+- aLowLimit：最小值（整数）
+- aHighLimit：最大值（整数）
+- timeout：超时时间（毫秒，整数）
+返回值：
+- 0：超时
+- 1：事件发生（值超出范围）
+- -1：发生错误
+
+##capl规范##
+函数名：TestWaitForSignalOutsideRange
+参数：
+- signal：信号对象（必须为数值类型）
+- lowLimit：最小值（整数）
+- highLimit：最大值（整数）
+- timeout：超时时间（毫秒，整数）
+返回值：
+- 0：超时
+- 1：事件发生（值超出范围）
+- -1：发生错误
+
+示例1：
+```capl
+int result;
+result = TestWaitForSignalOutsideRange(EngineRPM, 1000, 5000, 3000);
+```
+
+示例2：
+```capl
+if(TestWaitForSignalOutsideRange(VehicleSpeed, 0, 120, 5000) == 1)
+{
+    write("车速超出范围！");
+}
+```
+
+##capl名##
+TestWaitForSignalOutsideRange
+
+##转换须知##
+1. 参数类型：VBA使用object类型，而CAPL直接使用信号对象
+2. 函数名：CAPL使用首字母大写的命名约定
+3. 返回值：两者完全一致
+4. 超时处理：两者都以毫秒为单位
+5. 错误处理：两者都返回-1表示错误
+
+##转换示例##
+1. CAPL原始代码：
+```capl
+int res = TestWaitForSignalOutsideRange(CAN1::EngineTemp, 70, 90, 10000);
+```
+
+2. 转换后的VBA代码：
+```vba
+Dim res As Integer
+res = testWaitForSignalOutsideRange(CAN1.EngineTemp, 70, 90, 10000)
+```
+
+3. 关键转换说明：
+- 函数名从首字母大写改为全小写
+- CAPL的双冒号(::)分隔符改为VBA的点(.)分隔符
+- 变量声明方式从CAPL的"int"改为VBA的"Integer"
+- 参数顺序和含义保持不变

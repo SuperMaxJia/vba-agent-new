@@ -1,0 +1,42 @@
+##功能##
+该函数用于在测试系统中记录测试步骤发生的错误或异常信息，并将测试用例状态标记为Error状态。主要用于测试过程中出现意外情况时记录错误详情到测试报告中，便于后续分析和调试。
+
+##vba规范##
+函数名：testStepErrorInTestSystem
+参数：
+- levelOfDetail: str类型，表示错误重要程度，数字越大重要程度越低
+- description: str类型，错误描述信息，可选参数
+返回值：无
+功能：记录错误信息并改变测试用例状态为Error
+
+##capl规范##
+在CAPL中对应函数为testStepError，用于报告测试步骤错误并设置测试状态为ERROR。
+参数：
+- level: int类型，错误级别
+- message: char[]类型，错误描述信息
+返回值：void
+示例1：
+testStepError(3, "WaitForResponse: Expected message did not occur. Timeout.");
+示例2：
+testStepError(1, "CAN communication failure");
+
+##capl名##
+testStepError
+
+##转换须知##
+1. 参数类型差异：VBA使用字符串表示级别，CAPL使用整数
+2. 参数顺序一致：都是先级别后描述
+3. 函数行为相同：都会设置测试状态为Error
+4. 在CAPL中级别参数应为整数而非字符串
+
+##转换示例##
+CAPL原始代码：
+testStepError(3, "Timeout occurred during message wait");
+
+转换后的VBA代码：
+testStepErrorInTestSystem("3", "Timeout occurred during message wait");
+
+关键转换步骤：
+1. 保持相同的参数顺序
+2. 将CAPL的整数级别转换为VBA的字符串级别
+3. 保持错误描述信息不变

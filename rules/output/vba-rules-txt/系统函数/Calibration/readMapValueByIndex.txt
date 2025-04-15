@@ -1,0 +1,45 @@
+1. 函数名  
+readMapValueByIndex  
+
+2. 函数描述  
+读取Map变量指定区域内指定索引处的测量值。  
+
+3. 函数体  
+```vba  
+readMapValueByIndex(calNode, variable, columnIndex, rowIndex, region)  
+```  
+
+4. 返回值  
+| 名称         | 类型        | 描述                                                                 |  
+|--------------|-------------|----------------------------------------------------------------------|  
+| ans          | ResultInfo  | ans.errorInfo 为读取失败时返回的错误信息，ans.backPhyValue 为读取成功时获取的测量值 |  
+
+5. 参数  
+| 名称         | 类型         | 描述                                   |  
+|--------------|--------------|----------------------------------------|  
+| calNode      | CalNode      | 标定节点对象                          |  
+| variable     | str, CalVariable | 读取的变量，可以是变量名称或者变量对象 |  
+| columnIndex  | int          | 列索引（x方向索引）                   |  
+| rowIndex     | int          | 行索引（y方向索引）                   |  
+| region       | int          | 区域类型（0：值区域，1：X轴区域，2：Y轴区域） |  
+
+6. 内置函数  
+无  
+
+7. 示例  
+**示例功能**：读取CAN1网段下calNode1标定节点中名称为"NewMap"的标定量在值区域(0,0)索引处的测量值。  
+
+**示例代码**：  
+```vba  
+ans = readMapValueByIndex(CAN1.Calibrations.calNode1, "NewMap", 0, 0, 0)  
+' 或者  
+' ans = readMapValueByIndex(CAN1.Calibrations.calNode1, CAN1.Calibrations.calNode1.characteristics.NewMap, 0, 0, 0)  
+writeInfo(ans.backPhyValue)  
+```  
+
+**代码注释**：  
+- `readMapValueByIndex` 函数用于从Map变量中读取指定索引处的测量值。  
+- `writeInfo` 用于输出读取到的测量值。  
+
+8. 其他和函数或变量强相关的内容  
+无

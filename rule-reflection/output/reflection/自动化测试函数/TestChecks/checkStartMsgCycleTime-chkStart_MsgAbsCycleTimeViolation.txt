@@ -1,0 +1,62 @@
+##功能##
+该函数用于启动对CAN报文绝对周期时间的违规检查，监控报文是否按照预设的周期时间发送。主要用于测试CAN网络通信的时序合规性，确保报文周期符合规范要求。
+
+##vba规范##
+函数名：chkStart_MsgAbsCycleTimeViolation
+参数：无参数
+返回值：未明确说明（可能返回布尔值表示启动状态，或void无返回值）
+功能：启动报文周期时间监控
+
+##capl规范##
+函数定义：void checkStartMsgCycleTime()
+参数：无
+返回值：void
+示例1：
+```capl
+on start
+{
+  checkStartMsgCycleTime();
+  write("启动报文周期检查");
+}
+```
+示例2：
+```capl
+on key 's'
+{
+  checkStartMsgCycleTime();
+  testStepPass("周期监控已激活");
+}
+```
+
+##capl名##
+checkStartMsgCycleTime
+
+##转换须知##
+1. CAPL函数无返回值而VBA可能返回状态
+2. CAPL需要显式调用在事件处理程序中
+3. VBA版本可能需要错误处理机制
+4. CAPL通常集成在测试节点中自动执行
+
+##转换示例##
+CAPL原始代码：
+```capl
+on timer 1000
+{
+  checkStartMsgCycleTime();
+}
+```
+
+转换后的VBA代码：
+```vba
+Sub StartCycleCheck()
+    If Not chkStart_MsgAbsCycleTimeViolation() Then
+        MsgBox "周期检查启动失败"
+    End If
+End Sub
+```
+
+关键转换说明：
+1. 将CAPL事件处理器转换为VBA子程序
+2. 添加了VBA特有的错误提示机制
+3. 假设VBA函数返回布尔值需要判断
+4. 移除了定时触发机制改为手动调用

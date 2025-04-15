@@ -1,0 +1,62 @@
+##功能##
+testGroupEnd函数用于标识测试用例分组的结束，必须与testGroupBegin配对使用，在主函数中调用以组织测试用例的分组结构。它帮助将相关测试用例逻辑分组，便于管理和报告。
+
+##vba规范##
+函数名：testGroupEnd  
+描述：标识测试用例分组的结尾  
+函数体：testGroupEnd()  
+返回值：无  
+参数：无  
+要求：必须与testGroupBegin成对出现，且在主函数中调用  
+
+##capl规范##
+函数名：testGroupEnd  
+描述：标记测试组的结束  
+函数体：testGroupEnd();  
+返回值：void  
+参数：无  
+示例1：  
+```capl
+testGroupBegin("PowerTests", "验证电源相关功能");
+testCase1();
+testCase2();
+testGroupEnd();
+```
+示例2：  
+```capl
+testGroupBegin("CANComm", "CAN通信测试组");
+checkFrameCount();
+verifyBaudrate();
+testGroupEnd();
+```
+
+##capl名##
+testGroupEnd
+
+##转换须知##
+1. 参数和返回值在CAPL和VBA中完全一致  
+2. 必须保持相同的配对使用规则  
+3. CAPL中分号是必须的语句结束符  
+4. 都需要在主测试函数中调用  
+
+##转换示例##
+1. CAPL原始代码：  
+```capl
+testGroupBegin("ECU_Reset", "复位功能测试组");
+testResetNormal();
+testResetEmergency();
+testGroupEnd();
+```
+
+2. 转换后的VBA代码：  
+```vba
+testGroupBegin "ECU_Reset", "复位功能测试组"
+testResetNormal
+testResetEmergency
+testGroupEnd
+```
+
+3. 关键转换说明：  
+- 移除CAPL语句结束的分号  
+- VBA中调用函数不需要括号  
+- 保持完全相同的函数名和分组结构

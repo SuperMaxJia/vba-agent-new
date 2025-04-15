@@ -1,0 +1,28 @@
+1. 函数名
+strLeft
+
+2. 函数描述
+从字符串sourceStr左边数截取length长度的子串
+
+3. 函数体
+strLeft(sourceStr, length)
+
+4. 返回值
+名称  类型    描述
+str   String  返回截取的字符串
+
+5. 参数
+名称        类型    描述
+sourceStr  String  字符串
+length     int     截取字符的长度
+
+6. 内置函数
+(无相关信息)
+
+7. 示例
+示例功能：截取字符串'abcdef'的前3个字符
+示例代码：strLeft('abcdef', 3)
+代码注释：返回结果为'abc'
+
+8. 其他相关信息
+(无其他相关信息)

@@ -1,0 +1,65 @@
+##功能##
+该函数用于客户端建立TCP连接，适用于需要通过网络进行TCP通信的场景，如车载网络测试中ECU与测试设备之间的通信。
+
+##vba规范##
+函数定义：socketId = ethTCPClientConnect(network, TCPIPStack, sourPort, destIP, destPort, timeout)
+参数：
+- network: NetworkI类型，网段信息
+- TCPIPStack: TCPIPStack类型，本机TCP配置信息
+- sourPort: int类型，本机端口号
+- destIP: str类型，目的IP地址
+- destPort: int类型，目的端口号
+- timeout: int类型，超时时间
+返回值：int类型，成功返回socketid，失败返回错误码（-1表示接口调用错误）
+
+##capl规范##
+函数定义：socketId = tcpConnect(ipAddress, port, timeout)
+参数：
+- ipAddress: char[]类型，目的IP地址
+- port: dword类型，目的端口号
+- timeout: dword类型，超时时间（毫秒）
+返回值：dword类型，成功返回socket句柄，失败返回0xFFFFFFFF
+
+示例1：
+```capl
+dword socket;
+socket = tcpConnect("192.168.1.100", 8080, 5000);
+if(socket == 0xFFFFFFFF) {
+  write("Connection failed");
+}
+```
+
+示例2：
+```capl
+dword handle;
+handle = tcpConnect("10.0.0.2", 502, 3000);
+```
+
+##capl名##
+tcpConnect
+
+##转换须知##
+1. CAPL的tcpConnect只需要3个参数，而VBA需要6个参数
+2. CAPL的返回值是dword类型，VBA是int类型
+3. CAPL的超时单位是毫秒，VBA未明确单位
+4. CAPL没有网络和TCPIPStack参数的概念
+5. CAPL不提供源端口配置功能
+
+##转换示例##
+CAPL原始代码：
+```capl
+dword sock;
+sock = tcpConnect("192.168.0.1", 8000, 2000);
+```
+
+转换后的VBA代码：
+```vba
+Dim socketid As Integer
+socketid = ethTCPClientConnect(network, TCPIPStack, 0, "192.168.0.1", 8000, 2)
+```
+
+关键转换步骤说明：
+1. 将CAPL的IP地址和端口直接映射到VBA的destIP和destPort
+2. VBA需要额外提供network和TCPIPStack参数
+3. 超时时间从2000毫秒转换为2秒（假设VBA单位为秒）
+4. 添加默认源端口0（VBA要求）

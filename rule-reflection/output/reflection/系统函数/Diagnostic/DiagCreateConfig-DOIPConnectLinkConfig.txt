@@ -1,0 +1,66 @@
+##功能##
+该函数用于创建和配置DOIP连接参数对象，支持设置诊断仪IP地址、ECU地址、等待时间、间隔时间等参数，适用于通过本地网卡或V90A硬件进行DOIP通信的场景。
+
+##vba规范##
+函数名：DOIPConnectLinkConfig
+返回值：DOIPConfig对象
+参数：
+- ip: String类型，诊断仪IP地址
+- waitTime: int类型，等待时间
+- internalTime: int类型，间隔时间
+- reapeatTime: int类型，重复上限次数
+- flag: boolean类型，车辆连接标识
+- ecuaddress: dict类型，ECU地址
+- routeReserved: int类型，路由激活保留位
+- multicast: String类型，组播地址
+- dhcpConfig: DHCPConfig类型，DHCP配置
+- tcpipStack: TCPIPStack类型，TCP/IP协议栈
+- network: INetwork类型，以太网网段
+
+##capl规范##
+CAPL中没有直接对应的DOIP配置函数，但可以通过以下方式实现类似功能：
+1. 使用DiagSetParameter设置各项参数
+2. 使用DiagCreateConfig创建配置对象
+3. 使用DiagSetConfig设置配置
+
+示例1：
+DiagCreateConfig("DOIP_Config");
+DiagSetParameter("DOIP_Config", "IPAddress", "192.168.1.100");
+DiagSetParameter("DOIP_Config", "WaitTime", 500);
+DiagSetParameter("DOIP_Config", "ECUAddress", "192.168.1.1:0x0E80");
+
+示例2：
+long configHandle;
+configHandle = DiagCreateConfig("DOIP_Custom");
+DiagSetParameter(configHandle, "RepeatInterval", 100);
+DiagSetParameter(configHandle, "RepeatCount", 10);
+DiagSetParameter(configHandle, "UseDHCP", 0);
+
+##capl名##
+DiagCreateConfig
+
+##转换须知##
+1. CAPL使用单独的参数设置函数，而VBA使用对象属性设置
+2. CAPL需要显式创建配置对象，VBA自动返回配置对象
+3. CAPL使用数字0/1表示布尔值，VBA使用True/False
+4. CAPL中ECU地址需要字符串格式，VBA使用字典格式
+5. CAPL需要手动设置每个参数，VBA提供默认值
+
+##转换示例##
+CAPL原始代码：
+DiagCreateConfig("DOIP_Test");
+DiagSetParameter("DOIP_Test", "IPAddress", "192.168.1.100");
+DiagSetParameter("DOIP_Test", "WaitTime", 500);
+DiagSetParameter("DOIP_Test", "ECUAddress", "192.168.1.1:0x0E80");
+
+转换后的VBA代码：
+Set doipConfig = DOIPConnectLinkConfig()
+doipConfig.setTestIP("192.168.1.100")
+doipConfig.setWaitTime(500)
+doipConfig.setEcuAddress({"192.168.1.1":"0x0E80"})
+
+关键转换步骤：
+1. 将DiagCreateConfig转换为DOIPConnectLinkConfig对象创建
+2. 将DiagSetParameter调用转换为对象方法调用
+3. 将字符串格式的ECU地址转换为字典格式
+4. 保持参数值不变

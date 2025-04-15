@@ -1,0 +1,51 @@
+1. 函数名  
+chkStart_MsgSignalValueInvalid  
+
+2. 函数描述  
+用于启动对消息信号值无效的检查。该函数属于自动化测试函数中的检查控制类函数，用于在测试过程中监控信号值是否有效。  
+
+3. 函数体  
+函数体未在提供的文档中详细描述，但根据函数名称和上下文推断，该函数可能用于启动一个检查机制，监控信号值是否在预期范围内或是否符合预定义的规则。  
+
+4. 返回值  
+未明确说明返回值类型，可能为布尔值（True/False）表示检查是否成功启动，或为整数表示状态码。  
+
+5. 参数  
+未明确列出参数，但可能包括以下内容（假设）：  
+| 名称 | 类型 | 描述 |  
+|------|------|------|  
+| checkID | 整数 | 检查的唯一标识符 |  
+| callback | 字符串 | 回调函数名称 |  
+
+6. 内置函数  
+未明确列出内置函数，但可能涉及以下相关函数（假设）：  
+| 函数名称 | 函数描述 |  
+|----------|----------|  
+| chkControl_Start | 启动检查控制 |  
+| chkControl_Stop | 停止检查控制 |  
+
+7. 示例  
+示例功能：启动对信号值无效的检查。  
+示例代码：  
+```vba  
+Sub Example_chkStart_MsgSignalValueInvalid()  
+    Dim checkID As Integer  
+    checkID = 1  
+    Call chkStart_MsgSignalValueInvalid(checkID, "CallbackFunction")  
+End Sub  
+
+Sub CallbackFunction(checkID As Integer, status As Boolean)  
+    If status Then  
+        MsgBox "检查已启动！"  
+    Else  
+        MsgBox "检查启动失败！"  
+    End If  
+End Sub  
+```  
+代码注释：  
+- `checkID` 为检查的唯一标识符。  
+- `CallbackFunction` 为回调函数，用于接收检查启动状态。  
+
+8. 其他和函数或变量强相关的内容  
+- 该函数通常与 `chkControl_Stop` 和 `chkControl_Reset` 配合使用。  
+- 可能需要在测试配置中预先定义信号的有效范围或规则。

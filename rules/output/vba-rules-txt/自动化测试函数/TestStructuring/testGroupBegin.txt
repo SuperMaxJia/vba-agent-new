@@ -1,0 +1,34 @@
+1. 函数名
+testGroupBegin
+
+2. 函数描述
+用于管理并设置测试用例的分组，此函数用于标识分组的开始，必须写在测试主函数中才会生效，与testGroupEnd必须成对出现。
+
+3. 函数体
+testGroupBegin('title', 'description')
+
+4. 返回值
+无
+
+5. 参数
+名称      类型    描述
+title     str     表示此测试用例组的名称，字符串类型，会写在测试报告中
+description str   表示此测试用例组的描述信息，字符串类型，也可以不写，默认是空字符，会写在测试报告中
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：将TC1和TC2分为一组，TC3和TC4不进行分组。
+示例代码：
+@MainTest('ModuleTitle')
+def MainTestExecute()
+    testGroupBegin('title', 'description')
+    TC1()
+    TC2()
+    testGroupEnd()
+    TC3()
+    TC4()
+
+8. 其他和函数或变量强相关的内容
+必须与testGroupEnd函数成对使用

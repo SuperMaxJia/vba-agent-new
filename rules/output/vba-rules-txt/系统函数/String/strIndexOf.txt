@@ -1,0 +1,28 @@
+1. 函数名
+strIndexOf
+
+2. 函数描述
+获取字符串targetStr在sourceStr字符串第一次出现的索引
+
+3. 函数体
+strIndexOf(sourceStr, targetStr)
+
+4. 返回值
+名称 | 类型 | 描述
+index | int | 返回索引数值，如果没有返回-1
+
+5. 参数
+名称 | 类型 | 描述
+sourceStr | String | 字符串
+targetStr | String | 字符串
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：获取字符串'dbc'的索引
+示例代码：strIndexOf('dbc', 'dbc')
+代码注释：返回0
+
+8. 其他
+无其他相关信息

@@ -1,0 +1,41 @@
+{
+    "imports": {
+        "sys": "java.lang.System",
+        "os": "java.io.File",
+        "json": "org.json.JSONObject",
+        "datetime": "java.time.LocalDateTime"
+    },
+    "globals": {
+        "type_hints": true,
+        "naming_convention": "camelCase"
+    },
+    "classes": {
+        "inheritance": "extends",
+        "interface": "implements",
+        "constructor": "__init__",
+        "private": "private",
+        "public": "public",
+        "protected": "protected"
+    },
+    "functions": {
+        "def": "public",
+        "return": "return",
+        "self": "this",
+        "print": "System.out.println",
+        "input": "Scanner.nextLine()",
+        "len": "length()",
+        "range": "IntStream.range()",
+        "append": "add()",
+        "remove": "remove()",
+        "split": "split()",
+        "join": "String.join()",
+        "strip": "trim()",
+        "lower": "toLowerCase()",
+        "upper": "toUpperCase()"
+    },
+    "main": {
+        "entry_point": "public static void main(String[] args)",
+        "if_name_main": "if (__name__ == \"__main__\")",
+        "main_function": "public static void main"
+    }
+} 

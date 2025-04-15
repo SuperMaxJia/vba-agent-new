@@ -1,0 +1,51 @@
+##功能##
+将字符串或数字转换为浮点型数值。主要用于数据类型转换场景，如从文本输入或通信协议中提取数值数据。
+
+##vba规范##
+函数名：float
+参数：parm（String类型，需要转换的字符串）
+返回值：Float类型，转换后的浮点数值
+行为：将输入字符串转换为浮点数，若转换失败则报错
+
+##capl规范##
+函数名：atof
+参数：str（char[]类型，需要转换的字符串）
+返回值：double类型，转换后的浮点数值
+示例1：
+```
+double val;
+val = atof("50.3");  // val = 50.3
+```
+示例2：
+```
+char str[10] = "123.45";
+double x = atof(str);  // x = 123.45
+```
+
+##capl名##
+atof
+
+##转换须知##
+1. CAPL使用atof而VBA使用float作为函数名
+2. CAPL的atof接收char数组参数，VBA的float接收String参数
+3. CAPL返回double类型，VBA返回Float类型
+4. 两者在转换失败时都会报错
+
+##转换示例##
+CAPL原始代码：
+```
+double result;
+char input[20] = "78.9";
+result = atof(input);
+```
+
+转换后的VBA代码：
+```vba
+Dim result As Double
+result = float("78.9")
+```
+
+关键转换步骤：
+1. 将CAPL的char数组改为VBA的String
+2. 将atof函数调用改为float函数调用
+3. 保持相同的变量命名和逻辑结构

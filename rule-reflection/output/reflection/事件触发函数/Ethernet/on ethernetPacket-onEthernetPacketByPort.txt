@@ -1,0 +1,72 @@
+##功能##
+该函数用于在接收到指定端口的以太网数据包时触发事件处理函数，主要用于以太网通信监控和数据分析场景，如网络诊断、协议分析等。
+
+##vba规范##
+函数定义：onEthernetPacketByPort(port, network=None, VLAN=['0x88A8:0x0003', '0x8100:0x0002'])
+参数：
+- port: list类型，指定端口号范围或单个端口，如['7000-7788', 8000]
+- network: NetworkI类型，可选参数，指定网段对象
+- VLAN: str或list类型，指定VLAN对象集合，默认值为['0x88A8:0x0003', '0x8100:0x0002']
+返回值：无（事件触发函数）
+使用方式：通过装饰器语法声明事件处理函数
+
+##capl规范##
+CAPL中没有完全对应的单个函数，但可以通过组合实现类似功能：
+1. 使用on ethernetPacket事件捕获所有以太网数据包
+2. 在事件处理函数中通过this.port检查端口号
+3. 使用switch-case结构处理不同VLAN类型
+
+示例1：
+on ethernetPacket
+{
+  if(this.port >= 7000 && this.port <= 7788 || this.port == 8000)
+  {
+    write("Received packet on port %d", this.port);
+    // 处理VLAN逻辑
+  }
+}
+
+示例2：
+on ethernetPacket
+{
+  switch(this.port)
+  {
+    case 7000..7788:
+    case 8000:
+      if(this.VLAN == 0x88A8 || this.VLAN == 0x8100)
+      {
+        // 处理特定VLAN的数据包
+      }
+      break;
+  }
+}
+
+##capl名##
+on ethernetPacket
+
+##转换须知##
+1. CAPL中需要手动实现端口范围检查，而VBA中直接支持范围语法
+2. CAPL中的VLAN处理需要单独判断，VBA中支持直接传入VLAN列表
+3. CAPL的事件处理是全局的，需要添加过滤条件
+4. VBA使用装饰器语法，CAPL使用事件处理块
+5. CAPL中需要显式获取时间戳，而VBA中通过方法调用
+
+##转换示例##
+1. CAPL原始代码：
+on ethernetPacket
+{
+  if(this.port == 8000)
+  {
+    write("Timestamp: %d", timeNow());
+  }
+}
+
+2. 转换后的VBA代码：
+@onEthernetPacketByPort([8000])
+def onEthernetPacketEvent(ethFrame):
+    ethFrame.gettimestamp()
+
+3. 关键转换说明：
+- CAPL的on ethernetPacket事件转换为VBA的装饰器语法
+- CAPL的this.port判断转换为VBA的装饰器参数
+- CAPL的timeNow()转换为VBA的gettimestamp()方法调用

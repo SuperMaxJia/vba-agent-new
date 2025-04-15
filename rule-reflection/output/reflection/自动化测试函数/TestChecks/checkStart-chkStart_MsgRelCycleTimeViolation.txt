@@ -1,0 +1,56 @@
+##功能##
+该函数用于启动对总线消息相对周期时间违规的检查，监控消息实际周期时间是否符合预设的周期时间范围。主要用于汽车电子测试中验证ECU通信协议的稳定性。
+
+##vba规范##
+函数名：chkStart_MsgRelCycleTimeViolation  
+参数：无  
+返回值：无  
+依赖：需要先调用chkCreate_MsgRelCycleTimeViolation配置消息ID和允许偏差  
+功能：启动已创建的周期时间检查实例  
+
+##capl规范##
+函数名：checkStart  
+参数：无  
+返回值：无  
+依赖：需要先调用checkCreate配置消息ID和允许偏差  
+示例1：  
+```capl
+// 创建检查实例
+checkCreate(0x101, 0.1);
+// 启动监控
+checkStart();
+```
+示例2：  
+```capl
+// 创建多个检查实例
+checkCreate(0x200, 0.05);
+checkCreate(0x201, 0.08);
+// 启动所有监控
+checkStart();
+```
+
+##capl名##
+checkStart
+
+##转换须知##
+1. CAPL使用checkCreate和checkStart两个独立函数，而VBA使用带前缀的函数名区分功能  
+2. CAPL中参数直接传递，VBA使用命名参数语法  
+3. CAPL检查实例创建和启动完全分离，VBA需要保持调用顺序  
+4. CAPL允许多个检查实例同时存在，VBA通常单实例操作  
+
+##转换示例##
+CAPL原始代码：  
+```capl
+checkCreate(0x102, 0.15);
+checkStart();
+```
+转换后的VBA代码：  
+```vba
+chkCreate_MsgRelCycleTimeViolation msgId:=0x102, tolerance:=0.15
+chkStart_MsgRelCycleTimeViolation
+```
+关键转换步骤：  
+1. 将checkCreate转换为chkCreate_MsgRelCycleTimeViolation  
+2. 将位置参数转换为VBA命名参数语法  
+3. 将checkStart转换为chkStart_MsgRelCycleTimeViolation  
+4. 保持相同的调用顺序

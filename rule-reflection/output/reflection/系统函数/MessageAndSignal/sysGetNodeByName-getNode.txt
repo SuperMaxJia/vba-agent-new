@@ -1,0 +1,42 @@
+##功能##
+该函数用于从指定的网络段中获取特定名称的ECU节点对象。主要用于在CAN网络通信中定位和操作特定ECU节点。
+
+##vba规范##
+函数名：getNode
+参数：
+- node_name: String类型，指定要获取的节点名称
+- network: Network对象类型，指定要搜索的网络段
+返回值：ECUNode类型，返回找到的节点对象
+示例：node = getNode('EMS', CAN1)
+
+##capl规范##
+在CAPL中，可以使用sysGetNodeByName函数获取节点对象：
+- 参数：
+  - nodeName: char数组，节点名称
+  - busType: int，总线类型（如CAN）
+- 返回值：dword，节点句柄
+示例1：
+nodeHandle = sysGetNodeByName("EMS", CAN);
+示例2：
+nodeHandle = sysGetNodeByName("TCU", CAN);
+
+##capl名##
+sysGetNodeByName
+
+##转换须知##
+1. 参数差异：VBA使用Network对象，CAPL使用总线类型标识
+2. 返回值差异：VBA返回ECUNode对象，CAPL返回dword句柄
+3. 行为差异：CAPL需要显式指定总线类型
+4. 处理方式：在VBA中需要将CAN1等网络对象映射为CAPL的总线类型常量
+
+##转换示例##
+1. CAPL原始代码：
+nodeHandle = sysGetNodeByName("EMS", CAN);
+
+2. 转换后的VBA代码：
+Set node = getNode("EMS", CAN1)
+
+3. 关键说明：
+- 将CAPL的总线类型常量CAN转换为VBA的网络对象CAN1
+- 将CAPL的dword句柄转换为VBA的ECUNode对象
+- 保持节点名称参数不变

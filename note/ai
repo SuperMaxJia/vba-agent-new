@@ -1,0 +1,12 @@
+ # 生成输出文件路径（在当前目录下）
+        output_file = os.path.join(os.getcwd(), os.path.basename(os.path.splitext(file_path)[0]) + '.py')
+
+
+--trusted-host pypi.org --trusted-host files.pythonhosted.org
+
+
+self.client = OpenAI(
+            api_key="sk-15ece1d22cf2433fa0dd4fcc874b6154",
+            base_url="https://api.deepseek.com"
+        )
+

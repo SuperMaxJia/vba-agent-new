@@ -1,0 +1,58 @@
+##功能##
+该函数用于检测设置的条件是否已被破坏，主要应用于状态监控场景。当需要确认某个预设条件是否被违反时调用此函数，返回状态信息（未发生/已破坏/错误）。
+
+##vba规范##
+函数定义：Function testCheckCondition(object As Object) As Integer
+参数：object - 事件对象（VBA Object类型）
+返回值：Integer类型（0=状态未发生，1=状态被破坏，-1=错误）
+行为：通过检查事件对象判断条件破坏状态
+
+##capl规范##
+函数定义：int checkCondition(long objectHandle);
+参数：objectHandle - 对象句柄（CAPL long类型对应VBA对象）
+返回值：int类型（0=OK，1=Violated，-1=Error）
+示例1：
+```
+variable = checkCondition(msg.id);
+if(variable == 1) write("Condition violated!");
+```
+示例2：
+```
+on message CAN1.*
+{
+  if(checkCondition(this.id) == -1) write("Error detected");
+}
+```
+
+##capl名##
+checkCondition
+
+##转换须知##
+1. 参数差异：VBA使用Object类型，CAPL需转换为long型句柄
+2. 返回值语义相同但CAPL需显式处理总线消息
+3. CAPL需通过总线事件触发检测，VBA可直连对象
+4. 错误处理：CAPL需通过write输出错误，VBA可抛异常
+
+##转换示例##
+1. CAPL原始代码：
+```
+on key 'a'
+{
+  int result = checkCondition(EngineRPM.id);
+  if(result == 1) setSignal(Alarm, 1);
+}
+```
+
+2. 转换后VBA代码：
+```
+Sub CheckEngine()
+    Dim res As Integer
+    res = testCheckCondition(EngineRPM)
+    If res = 1 Then Alarm.Value = True
+End Sub
+```
+
+3. 关键说明：
+- CAPL的message.id转换为VBA直接对象引用
+- 键盘事件触发改为过程直接调用
+- 信号操作改为对象属性赋值

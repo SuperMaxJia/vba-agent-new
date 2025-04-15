@@ -1,0 +1,82 @@
+##功能##
+用于创建和配置DHCP以太网报文，包括设置XID、秒数、标志位、IP地址、硬件地址等参数，主要用于网络协议测试和仿真场景。
+
+##vba规范##
+函数名：DHCPPacket
+返回值：DHCPPacket对象
+参数：
+xid(int): 32位无符号整数
+seconds(int): 16位无符号整数
+flags(int): 16位无符号整数
+client_ip_address(str): 字符串格式IP
+your_ip_address(str): 字符串格式IP
+server_ip_address(str): 字符串格式IP
+agent_ip_address(str): 字符串格式IP
+client_hw_address(str): 字符串格式MAC
+client_hw_address_padding(str): 字符串格式填充
+magic_cookie(int): 32位无符号整数
+transportPacket(object): 仅支持UDP对象
+
+##capl规范##
+在CAPL中，可以使用EthernetPacket结构体配合DhcpMessage结构体来构建DHCP报文：
+1. 定义EthernetPacket结构体
+2. 定义DhcpMessage结构体
+3. 使用setDhcpField函数设置各字段
+
+示例1：
+```capl
+EthernetPacket ethPacket;
+DhcpMessage dhcpMsg;
+
+dhcpMsg.xid = 0x00000000;
+dhcpMsg.seconds = 0x0000;
+dhcpMsg.flags = 0x0000;
+setDhcpField(dhcpMsg, "clientIP", "0.0.0.0");
+setDhcpField(dhcpMsg, "yourIP", "0.0.0.0");
+ethPacket.dhcp = dhcpMsg;
+```
+
+示例2：
+```capl
+EthernetPacket pkt;
+DhcpMessage dhcp;
+
+dhcp.xid = 0x3A5B7C9D;
+dhcp.flags = 0x8000; // Broadcast
+setDhcpField(dhcp, "clientHW", "20:00:00:00:00:01");
+setDhcpField(dhcp, "magicCookie", 0x3F52353F);
+pkt.udp.dhcp = dhcp;
+```
+
+##capl名##
+DhcpMessage
+
+##转换须知##
+1. CAPL使用结构体而非对象，需要分别定义EthernetPacket和DhcpMessage
+2. CAPL中IP和MAC地址直接赋值，无需set方法
+3. CAPL中标志位直接赋值，VBA需要调用setFlags方法
+4. CAPL中传输层协议通过结构体层级自动确定
+5. CAPL没有严格的参数校验，需要手动确保参数有效性
+
+##转换示例##
+CAPL原始代码：
+```capl
+DhcpMessage dhcp;
+dhcp.xid = 0x12345678;
+dhcp.seconds = 60;
+setDhcpField(dhcp, "serverIP", "192.168.1.1");
+```
+
+转换后的VBA代码：
+```vba
+Set dhcpPacket = DHCPPacket()
+dhcpPacket.setXID(&H12345678)
+dhcpPacket.setSeconds(60)
+dhcpPacket.setServerIPAddress("192.168.1.1")
+```
+
+关键转换步骤说明：
+1. CAPL的DhcpMessage结构体转换为VBA的DHCPPacket对象
+2. CAPL的直接赋值转换为VBA的set方法调用
+3. CAPL的setDhcpField函数转换为VBA的特定set方法
+4. 16进制数值表示方式从0x前缀改为&H前缀

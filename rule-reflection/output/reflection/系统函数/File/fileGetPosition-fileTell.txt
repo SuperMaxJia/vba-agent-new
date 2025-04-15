@@ -1,0 +1,59 @@
+##功能##
+fileTell函数用于获取文件当前指针的位置，常用于文件读写操作中确定当前读取或写入的位置，便于后续操作如定位、分段读取等。
+
+##vba规范##
+函数名：fileTell
+参数：file（文件对象）
+返回值：int类型，表示文件指针的当前位置
+功能：返回文件当前指针的位置
+
+##capl规范##
+CAPL中没有直接对应的文件指针位置获取函数，但可以通过fileGetPosition函数实现类似功能。
+函数定义：long fileGetPosition(int fileHandle)
+参数：fileHandle（文件句柄，int类型）
+返回值：long类型，表示文件指针的当前位置
+示例1：
+```
+int file;
+long position;
+file = openFile("C:/demo.txt", 0);
+position = fileGetPosition(file);
+write("Current position: %ld", position);
+closeFile(file);
+```
+示例2：
+```
+int f = openFile("log.txt", 1);
+write(f, "test data");
+long pos = fileGetPosition(f); // 获取写入后的位置
+closeFile(f);
+```
+
+##capl名##
+fileGetPosition
+
+##转换须知##
+1. CAPL使用文件句柄(int)而非文件对象作为参数
+2. CAPL返回值是long类型而非int
+3. CAPL需要先通过openFile获取文件句柄
+4. 文件操作后需要手动调用closeFile
+
+##转换示例##
+1. CAPL原始代码：
+```
+int f = openFile("data.txt", 0);
+long pos = fileGetPosition(f);
+closeFile(f);
+```
+
+2. 转换后的VBA代码：
+```
+file = openFile("data.txt", mode="r")
+pos = fileTell(file)
+closeFile(file)
+```
+
+3. 关键转换说明：
+- 将openFile模式参数从CAPL的数字形式改为VBA的字符串形式
+- fileGetPosition改为fileTell
+- 保持相同的文件操作流程：打开->获取位置->关闭

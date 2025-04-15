@@ -1,0 +1,27 @@
+1. 函数名
+strSwapCase
+
+2. 函数描述
+将字符串sourceStr所有大写字符替换为小写并将所有小写字符替换为大写的新字符串
+
+3. 函数体
+strSwapCase(sourceStr)
+
+4. 返回值
+名称 | 类型 | 描述
+str | String | 返回替换后的字符串
+
+5. 参数
+名称 | 类型 | 描述
+sourceStr | String | 字符串
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：将字符串'ABCdedf'中大小写字符互转，返回'abcDEDF'
+示例代码：strSwapCase('ABCdedf')
+代码注释：无
+
+8. 其他和函数或变量强相关的内容
+无

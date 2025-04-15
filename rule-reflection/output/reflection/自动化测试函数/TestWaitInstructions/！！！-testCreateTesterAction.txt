@@ -1,0 +1,65 @@
+##功能##
+该函数用于创建一个测试动作，允许用户定义触发条件和对应的回调函数。当触发条件满足时（如周期时间到达、信号变化或系统变量变化），会调用指定的回调函数。主要用于自动化测试中创建灵活的触发机制和响应动作。
+
+##vba规范##
+函数名：testCreateTesterAction
+参数：
+- actionText: str，测试动作的描述文本
+- heading: str，测试动作的标题
+- callback: object，回调函数对象
+返回值：action对象，用于后续触发条件添加和验证
+内置函数：无
+回调函数要求：必须接受trigger参数，返回1表示条件满足，0表示不满足
+
+##capl规范##
+在CAPL中，最接近的功能是使用TestWaitForTimeout、TestWaitForSignal或TestWaitForSysVar等函数配合事件处理来实现类似功能。CAPL中没有直接对应的单一函数，但可以通过以下方式模拟：
+
+示例1：
+// 创建周期触发测试
+on timer msTimer {
+  if (@sysvar::sysInt == 1) {
+    testStepPass("Triggered by cycle time");
+  }
+}
+
+示例2：
+// 创建信号触发测试
+on signal CAN.MW.SigSigned16 {
+  if (this.raw == 1) {
+    testStepPass("Triggered by signal");
+  }
+}
+
+##capl名##
+！！！
+
+##转换须知##
+1. CAPL中没有直接对应的创建动作函数，需要分解为多个事件处理
+2. 回调函数在CAPL中需要转换为对应的事件处理程序
+3. 触发条件在CAPL中需要使用特定的事件类型（如on signal, on timer等）
+4. 返回值处理方式不同，CAPL中通常通过测试步骤直接报告结果
+5. 弹窗交互功能在CAPL中不可直接实现
+
+##转换示例##
+CAPL原始代码：
+on key 't' {
+  if (@sysvar::EngineStarted == 1) {
+    testStepPass("Engine started condition met");
+  }
+}
+
+转换后的VBA代码：
+def CallbackTesterAction(trigger):
+    if (sysVarEngineStarted == 1):
+        testStep("", "Engine started condition met");
+        return 1;
+    return 0;
+
+handle = testCreateTesterAction('Engine check', 'Engine status', CallbackTesterAction);
+trigger = TestAddTriggerTesterAction(handle, sysvar.EngineStarted);
+
+关键转换说明：
+1. CAPL的按键事件转换为VBA的主动触发机制
+2. 条件检查从事件处理程序移动到回调函数
+3. 测试结果报告方式从testStepPass改为testStep
+4. 需要显式创建触发器和动作对象

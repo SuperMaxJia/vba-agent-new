@@ -1,0 +1,55 @@
+1. 函数名  
+getSignal  
+
+2. 函数描述  
+获取CANDBCSignal信号对象。  
+
+3. 函数体  
+```vba  
+getSignal(*parms)  
+```  
+
+4. 返回值  
+| 名称   | 类型          | 描述       |  
+|--------|---------------|------------|  
+| signal | CANDBCSignal  | 信号对象   |  
+
+5. 参数  
+**情况1：指定信号**  
+| 名称       | 类型   | 描述       |  
+|------------|--------|------------|  
+| signalName | String | 信号名称   |  
+
+**情况2：指定网段的指定信号**  
+| 名称       | 类型     | 描述       |  
+|------------|----------|------------|  
+| signalName | String   | 信号名称   |  
+| network    | Network  | 网段对象   |  
+
+**情况3：指定报文的指定信号**  
+| 名称       | 类型          | 描述             |  
+|------------|---------------|------------------|  
+| signalName | String        | 信号名称         |  
+| canDBCMsg  | CANDBCMessage | 数据库中报文对象 |  
+
+6. 内置函数  
+无  
+
+7. 示例  
+**示例1：获取指定信号对象**  
+```vba  
+signal = getSignal('VehicleSpeed')  
+```  
+
+**示例2：获取CAN1网段下指定信号对象**  
+```vba  
+signal = getSignal('VehicleSpeed', CAN1)  
+```  
+
+**示例3：获取ESP_Status报文下指定信号对象**  
+```vba  
+signal = getSignal('VehicleSpeed', CAN1.ESP_Status)  
+```  
+
+8. 其他和函数或变量强相关的内容  
+无

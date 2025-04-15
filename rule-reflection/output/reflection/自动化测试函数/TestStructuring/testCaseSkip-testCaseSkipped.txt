@@ -1,0 +1,55 @@
+##功能##
+testCaseSkipped函数用于在测试报告中记录跳过的测试用例信息，确保测试报告中包含明确的跳过状态记录。主要用于自动化测试场景，当某些测试用例因条件不满足而被跳过时，可以通过该函数在报告中留下记录。
+
+##vba规范##
+函数定义：testCaseSkipped(id As String, title As String)
+参数类型：两个参数均为字符串类型
+返回值：无返回值
+功能描述：将跳过的测试用例ID和标题记录到测试报告中
+
+##capl规范##
+函数定义：testCaseSkip(id, title)
+参数类型：两个参数均为char数组或字符串
+返回值：无返回值
+使用示例1：
+```capl
+if (condition == 0) {
+    testCaseSkip("TC3", "Temperature Test");
+}
+```
+使用示例2：
+```capl
+on key 's' {
+    testCaseSkip("TC5", "Skipped by manual intervention");
+}
+```
+
+##capl名##
+testCaseSkip
+
+##转换须知##
+1. 参数数量相同，但CAPL中参数类型更灵活，可以是char数组或字符串
+2. 两者都无返回值
+3. 函数行为基本一致，都是记录跳过信息到测试报告
+4. 在CAPL中需要注意字符串的处理方式与VBA不同
+
+##转换示例##
+1. CAPL原始代码：
+```capl
+if (temp > 100) {
+    testCaseSkip("TC2", "High temperature skip");
+}
+```
+
+2. 转换后的VBA代码：
+```vba
+If temp > 100 Then
+    testCaseSkipped "TC2", "High temperature skip"
+End If
+```
+
+3. 关键转换说明：
+- 将CAPL的条件判断语法转换为VBA的If-Then语法
+- 函数名从testCaseSkip改为testCaseSkipped
+- 参数传递方式保持一致，但VBA不需要括号
+- 语句结束方式从分号改为VBA的行结束方式

@@ -1,0 +1,46 @@
+1. 函数名  
+chkCreate_NodeBabbling  
+
+2. 函数描述  
+用于检测节点是否休眠，给定一个容忍时间，容忍时间内报文可以发送，容忍时间后，收到一条报文，触发一次事件。  
+
+3. 函数体  
+所有检测函数都有对应的chkStart_xxxx()和chkCreate_xxxx()  
+chkCreate_xxxx()只创建检测对象但不开始检测，需要调用|chkControl_Start|；  
+chkStart_xxxx()创建检测对象同时直接开始检测。  
+
+4. 返回值  
+名称 | 类型 | 描述  
+res | int | 代表创建的对象，-1代表创建失败  
+
+5. 参数  
+名称 | 类型 | 描述  
+node | ECUNode | 节点对象  
+aMaxQuietTime | int | 最大截至时间  
+
+6. 内置函数  
+函数名称 | 函数描述  
+chkControl_Start | 启动检测对象  
+testAddCondition | 将统计信息加入自动化测试报告  
+testWaitForTimeout | 等待指定时间  
+testRemoveCondition | 结束统计  
+
+7. 示例  
+示例功能：检测节点是否休眠，给定一个容忍时间，容忍时间内报文可以发送，容忍时间后，收到一条报文，触发一次事件。  
+示例代码：  
+```vba  
+checkId = ChkStart_NodeBabbling(CAN1.NodeToObserve, 300)  
+testAddCondition(checkId)  
+testWaitForTimeout(1000)  
+testRemoveCondition(checkId)  
+```  
+代码注释：  
+- 300ms内，该节点可随意收发报文，300ms以后，出现该节点下报文则触发事件。  
+- 调用该方法后，统计信息将加入到自动化测试报告。  
+- 共统计1000ms,300ms后如果再出现该节点下报文，则触发事件。  
+- 结束统计。  
+
+8. 其他和函数或变量强相关的内容  
+- 该函数属于自动化测试函数中的TestChecks类别。  
+- 对应的直接启动检测函数为chkStart_NodeBabbling。  
+- 需要配合其他测试控制函数如testAddCondition、testWaitForTimeout等使用。

@@ -1,0 +1,75 @@
+##功能##
+该函数用于创建和配置DHCP(动态主机配置协议)参数对象，包括IP地址范围、租期时间、子网掩码、网关等网络配置。主要用于在DOIP(基于IP的诊断通信)连接中实现动态IP地址分配功能。
+
+##vba规范##
+函数名：DHCPConfig
+返回值：DHCPConfig对象
+参数：无
+方法：
+- getStartingIPAddress(): 返回字符串类型起始IP
+- getEndingIPAddress(): 返回字符串类型结束IP 
+- getLeaseTime(): 返回整数类型租期(小时)
+- getNetworkMask(): 返回字符串类型子网掩码
+- getGateway(): 返回字符串类型网关
+- getWaitTime(): 返回整数类型等待时间(秒)
+- setStartingIPAddress(startingIP: str)
+- setEndingIPAddress(endingIP: str) 
+- setLeaseTime(leaseTime: int)
+- setNetworkMask(networkMask: str)
+- setGateway(gateway: str)
+- setWaitTime(waitTime: int)
+
+##capl规范##
+在CAPL中，DHCP配置通常通过EthernetConfiguration对象实现：
+```
+// 示例1：基本DHCP配置
+EthernetConfiguration ethConfig;
+ethConfig.ipAddress = "192.168.1.1"; 
+ethConfig.subnetMask = "255.255.255.0";
+ethConfig.gateway = "0.0.0.0";
+ethConfig.dhcpEnabled = 1;
+ethConfig.dhcpLeaseTime = 192; // hours
+ethConfig.dhcpWaitTime = 5; // seconds
+
+// 示例2：与DOIP结合使用
+DoIPConfig doipCfg;
+doipCfg.ethernetConfig = ethConfig;
+doipCfg.discoveryWaitTime = 500;
+doipCfg.discoveryInterval = 100;
+```
+
+##capl名##
+EthernetConfiguration
+
+##转换须知##
+1. CAPL使用结构体而非对象，属性直接访问而非通过get/set方法
+2. DHCP功能通过dhcpEnabled标志控制而非单独对象
+3. IP地址范围在CAPL中通常由上层协议管理
+4. 等待时间等参数单位保持一致(秒)
+5. CAPL中没有显式的IP地址范围设置，需通过其他机制实现
+
+##转换示例##
+1. CAPL原始代码：
+```
+EthernetConfiguration ethCfg;
+ethCfg.ipAddress = "192.168.1.100";
+ethCfg.subnetMask = "255.255.255.0";
+ethCfg.gateway = "192.168.1.1";
+ethCfg.dhcpEnabled = 1;
+ethCfg.dhcpLeaseTime = 48;
+```
+
+2. 转换后的VBA代码：
+```
+Dim dhcpConfig As DHCPConfig
+Set dhcpConfig = New DHCPConfig
+dhcpConfig.setStartingIPAddress("192.168.1.100")
+dhcpConfig.setNetworkMask("255.255.255.0") 
+dhcpConfig.setGateway("192.168.1.1")
+dhcpConfig.setLeaseTime(48)
+```
+
+3. 关键转换说明：
+- CAPL结构体属性转为VBA对象set方法
+- dhcpEnabled标志隐含在VBA对象创建中
+- IP地址范围在VBA中需要显式设置

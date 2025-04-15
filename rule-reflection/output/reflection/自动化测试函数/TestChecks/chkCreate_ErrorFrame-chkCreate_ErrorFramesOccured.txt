@@ -1,0 +1,97 @@
+##功能##
+该函数用于检测CAN总线上出现的错误帧数量是否在指定范围内。如果接收到的错误帧数量小于最小值或大于最大值，则触发事件。主要用于总线监控和错误检测场景，属于自动化测试函数类别。
+
+##vba规范##
+函数名：chkCreate_ErrorFramesOccured
+返回值：int类型，代表创建的对象ID，-1表示创建失败
+参数：
+- minCountOfErrorFrames: int类型，最小错误帧数量
+- MaxCountOfErrorFrames: int类型，最大错误帧数量
+- timeout: int类型，超时时间(ms)，0表示无限等待
+- network: NetWork类型，要检测的网段
+相关函数：
+- chkControl_Start: 启动检测对象
+- testAddCondition: 将统计信息加入测试报告
+- testWaitForTimeout: 等待指定时间后输出统计信息
+- testRemoveCondition: 移除检测条件
+
+##capl规范##
+在CAPL中对应的功能可以通过错误帧事件处理函数和计数器实现：
+1. 使用on errorFrame事件处理错误帧
+2. 使用@sysvar::Can::ErrorFrames计数器获取错误帧数量
+3. 使用TestWaitForTimeout进行超时控制
+
+示例1：
+```capl
+variables {
+  int errorFrameCount = 0;
+  int minFrames = 0;
+  int maxFrames = 2;
+  int checkId = 1;
+}
+
+on errorFrame {
+  errorFrameCount++;
+  if(errorFrameCount < minFrames || errorFrameCount > maxFrames) {
+    testStepFail("Error frame count out of range");
+  }
+}
+
+on start {
+  testAddCondition(checkId);
+  TestWaitForTimeout(1000);
+  testRemoveCondition(checkId);
+}
+```
+
+示例2：
+```capl
+variables {
+  int checkId = 2;
+}
+
+on key 't' {
+  int result = chkCreate_ErrorFrame(0, 2, 1000, 1);
+  if(result != -1) {
+    chkControl_Start(result);
+    testAddCondition(result);
+  }
+}
+```
+
+##capl名##
+chkCreate_ErrorFrame
+
+##转换须知##
+1. CAPL中使用事件处理机制(on errorFrame)而不是直接函数调用
+2. CAPL中的网络参数通常使用通道号(1,2...)而不是网络对象
+3. CAPL中的超时控制需要使用TestWaitForTimeout函数
+4. CAPL中需要手动维护错误帧计数器
+5. CAPL中的检测条件管理(testAddCondition等)与VBA类似
+
+##转换示例##
+CAPL原始代码：
+```capl
+on start {
+  int checkId = chkCreate_ErrorFrame(0, 2, 1000, 1);
+  if(checkId != -1) {
+    chkControl_Start(checkId);
+    testAddCondition(checkId);
+    TestWaitForTimeout(1000);
+    testRemoveCondition(checkId);
+  }
+}
+```
+
+转换后的VBA代码：
+```vba
+checkId = chkStart_ErrorFramesOccured(0, 2, 1000, CAN1)
+testAddCondition(checkId)
+testWaitForTimeout(1000)
+testRemoveCondition(checkId)
+```
+
+关键转换步骤说明：
+1. CAPL中的chkCreate_ErrorFrame+chkControl_Start组合对应VBA中的chkStart_ErrorFramesOccured
+2. CAPL中的通道号1对应VBA中的CAN1网络参数
+3. 两者的条件管理和超时控制函数名称和用法基本相同

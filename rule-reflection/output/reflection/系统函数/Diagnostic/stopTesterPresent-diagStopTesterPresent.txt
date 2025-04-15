@@ -1,0 +1,59 @@
+##功能##
+停止诊断节点的3E诊断在线服务（Tester Present服务）。用于终止诊断节点上的周期性3E报文发送，通常在诊断会话结束时调用。
+
+##vba规范##
+函数名：diagStopTesterPresent
+参数：diagNode（DiagNode类型，表示目标诊断节点）
+返回值：无
+功能：停止指定诊断节点的3E服务
+
+##capl规范##
+函数名：stopTesterPresent
+参数：diagNode（DiagNode类型，表示目标诊断节点）
+返回值：无
+功能：停止指定诊断节点的3E服务
+
+示例1：
+on key 's'
+{
+  stopTesterPresent(DiagECU1);
+  write("Stopped TesterPresent service on ECU1");
+}
+
+示例2：
+variables
+{
+  DiagNode targetNode;
+}
+on start
+{
+  targetNode = DiagGetNode("Engine");
+  stopTesterPresent(targetNode);
+}
+
+##capl名##
+stopTesterPresent
+
+##转换须知##
+1. CAPL使用stopTesterPresent而VBA使用diagStopTesterPresent，名称前缀不同
+2. 两者参数类型和数量完全一致
+3. 两者都没有返回值
+4. 在CAPL中需要确保诊断节点已正确初始化
+5. VBA版本属于Diagnostic类方法，而CAPL是全局函数
+
+##转换示例##
+1. CAPL原始代码：
+on timer 1000
+{
+  stopTesterPresent(EngineControl);
+}
+
+2. 转换后的VBA代码：
+Sub StopTesterExample()
+  diagStopTesterPresent CAN1.DiagNodes.EngineControl
+End Sub
+
+3. 关键转换说明：
+- 将CAPL的stopTesterPresent改为VBA的diagStopTesterPresent
+- CAPL的节点标识符EngineControl转换为VBA的完整路径CAN1.DiagNodes.EngineControl
+- 定时器触发的逻辑改为VBA中直接调用的Sub过程

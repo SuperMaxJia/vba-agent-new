@@ -1,0 +1,31 @@
+1. 函数名
+resetNodeSignalValue
+
+2. 函数描述
+用于将一个仿真节点中指定的发送信号重置为初始值。
+
+3. 函数体
+resetNodeSignalValue(signal)
+
+4. 返回值
+无返回值（void）
+
+5. 参数
+| 名称    | 类型          | 描述       |
+|---------|---------------|------------|
+| signal  | CANDBCSignal  | 信号对象   |
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：将一个仿真节点中指定的发送信号重置为初始值。
+示例代码：
+resetNodeSignalValue(CAN1.msg.signal);
+代码注释：
+- CAN1.msg.signal 表示要重置的信号对象
+
+8. 其他说明
+- 该函数属于系统函数中的BaseFunction类别
+- 需要配合CAN数据库信号对象使用
+- 仅对仿真节点的发送信号有效

@@ -1,0 +1,38 @@
+1. 函数名  
+onEthernetPacketByMac  
+
+2. 函数描述  
+用于当接收到指定MAC地址以太网数据包时触发。  
+
+3. 函数体  
+```vba  
+onEthernetPacketByMAC(macaddress, network=None)  
+```  
+
+4. 返回值  
+无明确返回值（事件触发函数，通常用于执行回调逻辑）。  
+
+5. 参数  
+| 名称       | 类型       | 描述                                                                 |  
+|------------|------------|----------------------------------------------------------------------|  
+| macaddress | list       | MAC地址列表，例如 `["20:00:00:00:00:01", "FF:FF:FF:FF:FF:FF"]`      |  
+| network    | NetworkI   | （可选）网段对象，默认为 `None`                                      |  
+
+6. 内置函数  
+无直接关联的内置函数说明（事件触发函数通常依赖回调逻辑中的方法，如示例中的 `ethFrame.gettimestamp()`）。  
+
+7. 示例  
+**功能**：当接收到任意MAC地址（通配符 `'*'`）的以太网数据包时，触发事件并打印时间戳。  
+**示例代码**：  
+```vba  
+@onEthernetPacketByMAC('*')  
+def onEthernetPacketEvent(ethFrame):  
+    ethFrame.gettimestamp()  
+```  
+**代码注释**：  
+- `@onEthernetPacketByMAC('*')`：装饰器声明监听所有MAC地址的数据包。  
+- `ethFrame.gettimestamp()`：获取接收到数据包的时间戳。  
+
+8. 其他说明  
+- MAC地址支持通配符 `'*'` 表示匹配任意地址。  
+- 事件触发后需在回调函数中处理数据包对象（如 `ethFrame`）的属性和方法。

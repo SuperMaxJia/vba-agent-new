@@ -1,0 +1,63 @@
+1. 函数名  
+chkStart_MsgOccurrenceCount  
+
+2. 函数描述  
+该函数用于启动消息出现次数的检查功能，属于自动化测试函数的一部分。主要用于监控总线消息的出现次数是否符合预期，常用于验证通信协议的稳定性和一致性。  
+
+3. 函数体  
+函数体未在提供的文档中详细描述，但根据函数名和上下文推断，该函数可能包含以下逻辑：  
+- 初始化消息计数检查的配置  
+- 启动消息监控  
+- 实时统计指定消息的出现次数  
+- 触发回调或事件以反馈检查结果  
+
+4. 返回值  
+未明确说明返回值类型，可能为布尔值（True/False表示检查启动成功与否）或状态码。  
+
+5. 参数  
+参数未在文档中列出，但根据功能推测可能包含以下参数：  
+
+| 名称                | 类型       | 描述                          |  
+|---------------------|------------|-------------------------------|  
+| message_id          | 整数/字符串 | 需监控的消息ID或名称          |  
+| expected_count      | 整数       | 预期出现次数                  |  
+| tolerance           | 整数       | 允许的误差范围（可选）        |  
+| callback_function   | 函数指针   | 检查结果回调函数（可选）      |  
+
+6. 内置函数  
+可能依赖以下内置函数（未明确列出，基于功能推测）：  
+
+| 函数名称          | 描述                          | 参数说明                      |  
+|-------------------|-------------------------------|-------------------------------|  
+| getMsg            | 获取总线消息                  | 消息ID或名称                  |  
+| testStepPass/Fail | 记录测试结果                  | 测试步骤描述及结果            |  
+
+7. 示例  
+**示例功能**：监控CAN消息0x101的出现次数是否为50次（允许±2次误差）。  
+
+```vba
+Sub Example_chkStart_MsgOccurrenceCount()  
+    ' 启动消息出现次数检查  
+    Dim result As Boolean  
+    result = chkStart_MsgOccurrenceCount("0x101", 50, 2, AddressOf CheckCallback)  
+
+    If result Then  
+        WriteInfo "消息0x101的计数检查已启动"  
+    Else  
+        WriteWarningInfo "检查启动失败"  
+    End If  
+End Sub  
+
+' 回调函数定义  
+Sub CheckCallback(actualCount As Integer)  
+    If actualCount >= 48 And actualCount <= 52 Then  
+        testStepPass "消息0x101出现次数符合预期"  
+    Else  
+        testStepFail "实际出现次数：" & actualCount  
+    End If  
+End Sub  
+```  
+
+8. 其他相关内容  
+- 该函数通常与`chkCreate_MsgOccurrenceCount`（创建检查配置）和`chkControl_Stop`（停止检查）配合使用。  
+- 属于自动化测试函数集，需在测试序列或脚本中调用。

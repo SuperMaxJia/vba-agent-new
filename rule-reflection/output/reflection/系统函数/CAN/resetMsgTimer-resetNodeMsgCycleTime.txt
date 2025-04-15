@@ -1,0 +1,63 @@
+##功能##
+该函数用于将指定节点(Node)上的特定报文(message或id标识)的发送周期重置为数据库(DBC)中定义的默认周期。常用于测试过程中需要恢复报文原始周期的情况。
+
+##vba规范##
+函数定义：resetNodeMsgCycleTime(Node, message) 或 resetNodeMsgCycleTime(Node, id)
+参数：
+- Node: ECUNode类型，表示目标节点对象
+- message: CANDBCMessage类型，表示报文对象
+- id: int或str类型，表示报文ID(标准帧用数字，扩展帧用字符串)
+返回值：int类型，0表示成功，-1表示失败
+
+##capl规范##
+函数定义：resetMsgTimer(nodeName, messageName) 或 resetMsgTimer(nodeName, messageId)
+参数：
+- nodeName: char[]类型，表示节点名称字符串
+- messageName: char[]类型，表示报文名称字符串
+- messageId: int类型，表示报文ID
+返回值：int类型，0表示成功，-1表示失败
+
+示例1：
+// 通过报文名称重置周期
+on key 'r'
+{
+  int result;
+  result = resetMsgTimer("ECU1", "EngineSpeed");
+  if(result == 0) write("Reset成功");
+  else write("Reset失败");
+}
+
+示例2：
+// 通过报文ID重置周期
+on message 0x100
+{
+  int result;
+  result = resetMsgTimer("ECU1", this.id);
+  if(result == -1) write("无法重置报文周期");
+}
+
+##capl名##
+resetMsgTimer
+
+##转换须知##
+1. CAPL使用字符串表示节点和报文名称，而VBA使用对象引用
+2. CAPL只支持整数型ID，而VBA支持字符串和数字两种ID格式
+3. CAPL没有扩展帧的特殊处理，所有ID都视为整数
+4. 在CAPL中需要手动处理返回值，而VBA可能抛出异常
+
+##转换示例##
+1. CAPL原始代码：
+int result;
+result = resetMsgTimer("ECU1", 0x123);
+if(result == 0) write("成功");
+
+2. 转换后的VBA代码：
+Dim res As Integer
+res = resetNodeMsgCycleTime(Node, &H123)
+If res = 0 Then Debug.Print "成功"
+
+3. 关键转换说明：
+- 将CAPL的字符串节点名"ECU1"转换为VBA的Node对象
+- 保持相同的十六进制ID格式
+- 返回值检查逻辑保持一致
+- CAPL的write改为VBA的Debug.Print

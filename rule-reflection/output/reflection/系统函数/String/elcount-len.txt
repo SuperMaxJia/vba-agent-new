@@ -1,0 +1,47 @@
+##功能##
+len函数用于返回序列（字符串、列表、元组、字典等）的长度或项目个数。在实际应用中，常用于确定数据结构的大小、循环迭代次数控制、数据验证等场景。
+
+##vba规范##
+函数名：len
+参数：
+- seq：可以是String、List、Tuple、Dictionary等序列类型
+返回值：
+- len_：整数类型，返回序列的长度
+内置函数：无
+示例：len((5, 10, 14)) 返回3
+
+##capl规范##
+CAPL中没有直接对应的len函数，但可以通过以下方式实现类似功能：
+1. 对于字符串：使用strlen()函数
+2. 对于数组：使用elcount()函数获取元素个数
+
+示例1（字符串长度）：
+char str[20] = "Hello";
+int length = strlen(str); // 返回5
+
+示例2（数组长度）：
+int arr[5] = {1,2,3,4,5};
+int count = elcount(arr); // 返回5
+
+##capl名##
+elcount
+
+##转换须知##
+1. CAPL的elcount仅适用于数组，而VBA的len适用于多种序列类型
+2. 对于字符串，CAPL需要使用strlen而非elcount
+3. CAPL的数组长度是静态的，而VBA可以处理动态数组
+4. 在CAPL中无法直接获取结构体或消息的长度
+
+##转换示例##
+CAPL原始代码：
+int data[4] = {10,20,30,40};
+int size = elcount(data);
+
+转换后的VBA代码：
+data = Array(10,20,30,40)
+size = len(data)
+
+关键转换步骤：
+1. 将CAPL数组声明改为VBA的Array函数
+2. 将elcount替换为len
+3. 注意VBA中数组索引从0开始而CAPL从1开始

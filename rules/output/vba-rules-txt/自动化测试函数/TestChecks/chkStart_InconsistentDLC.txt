@@ -1,0 +1,41 @@
+1. 函数名  
+chkStart_InconsistentDLC  
+
+2. 函数描述  
+该函数用于启动检测CAN/LIN消息中DLC（数据长度码）不一致的自动化测试。当消息的实际DLC与配置的DLC不一致时，会触发事件记录。  
+
+3. 函数体  
+函数属于自动化测试函数中的检查类函数，用于监控总线消息的DLC一致性。启动后，系统会持续比对实际接收到的消息DLC与数据库配置的DLC，若发现不一致则记录违规事件。  
+
+4. 返回值  
+无显式返回值，但会通过测试报告输出检测结果（如事件计数、违规消息ID等）。  
+
+5. 参数  
+无输入参数。  
+
+6. 内置函数  
+依赖以下内置函数实现功能：  
+- `getMessageData`：获取消息数据  
+- `getNodeMessageData`：从节点获取消息数据  
+- `writeWarningInfo`：记录警告信息到测试报告  
+
+7. 示例  
+示例功能：启动DLC不一致检测并输出结果。  
+示例代码：  
+```vba
+Sub Example_chkStart_InconsistentDLC()  
+    ' 启动DLC不一致检测  
+    chkStart_InconsistentDLC  
+    ' 等待检测运行（示例中简化为延时）  
+    threadSleep(5000)  
+    ' 注：实际需结合测试框架获取事件报告  
+    writeInfo "DLC不一致检测已启动，请查看测试报告"  
+End Sub  
+```  
+代码注释：  
+- `threadSleep`用于模拟检测持续时间。  
+- 实际应用中需通过`chkQuery_NumEvents`查询违规事件数。  
+
+8. 其他相关  
+- 需在工程中预先配置消息数据库，否则检测无效。  
+- 常与`chkControl_Stop`配合使用以终止检测。

@@ -1,0 +1,28 @@
+1. 函数名
+ethCloseSocket
+
+2. 函数描述
+清除Socket连接
+
+3. 函数体
+ethCloseSocket(network, socketid)
+
+4. 返回值
+无
+
+5. 参数
+| 名称     | 类型      | 描述               |
+|----------|-----------|--------------------|
+| network  | NetworkI  | 网段信息           |
+| socketid | int       | 连接对应的socketid |
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：清除Socket连接
+示例代码：
+ethCloseSocket(network, socketid)
+
+8. 其他和函数或变量强相关的内容
+无

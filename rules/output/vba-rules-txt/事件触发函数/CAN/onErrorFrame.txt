@@ -1,0 +1,34 @@
+1. 函数名
+onErrorFrame
+
+2. 函数描述
+当接收到错误帧时触发此函数，支持同时定义多个onErrorFrame事件（函数名称不能相同）。
+
+3. 函数体
+@onErrorFrame
+def onErrorFrameEvent(canErrorMsg):
+    pass
+
+4. 返回值
+无返回值（void）。
+
+5. 参数
+名称      类型        描述
+errorMsg  CANErrorMsg 可以获取错误帧对象的timestamp和channel属性，属性值的获取可以用对应的getXxx()方法。
+
+6. 内置函数
+无。
+
+7. 示例
+示例功能：当收到错误帧时触发，并将字符串‘已出现错误帧！’输出到控制台上。
+示例代码：
+@onErrorFrame
+def onErrorFrameEvent(canErrorMsg):
+    writeInfo('已出现错误帧！' + errorMsg.getTimestamp())
+代码注释：
+- @onErrorFrame：装饰器，标识这是一个错误帧触发函数。
+- def onErrorFrameEvent(canErrorMsg): 定义错误帧触发函数，参数为canErrorMsg。
+- writeInfo('已出现错误帧！' + errorMsg.getTimestamp())：输出错误帧信息到控制台。
+
+8. 其他和函数或变量强相关的内容
+无。

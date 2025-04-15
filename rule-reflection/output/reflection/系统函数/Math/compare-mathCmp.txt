@@ -1,0 +1,72 @@
+##功能##
+比较两个数值的大小，返回比较结果。如果第一个数小于第二个数返回-1，相等返回0，大于返回1。常用于排序算法、条件判断等需要比较数值的场景。
+
+##vba规范##
+函数名：mathCmp
+参数：
+  x (int) - 第一个要比较的数值
+  y (int) - 第二个要比较的数值
+返回值：
+  absNum (int) - 比较结果：-1(x<y), 0(x==y), 1(x>y)
+示例：mathCmp(97,98) 返回-1
+
+##capl规范##
+CAPL中没有直接对应的比较函数，但可以通过条件语句实现相同功能：
+int compare(int x, int y)
+{
+  if(x < y) return -1;
+  if(x == y) return 0;
+  return 1;
+}
+
+示例1：
+on key 'a'
+{
+  int result = compare(5, 10); // 返回-1
+  write("比较结果：%d", result);
+}
+
+示例2：
+variables
+{
+  int a = 20;
+  int b = 20;
+}
+on start
+{
+  write("比较结果：%d", compare(a, b)); // 返回0
+}
+
+##capl名##
+compare
+
+##转换须知##
+1. CAPL需要自定义函数实现，而VBA可直接使用
+2. 两者参数类型和数量相同
+3. 返回值类型和行为完全一致
+4. 边界情况处理相同（如比较最大/最小整数值）
+
+##转换示例##
+1. CAPL原始代码：
+int compare(int x, int y)
+{
+  if(x < y) return -1;
+  if(x == y) return 0;
+  return 1;
+}
+
+2. 转换后的VBA代码：
+Function mathCmp(x As Integer, y As Integer) As Integer
+    If x < y Then
+        mathCmp = -1
+    ElseIf x = y Then
+        mathCmp = 0
+    Else
+        mathCmp = 1
+    End If
+End Function
+
+3. 关键转换说明：
+- 将CAPL的函数定义语法改为VBA的Function语法
+- 保持相同的条件判断逻辑
+- 返回值赋值方式从return改为直接赋值给函数名

@@ -1,0 +1,60 @@
+##功能##
+该函数作为测试脚本的主入口，标识脚本执行的起始点，所有测试用例必须在此函数中编写才能生效。相当于Python中的main函数，用于组织和管理测试用例的执行。
+
+##vba规范##
+1. 使用@MainTest注解标识主函数
+2. 函数名：MainTestExecute
+3. 无参数
+4. 无返回值
+5. 函数体内包含测试用例的组织逻辑
+6. 每个脚本必须且只能包含一个@MainTest注解的函数
+
+##capl规范##
+在CAPL中，测试主函数通常使用testcase或main作为入口点。CAPL没有注解机制，而是通过特定的函数命名来标识主测试用例。
+
+示例1：
+testcase MainTest()
+{
+  testGroupBegin("title", "description");
+  test01();
+  testGroupEnd();
+}
+
+示例2：
+void main()
+{
+  testGroupBegin("title", "description");
+  test01();
+  testGroupEnd();
+}
+
+##capl名##
+testcase
+
+##转换须知##
+1. CAPL使用testcase或main作为入口函数，而非注解
+2. CAPL的测试组函数命名可能不同（如testGroupBegin可能对应CAPL的testGroupStart）
+3. CAPL不需要特殊的注解标记，只需正确命名函数
+4. 在CAPL中，一个脚本可以有多个testcase函数
+
+##转换示例##
+1. CAPL原始代码：
+testcase MainTestExecute()
+{
+  testGroupStart("title", "description");
+  test01();
+  testGroupEnd();
+}
+
+2. 转换后的VBA代码：
+@MainTest
+def MainTestExecute():
+    testGroupBegin('title', 'description')
+    test01()
+    testGroupEnd()
+
+3. 关键转换说明：
+- 将CAPL的testcase关键字替换为VBA的@MainTest注解
+- 保持函数名一致
+- 将testGroupStart改为testGroupBegin（根据实际VBA函数名）
+- 保持测试用例调用方式不变

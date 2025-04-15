@@ -1,0 +1,39 @@
+1. 函数名
+testStepErrorInTestSystem
+
+2. 函数描述
+用于描述某个测试步骤在测试系统中发生的错误,如果发生错误或者异常信息则可以调用此函数加以记录，并输出在测试报告中。
+注：此函数也会改变测试用例的状态为Error状态。
+
+3. 函数体
+testStepErrorInTestSystem(levelOfDetail, 'description')
+
+4. 返回值
+无
+
+5. 参数
+名称            类型    描述
+levelOfDetail   str     可以用一个数字来表示这个测试步骤有多重要。在测试报告中，有可能只显示达到某一重要性的测试步骤。0表示"非常重要"，数字越大，重要程度越低。没有明确的规范
+description     str     表示此测试用例步骤的描述信息，字符串类型，也可以不写，默认是空字符，会写在测试报告中
+
+7. 示例
+示例功能：如果lRet等于0时表明出现了意料之外的错误，则调用此函数记录在测试报告中
+
+示例代码：
+@testcase
+def checkUndifinedMessage():
+    switch(lRet):
+        case 0: // timeout, reporting of failed action
+            testStepErrorInTestSystem("3.1", "WaitForResponse: Expected message did not occur. Timeout.");
+            break;
+
+代码注释：
+- 当lRet等于0时，表示出现超时情况
+- 调用testStepErrorInTestSystem函数记录错误信息
+- 参数"3.1"表示错误级别
+- 参数"WaitForResponse..."是错误描述信息
+
+8. 其他说明
+- 此函数会改变测试用例的状态为Error状态
+- 错误信息会被记录到测试报告中
+- 重要程度参数levelOfDetail的数字越大表示重要程度越低

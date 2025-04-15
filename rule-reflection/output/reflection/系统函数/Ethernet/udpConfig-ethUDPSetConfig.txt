@@ -1,0 +1,63 @@
+##功能##
+该函数用于在以太网通信中配置UDP客户端或服务器模块，建立UDP监听。主要用于车载网络测试中建立UDP通信连接，支持配置MAC地址、IP地址、网关、子网掩码、VLAN等网络参数。
+
+##vba规范##
+函数定义：ethUDPSetConfig(network, source_mac_str, source_ip_str, gateway_str, netmask_str, vlan, src_port, as_server)
+参数类型：
+- network: NetworkI (网段信息)
+- source_mac_str: str (本地MAC地址)
+- source_ip_str: str (本地IP地址)
+- gateway_str: str (本地网关)
+- netmask_str: str (本地子网掩码)
+- vlan: int (本地VLAN)
+- src_port: int (本地端口号)
+- as_server: bool (是否配置为服务器)
+返回值类型：int (成功返回socket ID，失败返回错误码，-1表示接口调用错误)
+
+##capl规范##
+在CAPL中对应的UDP配置函数通常为：
+udpConfig(socket, localAddress, localPort, remoteAddress, remotePort)
+参数类型：
+- socket: dword (socket句柄)
+- localAddress: char[] (本地IP地址)
+- localPort: word (本地端口)
+- remoteAddress: char[] (远程IP地址)
+- remotePort: word (远程端口)
+返回值类型：long (成功返回0，失败返回错误码)
+
+示例1：
+dword socket;
+long result;
+result = udpConfig(socket, "192.168.1.100", 5000, "192.168.1.200", 6000);
+
+示例2：
+dword mySocket;
+if(udpConfig(mySocket, "10.0.0.1", 8000, "10.0.0.2", 9000) == 0)
+{
+  write("UDP配置成功");
+}
+
+##capl名##
+udpConfig
+
+##转换须知##
+1. 参数差异：CAPL的udpConfig需要指定远程地址和端口，而VBA版本通过as_server参数区分客户端/服务器模式
+2. 返回值差异：CAPL返回错误码(0表示成功)，VBA返回socket ID或错误码
+3. 行为差异：VBA版本包含更多网络参数配置(MAC,网关等)，CAPL版本更基础
+4. 特殊情况：VBA的-1错误码需要单独处理，CAPL中非0即为错误
+
+##转换示例##
+CAPL原始代码：
+dword sock;
+long res;
+res = udpConfig(sock, "192.168.0.10", 5000, "192.168.0.20", 5000);
+
+转换后的VBA代码：
+Dim socketID As Integer
+socketID = ethUDPSetConfig(network, "00:11:22:33:44:55", "192.168.0.10", "192.168.0.1", "255.255.255.0", 0, 5000, False)
+
+关键转换说明：
+1. 将CAPL的udpConfig拆分为VBA中更详细的网络参数配置
+2. CAPL中的远程地址参数在VBA中通过as_server=False表示客户端模式
+3. 添加了VBA中必需的MAC地址、网关等额外参数
+4. 返回值处理方式不同，但都需检查是否成功

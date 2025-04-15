@@ -1,0 +1,62 @@
+##功能##
+该函数用于在指定的信号值发生变化时触发事件处理，主要用于监控CAN总线上的信号变化。典型应用场景包括车辆状态监控、故障诊断和实时数据显示等。
+
+##vba规范##
+函数定义：使用@onSignalChange装饰器注册信号变化事件
+参数：onsignal(CANDBCSignal)-要监听的信号对象；signal(CANDBCSignal)-接收到的信号对象
+返回值：无
+信号对象属性：name(信号名)、comment(注释)、rawval(原始值)、physVal(物理值)
+
+##capl规范##
+在CAPL中对应的是on signal事件处理函数：
+on signal <signal_name>
+{
+    // 处理代码
+}
+
+示例1：
+on signal CAN1::ESP_Status::ESP_VehicleSpeed
+{
+    write("Signal name: %s", this.name);
+    write("Physical value: %f", this.phys);
+}
+
+示例2：
+on signal CAN2::EngineData::RPM
+{
+    if(this.phys > 3000)
+    {
+        write("Engine RPM over limit!");
+    }
+}
+
+##capl名##
+on signal
+
+##转换须知##
+1. CAPL使用"::"作为命名空间分隔符，而VBA使用"."
+2. CAPL中信号值通过this关键字访问，VBA通过参数传递
+3. CAPL信号属性名称为phys，VBA为physVal
+4. CAPL不需要装饰器语法，直接定义事件处理函数
+5. CAPL中信号处理函数只能定义一次，不能重复定义
+
+##转换示例##
+CAPL原始代码：
+on signal CAN1::ESP_Status::ESP_VehicleSpeed
+{
+    write("Name: %s", this.name);
+    write("Value: %f", this.phys);
+}
+
+转换后的VBA代码：
+@onSignalChange(CAN1.ESP_Status.ESP_VehicleSpeed)
+def onSignalChangeEvent(signal):
+    writeInfo(signal.getName())
+    writeInfo(str(signal.getPhysVal()))
+
+关键转换步骤：
+1. 将"::"替换为"."
+2. 将this访问改为signal参数访问
+3. 将write改为writeInfo
+4. 添加装饰器语法
+5. 属性名phys改为getPhysVal()方法调用

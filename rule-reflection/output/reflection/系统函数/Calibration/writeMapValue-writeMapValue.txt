@@ -1,0 +1,86 @@
+##功能##
+该函数用于写入Map变量的值信息，包括X轴和Y轴的数值列表以及对应的数值区域。适用于汽车标定场景中需要动态修改Map变量值的操作。
+
+##vba规范##
+函数定义：writeMapValue(calNode, variable, mapValueInfo)
+参数：
+- calNode: CalNode类型，标定节点对象
+- variable: str或CalVariable类型，变量名或变量对象
+- mapValueInfo: MapValueInfo类型，包含Map变量配置信息
+返回值：MapValueInfo对象，包含columnNumber、xAxisValue、rowNumber、yAxisValue、value和info属性
+
+##capl规范##
+函数定义：writeMapValue(node, variable, mapInfo)
+参数：
+- node: 标定节点引用
+- variable: char[]或变量引用
+- mapInfo: 结构体，包含：
+  - columnCount: int
+  - xValues: float[]
+  - rowCount: int
+  - yValues: float[]
+  - values: float[]
+返回值：结构体，包含与输入mapInfo相同的字段，外加errorMsg char[]
+
+示例1：
+struct MapInfo info;
+info.columnCount = 2;
+info.rowCount = 2;
+info.xValues = {1.0, 1.0};
+info.yValues = {1.0, 1.0};
+info.values = {3.0, 4.0, 5.0, 6.0};
+
+struct MapInfo result = writeMapValue(CAN1::Calibrations::calNode1, "NewMap", info);
+
+示例2：
+struct MapInfo info;
+//...初始化info...
+struct MapInfo result = writeMapValue(CAN1::Calibrations::calNode1, CAN1::Calibrations::calNode1::NewMap, info);
+
+##capl名##
+writeMapValue
+
+##转换须知##
+1. CAPL使用结构体而非对象来传递Map信息
+2. CAPL中数组直接初始化方式不同
+3. CAPL中节点和变量引用使用::分隔而非.
+4. CAPL返回值包含错误信息在单独字段中
+5. CAPL需要预先定义结构体类型
+
+##转换示例##
+CAPL原始代码：
+struct MapInfo {
+  int columnCount;
+  float xValues[4];
+  int rowCount;
+  float yValues[4];
+  float values[4];
+  char errorMsg[100];
+};
+
+struct MapInfo info;
+info.columnCount = 2;
+info.rowCount = 2;
+info.xValues = {1.0, 1.0, 1.0, 1.0};
+info.yValues = {1.0, 1.0, 1.0, 1.0};
+info.values = {3.0, 4.0, 5.0, 6.0};
+
+struct MapInfo result = writeMapValue(CAN1::Calibrations::calNode1, "NewMap", info);
+
+转换后的VBA代码：
+Dim mapValueInfo As MapValueInfo
+Set mapValueInfo = New MapValueInfo
+mapValueInfo.setColumnNumber 2
+mapValueInfo.setRowNumber 2
+mapValueInfo.setXAxisValue Array(1.0, 1.0, 1.0, 1.0)
+mapValueInfo.setYAxisValue Array(1.0, 1.0, 1.0, 1.0)
+mapValueInfo.setValue Array(3.0, 4.0, 5.0, 6.0)
+
+Dim ans As MapValueInfo
+Set ans = writeMapValue(CAN1.Calibrations.calNode1, "NewMap", mapValueInfo)
+
+关键转换说明：
+1. 结构体转换为对象实例化
+2. 数组初始化方式从{}变为Array()
+3. 节点引用从::变为.
+4. 返回值处理方式从结构体赋值变为对象引用

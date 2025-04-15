@@ -1,0 +1,42 @@
+1. 函数名  
+getCRCData  
+
+2. 函数描述  
+计算CRC校验值，返回一个整形数值。  
+
+3. 函数体  
+```vba
+getCRCData(datas, width=32, poly=0x04C11DB7, reflect_in=True, xor_in=0xFFFFFFFF, reflect_out=True, xor_out=0xFFFFFFFF)
+```  
+
+4. 返回值  
+| 名称       | 类型 | 描述               |  
+|------------|------|--------------------|  
+| CRCValue   | int  | 计算出的CRC校验值  |  
+
+5. 参数  
+| 名称         | 类型     | 描述               |  
+|--------------|----------|--------------------|  
+| datas        | byte     | 需要校验的数据字节 |  
+| width        | int      | 算法的宽度         |  
+| poly         | int      | 多项式的值         |  
+| reflect_in   | Boolean  | 初始字节翻转       |  
+| xor_in       | int      | 初始异或值         |  
+| reflect_out  | Boolean  | 输出字节翻转       |  
+| xor_out      | int      | 输出异或值         |  
+
+6. 内置函数  
+无  
+
+7. 示例  
+**示例功能**：使用CRC32算法计算CRC值  
+**示例代码**：  
+```vba
+CRCValue = getCRCData([0x10, 0x12])
+```  
+**代码注释**：  
+- `[0x10, 0x12]` 是需要计算CRC校验值的数据字节。  
+- 默认使用CRC32算法（`width=32`，`poly=0x04C11DB7`，其他参数为默认值）。  
+
+8. 其他和函数或变量强相关的内容  
+无

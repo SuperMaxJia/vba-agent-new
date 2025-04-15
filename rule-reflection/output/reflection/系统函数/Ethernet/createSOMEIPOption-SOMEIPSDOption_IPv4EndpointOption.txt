@@ -1,0 +1,77 @@
+##功能##
+该函数用于创建SOMEIP-SD协议的IPv4端点选项对象，设置选项类型、IPv4地址、协议类型和端口号。用于在车载网络中配置SOMEIP-SD服务的通信端点信息。
+
+##vba规范##
+函数名：SOMEIPSDOption_IPv4EndpointOption
+参数：
+- type: str类型，指定选项类型(0x04组播/0x14单播/0x24SDEndPoint)
+- ipv4_address: str类型，IPv4地址字符串
+- protocol: int类型，协议值(6=TCP/17=UDP)
+- port_number: str类型，端口号的十六进制表示
+返回值：返回SOMEIPSD的Option对象
+方法：
+- setType(): 设置选项类型
+- setIPv4Address(): 设置IPv4地址
+- setProtocol(): 设置协议类型
+- setPortNumber(): 设置端口号
+
+##capl规范##
+在CAPL中可以使用结构体和函数实现类似功能：
+1. 定义结构体：
+struct SOMEIP_SD_Option {
+  byte type;
+  byte[4] ipAddress;
+  byte protocol;
+  word port;
+};
+
+2. 创建函数：
+SOMEIP_SD_Option createSOMEIPOption(byte type, byte ip1, byte ip2, byte ip3, byte ip4, byte protocol, word port) {
+  SOMEIP_SD_Option option;
+  option.type = type;
+  option.ipAddress[0] = ip1;
+  option.ipAddress[1] = ip2;
+  option.ipAddress[2] = ip3;
+  option.ipAddress[3] = ip4;
+  option.protocol = protocol;
+  option.port = port;
+  return option;
+}
+
+示例1：
+SOMEIP_SD_Option option1;
+option1 = createSOMEIPOption(0x04, 192, 168, 2, 0, 6, 0x1234);
+
+示例2：
+SOMEIP_SD_Option option2;
+option2.type = 0x14;
+option2.ipAddress = {192, 168, 1, 100};
+option2.protocol = 17;
+option2.port = 0x5678;
+
+##capl名##
+createSOMEIPOption
+
+##转换须知##
+1. CAPL使用单独字节表示IP地址各部分，VBA使用完整字符串
+2. CAPL端口号为word类型，VBA使用十六进制字符串
+3. CAPL需要手动设置每个字段，VBA有独立设置方法
+4. CAPL返回结构体，VBA返回对象
+5. 协议类型在CAPL中直接赋值，VBA使用常量值
+
+##转换示例##
+1. CAPL原始代码：
+SOMEIP_SD_Option option;
+option = createSOMEIPOption(0x24, 10, 0, 0, 1, 17, 0x22B8);
+
+2. 转换后的VBA代码：
+Set someipSDoption = SOMEIPSDOption_IPv4EndpointOption()
+someipSDoption.setType(0x24)
+someipSDoption.setIPv4Address("10.0.0.1")
+someipSDoption.setProtocol(17)
+someipSDoption.setPortNumber(0x22B8)
+
+3. 关键转换说明：
+- 将IP地址从分字节表示转换为字符串格式
+- 将直接结构体赋值转换为对象方法调用
+- 保持协议类型和端口号的数值一致性

@@ -1,0 +1,56 @@
+1. 函数名  
+chkStart_NodeMsgsRelCycleTimeViolation  
+
+2. 函数描述  
+该函数用于启动对节点消息相对周期时间违规的检查。它属于自动化测试函数中的TestChecks类别，用于监控节点消息的周期时间是否符合预期，检测是否存在周期时间违规的情况。  
+
+3. 函数体  
+函数的具体实现未在提供的文档中详细描述，但根据函数名称和上下文推断，其功能是启动一个检查机制，监控指定节点消息的相对周期时间是否违反预设的阈值或规则。  
+
+4. 返回值  
+未明确说明返回值类型，但通常此类函数可能返回布尔值（True/False）表示检查是否成功启动，或返回状态码表示操作结果。  
+
+5. 参数  
+未明确列出参数，但根据函数名称和用途，可能的参数包括：  
+
+| 名称 | 类型 | 描述 |  
+|------|------|------|  
+| nodeName | String | 需要监控的节点名称 |  
+| tolerance | Integer | 允许的周期时间误差范围（毫秒） |  
+| callback | Function | 违规事件触发时的回调函数 |  
+
+6. 内置函数  
+未明确列出内置函数，但可能依赖以下相关函数：  
+
+| 函数名称 | 函数描述 | 参数说明 |  
+|----------|----------|----------|  
+| getNode | 获取节点信息 | nodeName: 节点名称 |  
+| setNodeMsgCycleTime | 设置节点消息周期时间 | nodeName: 节点名称, cycleTime: 周期时间 |  
+
+7. 示例  
+**示例功能**：启动对节点“Engine”消息相对周期时间违规的检查，允许误差范围为±10ms，并在违规时触发回调函数。  
+
+**示例代码**：  
+```vba
+Sub Example_StartNodeMsgCheck()
+    Dim result As Boolean
+    result = chkStart_NodeMsgsRelCycleTimeViolation("Engine", 10, AddressOf OnViolation)
+    If result Then
+        WriteInfo "节点消息周期检查已启动"
+    Else
+        WriteWarningInfo "检查启动失败"
+    End If
+End Sub
+
+Sub OnViolation(nodeName As String, violationTime As Long)
+    WriteErrorInfo "节点 " & nodeName & " 消息周期违规，时间偏差: " & violationTime & "ms"
+End Sub
+```  
+
+**代码注释**：  
+- `chkStart_NodeMsgsRelCycleTimeViolation` 启动检查，传入节点名、误差范围和回调函数。  
+- `OnViolation` 是自定义回调函数，在周期违规时输出错误信息。  
+
+8. 其他相关内容  
+- 该函数通常用于自动化测试场景，需配合其他测试控制函数（如 `chkControl_Stop`）使用。  
+- 检查结果可通过日志函数（如 `WriteErrorInfo`）记录，便于后续分析。

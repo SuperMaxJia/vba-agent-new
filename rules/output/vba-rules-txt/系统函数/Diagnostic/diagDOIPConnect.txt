@@ -1,0 +1,36 @@
+1. 函数名  
+diagDOIPConnect  
+
+2. 函数描述  
+配置DOIP连接设置，返回connectHandle。  
+
+3. 函数体  
+```vba
+diagDOIPConnect(doipConnectLinkConfig)
+```  
+
+4. 返回值  
+| 名称          | 类型 | 描述                          |  
+|---------------|------|-----------------------------|  
+| connectHandle | int  | 返回连接句柄，返回0时连接失败。 |  
+
+5. 参数  
+| 名称                    | 类型                  | 描述                     |  
+|-------------------------|-----------------------|------------------------|  
+| doipConnectLinkConfig   | DOIPConnectLinkConfig | DOIPConnectLinkConfig对象 |  
+
+6. 内置函数  
+无  
+
+7. 示例  
+**示例功能**：配置DOIP连接，返回connectHandle。  
+**示例代码**：  
+```vba
+connectHandle = diagDOIPConnect(doipConnectLinkConfig)
+```  
+**代码注释**：  
+- `doipConnectLinkConfig` 是DOIP连接配置对象。  
+- `connectHandle` 为返回的连接句柄，0表示连接失败。  
+
+8. 其他和函数或变量强相关的内容  
+无

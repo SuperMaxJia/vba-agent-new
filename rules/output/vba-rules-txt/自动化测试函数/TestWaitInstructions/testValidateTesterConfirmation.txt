@@ -1,0 +1,41 @@
+1. 函数名  
+testValidateTesterConfirmation  
+
+2. 函数描述  
+用于创建一个显示给定字符串的弹出窗口，测试员通过确认操作，并将操作结果或备注生成到测试报告中。  
+
+3. 函数体  
+```vba  
+testValidateTesterConfirmation(questionText, heading, timeoutResult, timeout)  
+```  
+
+4. 返回值  
+| 名称 | 类型 | 描述 |  
+|------|------|------|  
+| res  | int  | 0代表超时，1代表选择的yes，2代表用户no，3代表不清楚，-1代表产生未知错误 |  
+
+5. 参数  
+| 名称          | 类型 | 描述 |  
+|---------------|------|------|  
+| questionText  | str  | 测试结果确认的描述 |  
+| heading       | str  | 测试弹框的标题 |  
+| timeoutResult | int  | 测试结果超时后处理的结果（1代表pass，0代表fail） |  
+| timeout       | int  | 超时的时间 |  
+
+6. 内置函数  
+无  
+
+7. 示例  
+**示例功能**：创建一个显示给定字符串的弹出窗口，测试员确认操作后返回结果。  
+**示例代码**：  
+```vba  
+testValidateTesterConfirmation(questionText, heading, timeoutResult, timeout)  
+```  
+**代码注释**：  
+- `questionText`：测试确认的描述文本。  
+- `heading`：弹窗标题。  
+- `timeoutResult`：超时后的默认处理结果（1为通过，0为失败）。  
+- `timeout`：超时时间（单位：秒）。  
+
+8. 其他和函数或变量强相关的内容  
+无

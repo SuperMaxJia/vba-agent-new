@@ -1,0 +1,61 @@
+1. 函数名  
+SOMEIPSDEntry  
+
+2. 函数描述  
+用于创建一条SOMEIPSD的Entry字段。  
+
+3. 函数体  
+SOMEIPSDEntry()  
+
+4. 返回值  
+无（返回一个SOMEIPSDEntry实例）。  
+
+5. 参数  
+| 名称          | 类型  | 描述                                                                 |  
+|---------------|-------|----------------------------------------------------------------------|  
+| type          | int   | 类型，如 0x00 表示 FindServiceEntry，0x01 表示 OfferServiceEntry；0x06 表示 SubscribeEventGroupEntry，0x07 表示 SubscribeEventGroupACKEntry |  
+| index1Option  | int   | 设置 SOMEIPSDEntry 的 Index1Option                                   |  
+| index2Option  | int   | 设置 SOMEIPSDEntry 的 Index2Option                                   |  
+| number1Option | int   | 设置 SOMEIPSDEntry 的 Number1Option                                  |  
+| number2Option | int   | 设置 SOMEIPSDEntry 的 Number2Option                                  |  
+| serviceID     | int   | 设置 SOMEIPSDEntry 的 ServiceID                                      |  
+| instanceID    | int   | 设置 SOMEIPSDEntry 的 InstanceID                                     |  
+| ttl           | float | 设置 SOMEIPSDEntry 的 TTL（生存时间）                                |  
+| minorVersion  | int   | 设置 SOMEIPSDEntry 的 MinorVersion（仅在 Find 和 Offer 时支持）       |  
+| count         | int   | 设置 SOMEIPSDEntry 的 Count（仅在订阅类型时支持）                     |  
+| eventGroupID  | int   | 设置 SOMEIPSDEntry 的 EventGroupID（仅在订阅类型时支持）              |  
+
+6. 内置函数  
+无（该函数为构造函数，不涉及内置函数）。  
+
+7. 示例  
+**示例功能**：创建一个 SOMEIPSDEntry 实例并设置相关参数。  
+
+**示例代码**：  
+```vba  
+someipSDEntry = SOMEIPSDEntry()  
+someipSDEntry.setType(0x00) ' 0x00 是 FindServiceEntry，0x01 是 OfferServiceEntry；0x06 是 SubscribeEventGroupEntry，0x07 是 SubscribeEventGroupACKEntry  
+someipSDEntry.setIndex1Option(0x01)  
+someipSDEntry.setIndex2Option(0x01)  
+someipSDEntry.setNumber1Option(0x01)  
+someipSDEntry.setNumber2Option(0x80)  
+someipSDEntry.setServiceID(0x0001)  
+someipSDEntry.setInstanceID(0xFFFF)  
+someipSDEntry.setTTL(1000)  
+someipSDEntry.setMinorVersion(0x00000001) ' 只有在发现和提供服务的类型的时候生效  
+someipSDEntry.setCount(1) ' 只有在订阅的类型的时候生效  
+someipSDEntry.setEventGroupID(1) ' 只有在订阅的类型的时候生效  
+```  
+
+**代码注释**：  
+- `setType`：设置 Entry 类型（如 FindServiceEntry 或 OfferServiceEntry）。  
+- `setIndex1Option` 和 `setIndex2Option`：设置索引选项。  
+- `setNumber1Option` 和 `setNumber2Option`：设置数字选项。  
+- `setServiceID` 和 `setInstanceID`：设置服务 ID 和实例 ID。  
+- `setTTL`：设置生存时间（单位：毫秒）。  
+- `setMinorVersion`：设置次要版本号（仅在 Find 和 Offer 类型时生效）。  
+- `setCount` 和 `setEventGroupID`：设置订阅相关的参数（仅在订阅类型时生效）。  
+
+8. 其他和函数或变量强相关的内容  
+- 该函数主要用于 SOME/IP 服务发现协议（SD）的 Entry 字段配置。  
+- 适用于车载以太网通信中的 SOME/IP 协议栈开发。

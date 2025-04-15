@@ -1,0 +1,45 @@
+1. 函数名  
+writeMapValueByIndex  
+
+2. 函数描述  
+向Map变量指定区域的指定索引处写入标定值。  
+
+3. 函数体  
+```vba  
+writeMapValueByIndex(calNode, variable, columnIndex, rowIndex, region, value)  
+```  
+
+4. 返回值  
+| 名称          | 类型        | 描述                                                                 |  
+|---------------|-------------|----------------------------------------------------------------------|  
+| ans           | ResultInfo  | ans.errorInfo为读取失败时返回的错误信息，ans.backPhyValue为读取成功时获取的测量值 |  
+
+5. 参数  
+| 名称          | 类型        | 描述                         |  
+|---------------|-------------|------------------------------|  
+| calNode       | CalNode     | 标定节点对象                 |  
+| variable     | String/Object | Map变量名或变量对象          |  
+| columnIndex  | Integer     | 列索引（从0开始）            |  
+| rowIndex     | Integer     | 行索引（从0开始）            |  
+| region       | Integer     | 区域索引（从0开始）          |  
+| value        | Float       | 待写入的标定值               |  
+
+6. 内置函数  
+无  
+
+7. 示例  
+**功能**：向Map变量`NewMap`的指定位置写入标定值123.0，并输出写入结果。  
+**示例代码**：  
+```vba  
+ans = writeMapValueByIndex(CAN1.Calibrations.calNode1, 'NewMap', 0, 0, 0, 123.0)  
+' 或使用变量对象形式：  
+' ans = writeMapValueByIndex(CAN1.Calibrations.calNode1, CAN1.Calibrations.calNode1.characteristics.NewMap, 0, 0, 0, 123.0)  
+writeInfo(ans.backPhyValue)  
+```  
+**注释**：  
+- `calNode`需替换为实际的标定节点路径（如`CAN1.Calibrations.calNode1`）。  
+- 支持直接传入变量名（字符串）或变量对象。  
+
+8. 其他说明  
+- 索引从0开始，需确保参数在有效范围内。  
+- 返回值`ans`包含操作状态（错误信息或实际写入值）。

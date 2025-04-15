@@ -1,0 +1,28 @@
+1. 函数名
+startLogging
+
+2. 函数描述
+启动指定的logger模块，开始录制。当loggerConfig为None时，该方法根据logger_name和file_name可以控制VBA中Loggers下的节点开始录制并保存；当loggerConfig不为None时，则logger_name和file_name两个参数失效，该方法将根据loggerConfig的属性来控制自定义的录制文件启动。
+
+3. 函数体
+startLogging(logger_name, file_name='', loggerConfig=None)
+
+4. 返回值
+无
+
+5. 参数
+| 名称        | 类型   | 描述                                                                                     |
+|-------------|--------|------------------------------------------------------------------------------------------|
+| logger_name | String | 工程Loggers模块下配置的logger节点名称                                                   |
+| file_name   | String | 录制文件的名称                                                                          |
+| loggerConfig| String | 文件的后缀名称，支持asc、blf、pacp格式文件，支持输入大小写，不符合这三种，则报错提示    |
+
+6. 内置函数
+无
+
+7. 示例
+功能：启动指定的logger模块，开始录制
+代码：startLogging(logger_name, file_name='aaa', loggerConfig=None)
+
+8. 其他
+无

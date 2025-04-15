@@ -1,0 +1,55 @@
+##功能##
+该函数用于在接收到指定CAN报文时触发自定义操作，支持多种报文ID匹配方式和网段过滤，适用于CAN总线监控、报文处理、诊断等场景。
+
+##vba规范##
+函数定义：@onMessage装饰器定义事件处理函数
+参数类型：
+- message_id: int/str/list[str]
+- canmessage: CANMessage/CANDBCMessage
+- 网段: NetWork
+- 报文方向: int
+返回值类型：无
+入参处理：支持多种报文ID格式和网段过滤
+
+##capl规范##
+函数定义：on message <CAN ID>
+参数类型：
+- CAN ID: int/string
+- 网段: 通过环境变量或总线选择
+返回值类型：void
+示例1：
+on message 0x132 {
+    write("Received data: %x", this.data);
+}
+
+示例2：
+on message * {
+    write("Received CAN ID: %x", this.id);
+}
+
+##capl名##
+on
+
+##转换须知##
+1. CAPL使用"on message"语法而非装饰器
+2. CAPL通过"this"关键字访问报文对象
+3. CAPL不支持直接的ID范围匹配，需要手动实现
+4. CAPL的网段选择通过总线配置实现
+5. CAPL的报文方向通过dir属性判断
+
+##转换示例##
+CAPL原始代码：
+on message 0x100 {
+    write("DLC: %d", this.dlc);
+}
+
+转换后的VBA代码：
+@onMessage(0x100)
+def onMessageEvent(canMsg):
+    writeInfo(canMsg.getDlc())
+
+关键转换步骤：
+1. 将"on message"转换为@onMessage装饰器
+2. 将"this"替换为canMsg参数
+3. 将write函数转换为writeInfo方法
+4. 保持相同的报文ID匹配逻辑

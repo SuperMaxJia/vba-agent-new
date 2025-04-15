@@ -1,0 +1,60 @@
+##功能##
+该函数用于返回初始化后指定检测函数产生的事件次数，主要用于监控信号是否超出预设范围并统计违规次数，常用于自动化测试中的信号验证场景。
+
+##vba规范##
+函数定义：result = chkQuery_NumEvents(object)
+参数：object类型为检测对象，通常由其他检测函数如checkSignalInRange返回
+返回值：字符串类型，表示事件触发次数
+用途：查询检测对象的事件触发次数
+
+##capl规范##
+对应函数：chkGetEventCount(checkId)
+参数：checkId类型为long，表示检测ID
+返回值：int类型，返回事件计数
+示例1：
+```
+long checkId = chkCreateSignalRange(Node_SUT::Velocity, 60, 100);
+testWaitForTimeout(10000);
+if(chkGetEventCount(checkId) > 0) {
+    testStepFail("Value of signal is not in the allowed range!");
+}
+```
+示例2：
+```
+on signal Node_SUT::Velocity
+{
+    if(chkGetEventCount(activeCheckId) > threshold) {
+        write("Warning: Excessive out-of-range events detected");
+    }
+}
+```
+
+##capl名##
+chkGetEventCount
+
+##转换须知##
+1. CAPL使用整型checkId而非VBA的object类型
+2. CAPL返回值为整型而非VBA的字符串
+3. CAPL需要显式创建检测(chkCreate)而VBA可能隐式处理
+4. 超时处理方式不同：CAPL用testWaitForTimeout，VBA用time.sleep
+
+##转换示例##
+CAPL原始代码：
+```
+long checkId = chkCreateSignalRange(Node_SUT::Velocity, 60, 100);
+testWaitForTimeout(10000);
+int count = chkGetEventCount(checkId);
+```
+
+转换后的VBA代码：
+```
+checkId = checkSignalInRange(Node_SUT.Velocity, 60, 100)
+time.sleep(10)
+result = chkQuery_NumEvents(checkId)
+```
+
+关键转换说明：
+1. chkCreateSignalRange → checkSignalInRange
+2. testWaitForTimeout → time.sleep
+3. chkGetEventCount → chkQuery_NumEvents
+4. 注意返回值类型从int变为str

@@ -1,0 +1,32 @@
+1. 函数名
+setNodeMsgCycleTime
+
+2. 函数描述
+用于为报文设置一个新的发送周期
+
+3. 函数体
+setNodeMsgCycleTime(Node, message, cycletime)
+setNodeMsgCycleTime(Node, id, cycletime)
+
+4. 返回值
+名称  类型  描述
+res   int   0代表没有错误，-1出现错误
+
+5. 参数
+名称      类型            描述
+Node      ECUNode         Node节点对象
+message   CANDBCMessage   报文对象
+id        int或str        报文的id（标准帧可以输入数字，扩展帧输入字符串）
+cycletime int             触发的周期
+
+6. 内置函数
+(无内置函数说明)
+
+7. 示例
+示例功能：为报文设置一个新的发送周期
+示例代码：
+setNodeMsgCycleTime(Node, message, cycletime)
+setNodeMsgCycleTime(Node, id, cycletime)
+
+8. 其他说明
+(无其他相关说明)

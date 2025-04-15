@@ -1,0 +1,29 @@
+1. 函数名
+getETHNode
+
+2. 函数描述
+用于获取以太网仿真节点对象
+
+3. 函数体
+getETHNode(name, network)
+
+4. 返回值
+名称: res
+类型: ECUNode
+描述: Node对象
+
+5. 参数
+名称      类型      描述
+name     str       ECU节点名称
+network  Network   网段对象
+
+6. 内置函数
+(无内置函数相关信息)
+
+7. 示例
+示例功能: 获取以太网仿真节点对象
+示例代码: getETHNode(name, network)
+代码注释: (无示例代码注释)
+
+8. 其他
+(无其他相关信息)

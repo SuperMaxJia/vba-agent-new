@@ -1,0 +1,72 @@
+##功能##
+用于当接收到指定MAC地址以太网数据包时触发事件回调，常用于网络监控、数据包分析和自动化测试场景。
+
+##vba规范##
+函数定义：onEthernetPacketByMAC(macaddress, network=None)
+参数：
+- macaddress: list类型，包含MAC地址字符串（支持通配符'*'）
+- network: NetworkI类型（可选），指定网段对象
+返回值：无（事件触发器）
+特性：通过装饰器声明事件监听，回调函数接收ethFrame参数
+
+##capl规范##
+对应CAPL事件：on ethernetPacket
+参数：
+- 通过Ethernet::AddressFilter设置MAC过滤
+- 通过Ethernet::Interface选择网卡
+返回值：无
+示例1：
+```capl
+on ethernetPacket
+{
+  if(this.mac == "20:00:00:00:00:01") {
+    write("Received packet from target MAC: %s", this.timestamp);
+  }
+}
+```
+示例2：
+```capl
+variables {
+  char macFilter[][18] = {"20:00:00:00:00:01", "FF:FF:FF:FF:FF:FF"};
+}
+
+on start {
+  Ethernet::AddressFilter(macFilter);
+}
+
+on ethernetPacket
+{
+  write("Packet received at %f", timeNow());
+}
+```
+
+##capl名##
+on ethernetPacket
+
+##转换须知##
+1. CAPL使用单独语句设置MAC过滤，VBA通过参数直接指定
+2. CAPL通过this关键字访问数据包对象，VBA通过回调参数
+3. CAPL需要显式时间获取函数，VBA通过ethFrame方法
+4. 通配符处理方式不同：CAPL需遍历所有包，VBA直接支持'*'
+
+##转换示例##
+CAPL原始代码：
+```capl
+on ethernetPacket
+{
+  if(this.mac == "FF:FF:FF:FF:FF:FF") {
+    write("Broadcast packet at %f", this.time);
+  }
+}
+```
+转换后VBA代码：
+```vba
+@onEthernetPacketByMAC("FF:FF:FF:FF:FF:FF")
+def onEthernetPacketEvent(ethFrame):
+    print "Broadcast packet at", ethFrame.gettimestamp()
+```
+关键转换：
+1. CAPL的条件判断转换为VBA的装饰器过滤
+2. this.mac对应装饰器参数
+3. write函数转换为print
+4. this.time转换为gettimestamp()方法

@@ -1,0 +1,101 @@
+##功能##
+该函数用于启动消息出现次数的检查功能，属于自动化测试函数的一部分。主要用于监控总线消息的出现次数是否符合预期，常用于验证通信协议的稳定性和一致性。在实际应用中，它可以帮助测试工程师快速发现通信异常或消息丢失等问题。
+
+##vba规范##
+函数名：chkStart_MsgOccurrenceCount
+参数：
+- message_id：整数/字符串，需监控的消息ID或名称
+- expected_count：整数，预期出现次数
+- tolerance：整数（可选），允许的误差范围
+- callback_function：函数指针（可选），检查结果回调函数
+返回值：布尔值（True/False表示检查启动成功与否）或状态码
+
+##capl规范##
+函数名：checkStart
+参数：
+- messageId：long/int，需监控的消息ID
+- expectedCount：int，预期出现次数
+- tolerance：int（可选），允许的误差范围
+- callback：function（可选），检查结果回调函数
+返回值：int（0表示成功，非0表示失败）
+
+示例1：
+```capl
+on start
+{
+  int result;
+  result = checkStart(0x101, 50, 2, CheckCallback);
+  if(result == 0)
+  {
+    write("消息0x101的计数检查已启动");
+  }
+  else
+  {
+    write("检查启动失败");
+  }
+}
+
+void CheckCallback(int actualCount)
+{
+  if(actualCount >= 48 && actualCount <= 52)
+  {
+    testStepPass("消息0x101出现次数符合预期");
+  }
+  else
+  {
+    testStepFail("实际出现次数：%d", actualCount);
+  }
+}
+```
+
+示例2：
+```capl
+on key 'a'
+{
+  checkStart(0x200, 10); // 不带回调和容差
+}
+```
+
+##capl名##
+checkStart
+
+##转换须知##
+1. 参数类型差异：VBA使用Variant类型而CAPL使用强类型
+2. 返回值差异：VBA返回布尔值而CAPL返回整数状态码
+3. 回调函数定义方式不同：VBA使用AddressOf而CAPL直接传递函数名
+4. CAPL需要显式处理消息ID为16进制格式
+5. CAPL中回调函数的参数类型必须严格匹配
+
+##转换示例##
+CAPL原始代码：
+```capl
+on start
+{
+  int status;
+  status = checkStart(0x301, 20, 1, MyCallback);
+}
+
+void MyCallback(int count)
+{
+  write("实际计数：%d", count);
+}
+```
+
+转换后的VBA代码：
+```vba
+Sub Main()
+    Dim result As Boolean
+    result = chkStart_MsgOccurrenceCount("0x301", 20, 1, AddressOf MyCallback)
+End Sub
+
+Sub MyCallback(actualCount As Integer)
+    WriteInfo "实际计数：" & actualCount
+End Sub
+```
+
+关键转换步骤说明：
+1. 将CAPL的on start转换为VBA的Sub Main
+2. 将checkStart转换为chkStart_MsgOccurrenceCount
+3. 16进制消息ID在VBA中需要加引号
+4. 回调函数从CAPL的直接调用改为VBA的AddressOf语法
+5. 输出函数从write改为WriteInfo

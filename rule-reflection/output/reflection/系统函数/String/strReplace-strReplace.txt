@@ -1,0 +1,50 @@
+##功能##
+该函数用于在源字符串中替换第一次出现的指定子字符串为新的子字符串，返回替换后的新字符串。适用于需要修改字符串内容的场景，如数据清洗、格式调整等。
+
+##vba规范##
+函数名：strReplace  
+参数：  
+- sourceStr：String类型，原始字符串  
+- old：String类型，要被替换的子字符串  
+- new：String类型，替换后的子字符串  
+返回值：String类型，返回替换后的新字符串  
+功能：替换sourceStr中第一次出现的old为new  
+
+##capl规范##
+CAPL中使用strReplace函数实现相同功能：  
+```c
+char[100] result;
+strReplace(result, "abcdef", "d", "k");  // 返回"abckef"
+write(result); 
+
+char[50] output;
+strReplace(output, "hello world", "world", "CAPL");  // 返回"hello CAPL"
+write(output);
+```
+
+##capl名##
+strReplace
+
+##转换须知##
+1. CAPL中需要预分配结果字符串缓冲区，VBA自动处理内存  
+2. CAPL的strReplace直接修改目标缓冲区，VBA返回新字符串  
+3. CAPL需要确保目标缓冲区足够大，否则可能截断  
+4. 两者都只替换第一次出现的子串  
+
+##转换示例##
+1. CAPL原始代码：
+```c
+char[100] output;
+strReplace(output, "test string", "st", "XX");
+```
+
+2. 转换后的VBA代码：
+```vba
+Dim result As String
+result = strReplace("test string", "st", "XX")
+```
+
+3. 关键转换说明：
+- CAPL的缓冲区声明转换为VBA的字符串变量
+- CAPL的显式缓冲区参数变为VBA的隐式返回
+- 函数调用方式保持相同参数顺序

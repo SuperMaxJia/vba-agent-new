@@ -1,0 +1,74 @@
+##功能##
+该函数用于检测总线上信号或系统变量是否在指定的数值范围内。主要用于测试验证阶段，确保信号或变量的值处于预期范围内，常用于自动化测试脚本中验证系统行为是否符合规范。
+
+##vba规范##
+函数名：checkSignalInRange
+参数：
+- aSignal: CANDBCSignal或LINDBCSignal类型，表示总线信号对象
+- variable: VariableEntity类型，表示系统变量对象
+- aLowLimit: int或float类型，表示范围下限
+- aHighLimit: int或float类型，表示范围上限
+返回值：int类型
+- 1: 在范围内
+- 0: 信号/变量不存在
+- -1: 校验失败
+- -2: 类型无效(非数值类型)
+
+##capl规范##
+在CAPL中，可以使用内置的检查函数和信号访问功能实现类似功能：
+```
+int checkRange(long value, float low, float high)
+{
+    if(value == 0xFFFFFFFF) return 0;  // 信号不存在
+    if(!isNumber(value)) return -2;    // 非数值类型
+    if(value >= low && value <= high) return 1;
+    return -1;
+}
+
+// 示例1：检查CAN信号
+on message EngineData
+{
+    int result = checkRange(this.RPM, 800, 6000);
+    if(result != 1) write("RPM out of range!");
+}
+
+// 示例2：检查系统变量
+on sysvar_update sysvar::Vehicle::Speed
+{
+    int result = checkRange(@sysvar::Vehicle::Speed, 0, 120);
+    if(result != 1) write("Speed out of range!");
+}
+```
+
+##capl名##
+checkRange
+
+##转换须知##
+1. CAPL中需要区分信号和系统变量的访问方式
+2. CAPL没有内置的对象类型检查，需要手动实现
+3. CAPL中信号不存在时通常返回0xFFFFFFFF
+4. VBA中的VariableEntity在CAPL中对应sysvar类型
+5. CAPL需要单独处理浮点和整型数值
+
+##转换示例##
+1. CAPL原始代码：
+```
+on message BrakeData
+{
+    int res = checkRange(this.BrakePressure, 10, 100);
+    if(res != 1) testStepFail("Brake pressure invalid");
+}
+```
+
+2. 转换后的VBA代码：
+```
+res = checkSignalInRange(Node_ECU.BrakePressure, 10, 100)
+If res <> 1 Then
+    TestStepFail "Brake pressure invalid"
+End If
+```
+
+3. 关键转换说明：
+- CAPL的on message事件处理转换为VBA的直接函数调用
+- CAPL的this访问转换为VBA的对象访问语法
+- 错误处理逻辑保持相同，但VBA使用<>而非!=

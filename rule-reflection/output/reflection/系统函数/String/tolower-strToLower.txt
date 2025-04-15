@@ -1,0 +1,75 @@
+##功能##
+将输入字符串中的所有大写字母转换为小写字母，返回转换后的新字符串。常用于字符串比较、数据标准化等场景。
+
+##vba规范##
+函数名：strToLower
+参数：sourceStr (String类型) - 需要转换的原始字符串
+返回值：String类型 - 转换后的小写字符串
+内置函数：无
+示例：strToLower("ABCdedf") 返回 "abcdedf"
+
+##capl规范##
+函数名：tolower
+参数：char[] input - 需要转换的原始字符串
+返回值：char[] - 转换后的小写字符串
+示例1：
+```
+variables {
+  char original[10] = "HELLO";
+  char lower[10];
+}
+on start {
+  strncpy(lower, tolower(original), elcount(lower));
+  write("Lowercase: %s", lower); // 输出: hello
+}
+```
+示例2：
+```
+on key 'a' {
+  char test[20] = "CAPL2Python";
+  write("Result: %s", tolower(test)); // 输出: capl2python
+}
+```
+
+##capl名##
+tolower
+
+##转换须知##
+1. CAPL的tolower直接操作字符数组，而VBA操作String对象
+2. CAPL需要处理字符数组大小，VBA自动管理字符串内存
+3. CAPL返回字符数组，VBA返回String
+4. CAPL中需要确保目标数组足够大，VBA无需考虑
+5. CAPL的tolower是内置函数，VBA需要自己实现或调用LCase函数
+
+##转换示例##
+1. CAPL原始代码：
+```
+variables {
+  char input[10] = "TEST";
+  char output[10];
+}
+on start {
+  strncpy(output, tolower(input), elcount(output));
+}
+```
+
+2. 转换后的VBA代码：
+```vba
+Function strToLower(sourceStr As String) As String
+    strToLower = LCase(sourceStr)
+End Function
+
+Sub Test()
+    Dim inputStr As String
+    Dim outputStr As String
+    
+    inputStr = "TEST"
+    outputStr = strToLower(inputStr)
+End Sub
+```
+
+3. 关键转换说明：
+- 将CAPL的字符数组操作改为VBA的String操作
+- 用VBA内置的LCase函数替代CAPL的tolower
+- 移除CAPL中的数组大小处理逻辑
+- 保持相同的功能：将大写字符串转换为小写

@@ -1,0 +1,40 @@
+1. 函数名
+writeCurveValue
+
+2. 函数描述
+写入Curve变量信息
+
+3. 函数体
+writeCurveValue(calNode, variable, curveValueInfo)
+
+4. 返回值
+名称      类型            描述
+ans       CurveValueInfo  ans.axisNumber为Curve变量轴点个数, ans.axisValue为Curve变量轴点区域数值列表（个数=AxisNumber），ans.value为Curve变量数值列表（个数=AxisNumber），ans.info为接口执行执行失败的原因
+
+5. 参数
+名称            类型            描述
+calNode         CalNode         标定节点对象
+variable        str/CalVariable 读取的变量，可以是变量名称或者变量对象
+curveValueInfo  CurveValueInfo  Curve变量对象信息
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：标定CAN1网段下calNode1标定节点中名称为"ResistTemp_Y"的标定量
+
+示例代码：
+curveValueInfo = CurveValueInfo()
+curveValueInfo.setAxisNumber(1)        #设置轴点个数
+curveValueInfo.setAxisValue([2.0])     #设置Curve轴区域数值列表
+curveValueInfo.setValue([3.0])         #设置Curve值区域数值列表
+ans = writeCurveValue(CAN1.Calibrations.calNode1, "ResistTemp_Y", curveValueInfo)
+#or
+#ans = writeCurveValue(CAN1.Calibrations.calNode1, CAN1.Calibrations.calNode1.characteristics.ResistTemp_Y, curveValueInfo)
+writeInfo(ans.value)
+
+8. 其他说明
+- 该函数属于Calibration类函数
+- 需要先创建CurveValueInfo对象并设置相关参数
+- 可以通过变量名或变量对象两种方式指定要写入的变量
+- 执行结果通过返回值中的info字段可获取失败原因

@@ -1,0 +1,49 @@
+##功能##
+该函数用于在汽车诊断中计算安全认证密钥，主要用于处理ECU的安全访问流程。它接收ECU返回的种子值和指定的安全算法文件，计算出对应的密钥，用于后续的安全认证步骤。
+
+##vba规范##
+函数定义：diagGetSeedKey(seedFilePath, respPDU)
+参数：
+- seedFilePath: String类型，安全算法文件的绝对路径
+- respPDU: List类型，包含ECU响应的种子值
+返回值：List类型，返回计算后的密钥数值列表
+
+##capl规范##
+在CAPL中，对应的安全访问功能通常通过SecurityAccess模块实现。CAPL没有完全等效的单个函数，但可以通过以下方式实现类似功能：
+
+示例1：
+byte key[4];
+SecurityAccess_CalculateKey("D:\\seedkey.dll", respPDU, key);
+
+示例2：
+byte seed[4] = {respPDU[0], respPDU[1], respPDU[2], respPDU[3]};
+byte key[4];
+SecurityAccess_GetKeyFromSeed(seed, "D:\\security\\algo.dll", key);
+
+##capl名##
+SecurityAccess_CalculateKey
+
+##转换须知##
+1. CAPL使用字节数组而非列表来处理种子和密钥
+2. CAPL需要显式声明密钥数组的大小
+3. CAPL的安全访问函数通常不返回数组而是通过输出参数填充
+4. 文件路径在CAPL中需要使用双反斜杠
+5. CAPL需要手动处理种子从响应PDU中的提取
+
+##转换示例##
+CAPL原始代码：
+byte respPDU[8] = {0x67, 0x01, 0x12, 0x34, 0x56, 0x78, 0x00, 0x00};
+byte key[4];
+SecurityAccess_CalculateKey("D:\\sec\\algo.dll", respPDU, key);
+diagSendPDU(udsConfig, 0x27, 0x02, key, 4, CAN1);
+
+转换后的VBA代码：
+respPDU = diagSendPDU(udsConfig, [0x27, 0x01], CAN1)
+key = diagGetSeedKey("D:/sec/algo.dll", respPDU)
+diagSendPDU(udsConfig, [0x27, 0x02] + key, CAN1)
+
+关键转换步骤：
+1. 将CAPL的字节数组respPDU转换为VBA的List
+2. 将CAPL的输出参数key转换为VBA的返回值
+3. 调整文件路径分隔符从\\到/
+4. 将CAPL的显式PDU构造转换为VBA的列表拼接

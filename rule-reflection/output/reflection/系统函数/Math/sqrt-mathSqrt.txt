@@ -1,0 +1,55 @@
+##功能##
+该函数用于计算给定数值的平方根，常用于数学计算、物理模拟和工程应用中需要平方根运算的场景。
+
+##vba规范##
+函数名：mathSqrt  
+参数：num（int类型），需要求取平方根的数值  
+返回值：num（int类型），返回输入数值的平方根  
+示例：mathSqrt(100) 返回10  
+
+##capl规范##
+函数名：sqrt  
+参数：double类型，需要求取平方根的数值  
+返回值：double类型，返回输入数值的平方根  
+示例1：  
+```capl
+double result;
+result = sqrt(100.0); // result = 10.0
+```  
+示例2：  
+```capl
+on key 'a'
+{
+  double input = 25.0;
+  write("Square root: %f", sqrt(input)); // 输出: Square root: 5.000000
+}
+```
+
+##capl名##
+sqrt
+
+##转换须知##
+1. 参数类型差异：VBA使用int类型，而CAPL使用double类型
+2. 返回值差异：VBA返回int类型，CAPL返回double类型
+3. 精度差异：CAPL版本提供更高精度的浮点结果
+4. 类型转换：在VBA中可能需要额外处理浮点结果取整
+
+##转换示例##
+1. CAPL原始代码：
+```capl
+double x = 144.0;
+double y = sqrt(x);
+```
+
+2. 转换后的VBA代码：
+```vba
+Dim x As Integer
+x = 144
+Dim y As Integer
+y = mathSqrt(x)
+```
+
+3. 关键转换说明：
+- 将CAPL的double类型变量改为VBA的Integer类型
+- 将sqrt函数改为mathSqrt函数
+- 注意VBA版本会丢失小数部分，因为返回值为整数

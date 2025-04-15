@@ -1,0 +1,49 @@
+##功能##
+获取指定CAN信号的对象。用于在CAN通信中访问特定信号，支持通过信号名称单独获取、指定网络获取或指定报文获取三种方式。
+
+##vba规范##
+函数名：getSignal
+返回值：CANDBCSignal类型，表示获取到的信号对象
+参数：
+1. signalName: String类型，必需参数，表示信号名称
+2. network: Network类型，可选参数，表示网络对象
+3. canDBCMsg: CANDBCMessage类型，可选参数，表示报文对象
+
+##capl规范##
+在CAPL中，可以使用thisSignal关键字或直接通过信号名称访问信号对象。对于DBC信号，通常使用message::signal语法。
+
+示例1：
+```capl
+signal VehicleSpeedSignal = this::VehicleSpeed;
+```
+
+示例2：
+```capl
+signal VehicleSpeedSignal = CAN1::VehicleSpeed;
+```
+
+##capl名##
+thisSignal
+
+##转换须知##
+1. CAPL中信号访问更直接，通常不需要专门函数
+2. VBA需要明确指定网络或报文，而CAPL可通过上下文确定
+3. CAPL中信号是静态绑定的，VBA中可能是动态获取的
+4. 当信号位于不同网络时，CAPL需要明确指定网络前缀
+
+##转换示例##
+CAPL原始代码：
+```capl
+signal speedSignal = CAN1::VehicleSpeed;
+```
+
+转换后的VBA代码：
+```vba
+Dim speedSignal As CANDBCSignal
+Set speedSignal = getSignal("VehicleSpeed", CAN1)
+```
+
+关键转换说明：
+1. CAPL的直接网络访问语法转换为VBA的函数调用
+2. CAPL的静态信号声明转换为VBA的动态对象获取
+3. 网络标识从语法前缀转换为函数参数

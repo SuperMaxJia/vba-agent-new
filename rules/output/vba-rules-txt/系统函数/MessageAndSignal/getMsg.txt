@@ -1,0 +1,37 @@
+1. 函数名
+getMsg
+
+2. 函数描述
+获取CANDBCMessage报文对象
+
+3. 函数体
+getMsg(*parms)
+
+4. 返回值
+名称      类型            描述
+msg       CANDBCMessage   报文对象
+
+5. 参数
+情况1：通过报文ID获取报文，getMsg(id, extend, network)
+名称      类型      描述
+id        int       报文ID
+extend    boolean   扩展帧标识，True:扩展帧，False:标准帧
+network   Network   网段对象
+
+情况2：通过报文名获取报文，getMsg(msgName, network)
+名称      类型      描述
+msgName   String    报文名称
+network   Network   网段对象
+
+6. 内置函数
+无
+
+7. 示例
+示例1：获取CAN1网段下标准帧0x10。
+msg = getMsg(0x10, False, CAN1)
+
+示例2：获取CAN1网段下标准帧ESP_Status。
+msg = getMsg('ESP_Status', CAN1)
+
+8. 其他和函数或变量强相关的内容
+无

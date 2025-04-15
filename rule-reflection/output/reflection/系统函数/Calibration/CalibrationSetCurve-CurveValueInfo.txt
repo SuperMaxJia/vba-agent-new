@@ -1,0 +1,64 @@
+##功能##
+该函数用于创建和配置一个Curve结构对象，主要用于标定操作。通过设置轴点个数、轴区域数值列表和值区域数值列表，可以定义曲线的形状和参数。常用于汽车ECU标定中配置各种特性曲线，如温度-电阻曲线等。
+
+##vba规范##
+函数名：CurveValueInfo
+返回值：CurveValueInfo对象
+对象方法：
+- getAxisNumber() → int
+- getAxisValue() → list
+- getValue() → list[float]
+- getInfo() → str
+- setAxisNumber(axisNumber: int)
+- setAxisValue(axisValue: list)
+- setValue(value: list[float])
+
+##capl规范##
+在CAPL中，曲线标定通常通过直接访问ECU的标定变量实现。对应功能可通过以下方式实现：
+1. 使用CalibrationRaw函数直接写入原始数据
+2. 使用CalibrationSet函数设置标定量值
+
+示例1：
+```
+// 设置单点曲线
+CalibrationSet("ResistTemp_Y", 3.0, 2.0);
+```
+
+示例2：
+```
+// 设置多点曲线
+float axisValues[3] = {1.0, 2.0, 3.0};
+float curveValues[3] = {10.0, 20.0, 30.0};
+CalibrationSetCurve("ResistTemp_Y", axisValues, curveValues, 3);
+```
+
+##capl名##
+CalibrationSetCurve
+
+##转换须知##
+1. CAPL使用直接标定函数，而VBA需要先创建对象再设置值
+2. CAPL中曲线数据通常通过数组传递，VBA中使用列表
+3. CAPL的CalibrationSetCurve函数一次性设置所有点，VBA需要分别设置轴点数和数值
+4. CAPL中错误处理通过系统变量实现，VBA通过getInfo()方法
+
+##转换示例##
+1. CAPL原始代码：
+```
+float xAxis[2] = {1.0, 2.0};
+float yValues[2] = {10.0, 20.0};
+CalibrationSetCurve("ResistTemp_Y", xAxis, yValues, 2);
+```
+
+2. 转换后的VBA代码：
+```
+curveValueInfo = CurveValueInfo()
+curveValueInfo.setAxisNumber(2)
+curveValueInfo.setAxisValue([1.0, 2.0])
+curveValueInfo.setValue([10.0, 20.0])
+writeCurveValue(CAN1.Calibrations.calNode1, "ResistTemp_Y", curveValueInfo)
+```
+
+3. 关键转换说明：
+- CAPL数组转换为VBA列表
+- CAPL的CalibrationSetCurve函数拆分为VBA的对象方法调用
+- 曲线名称和节点信息在VBA中作为writeCurveValue参数传递

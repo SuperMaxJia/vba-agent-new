@@ -1,0 +1,56 @@
+##功能##
+该函数用于停止一个正在运行的检测事件对象，通常用于终止CAN总线上的特定检测任务，如错误帧检测。
+
+##vba规范##
+函数名：chkControl_Stop
+参数：object（检测对象）
+返回值：int（0表示成功，-1表示失败）
+功能：停止指定的检测对象
+
+##capl规范##
+函数名：testStop
+参数：long（检测ID）
+返回值：int（0表示成功，-1表示失败）
+功能：停止指定的测试用例
+
+示例1：
+```capl
+long checkId;
+checkId = testStartErrorFrames();
+testStop(checkId);
+```
+
+示例2：
+```capl
+long monitorId;
+monitorId = testStartMessage(0x123);
+testStop(monitorId);
+```
+
+##capl名##
+testStop
+
+##转换须知##
+1. 参数类型差异：VBA使用object类型，CAPL使用long类型作为检测ID
+2. 函数命名差异：VBA使用chk前缀，CAPL使用test前缀
+3. 功能相似性：两者都用于停止检测/测试任务
+4. 返回值含义相同：0成功，-1失败
+
+##转换示例##
+CAPL原始代码：
+```capl
+long id = testStartErrorFrames();
+testStop(id);
+```
+
+转换后的VBA代码：
+```vba
+Dim checkId As Object
+checkId = chkStart_ErrorFramesOccured()
+chkControl_Stop(checkId)
+```
+
+关键转换步骤：
+1. 将testStartErrorFrames()转换为chkStart_ErrorFramesOccured()
+2. 将testStop()转换为chkControl_Stop()
+3. 注意变量类型从long变为Object

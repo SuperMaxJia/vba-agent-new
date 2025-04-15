@@ -1,0 +1,75 @@
+##功能##
+该函数用于获取当前测试模块的判定结果，返回0表示失败，1表示通过。主要用于测试自动化中判断模块测试状态，并根据状态决定后续操作。
+
+##vba规范##
+函数名：testGetVerdictModule
+参数：无
+返回值：int类型，0表示failed，1表示pass
+功能：返回测试模块的当前状态
+
+##capl规范##
+函数名：testVerdict
+参数：无
+返回值：int类型，0表示failed，1表示pass
+功能：返回当前测试模块的判定结果
+
+示例1：
+```capl
+on start
+{
+  int result;
+  result = testVerdict();
+  if(result == 1)
+    write("Test passed");
+  else
+    write("Test failed");
+}
+```
+
+示例2：
+```capl
+testcase TC1()
+{
+  if(testVerdict() == 0)
+  {
+    // 执行失败处理逻辑
+  }
+}
+```
+
+##capl名##
+testVerdict
+
+##转换须知##
+1. 函数名不同：VBA使用testGetVerdictModule，CAPL使用testVerdict
+2. 返回值含义一致：都是0表示失败，1表示通过
+3. CAPL中需要显式声明变量类型，VBA中可省略
+4. CAPL中使用write输出信息，VBA使用WriteInfo
+
+##转换示例##
+CAPL原始代码：
+```capl
+on start
+{
+  int res = testVerdict();
+  if(res == 1)
+    write("Module passed");
+}
+```
+
+转换后的VBA代码：
+```vba
+Sub MainTest()
+    Dim res As Integer
+    res = testGetVerdictModule()
+    If res = 1 Then
+        WriteInfo "Module passed"
+    End If
+End Sub
+```
+
+关键转换步骤：
+1. 将CAPL的testVerdict改为VBA的testGetVerdictModule
+2. 添加变量声明Dim res As Integer
+3. 将write改为WriteInfo
+4. 调整语法格式为VBA风格

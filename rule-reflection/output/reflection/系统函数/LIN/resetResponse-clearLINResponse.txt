@@ -1,0 +1,43 @@
+##功能##
+清除指定LIN网段上的特定LIN响应报文。用于在LIN通信测试中动态管理响应报文，例如在测试不同LIN从节点响应时清除之前的配置。
+
+##vba规范##
+函数名：clearLINResponse
+参数：
+1. lin_responses: 可以是单个LINMsg/LINDBCMessage对象或它们的列表
+2. lin_network: Network对象，指定LIN网段
+返回值：无
+功能：从指定LIN网段移除指定的响应报文配置
+
+##capl规范##
+函数名：resetResponse
+参数：
+1. msgId: 整数或整数数组，指定要清除的LIN报文ID
+2. channel: 整数，指定LIN通道号
+返回值：无
+示例1：
+resetResponse(0x10, 1);  // 清除LIN通道1上ID为0x10的响应报文
+示例2：
+int msgIds[2] = {0x20, 0x21};
+resetResponse(msgIds, 2);  // 清除LIN通道2上的多个响应报文
+
+##capl名##
+resetResponse
+
+##转换须知##
+1. CAPL使用通道号而非网络对象标识LIN网段
+2. CAPL只接受报文ID作为参数，不接受报文对象
+3. CAPL需要显式指定通道参数
+4. 批量操作时，CAPL需要预定义数组
+
+##转换示例##
+1. CAPL原始代码：
+resetResponse(0x30, 1);
+
+2. 转换后的VBA代码：
+clearLINResponse(0x30, LIN1)
+
+3. 关键转换说明：
+- 将CAPL的通道号1映射为VBA的LIN1网络对象
+- 保持相同的报文ID 0x30
+- 函数名从resetResponse改为clearLINResponse

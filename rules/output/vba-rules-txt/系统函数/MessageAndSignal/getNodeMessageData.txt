@@ -1,0 +1,39 @@
+1. 函数名
+getNodeMessageData
+
+2. 函数描述
+获取仿真节点中报文的数据场
+
+3. 函数体
+getNodeMessageData(DBMessage)
+
+4. 返回值
+名称: dataList
+类型: list
+描述: 报文的数据场 [list]
+
+5. 参数
+| 名称      | 类型                          | 描述             |
+|-----------|-------------------------------|------------------|
+| DBMessage | CANDBCMessage 或 LINDBCMessage | 报文对象         |
+
+6. 内置函数
+无
+
+7. 示例
+示例功能: 获取CAN1.ESP.ESP_Status报文的数据场并输出
+
+示例代码:
+@onKey('K')
+def onKeyEvent():
+    writeInfo(getNodeMessageData(CAN1.ESP.ESP_Status))
+
+代码注释:
+- 当按下K键时触发该函数
+- 调用getNodeMessageData获取CAN1网络中ESP节点的ESP_Status报文数据
+- 使用writeInfo函数输出获取到的数据场内容
+
+8. 其他说明
+- 该函数适用于CAN和LIN网络的报文数据获取
+- 返回的数据场是一个列表(list)类型
+- 需要配合具体的报文对象使用

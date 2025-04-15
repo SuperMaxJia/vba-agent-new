@@ -1,0 +1,49 @@
+1. 函数名  
+chkCreate_SignalCycleTimeViolation  
+
+2. 函数描述  
+用于检测信号或者变量的周期是否在某一范围内。  
+
+3. 函数体  
+所有检测函数都有对应的chkStart_xxxx()和chkCreate_xxxx()。  
+chkCreate_xxxx()只创建检测对象但不开始检测，需要调用chkControl_Start；  
+chkStart_xxxx()创建检测对象同时直接开始检测。  
+
+4. 返回值  
+| 名称 | 类型 | 描述 |  
+|------|------|------|  
+| res  | int  | 代表创建的对象，-1代表创建失败 |  
+
+5. 参数  
+| 名称         | 类型                | 描述                     |  
+|--------------|---------------------|--------------------------|  
+| signal       | CANDBCSignal, LINDBCSignal | 信号对象(变量对象)       |  
+| minCycleTime | Number              | 最小周期（单位：ms）     |  
+| maxCycleTime | Number              | 最大周期（单位：ms）     |  
+
+6. 内置函数  
+| 函数名称                  | 函数描述                           | 参数说明                               |  
+|---------------------------|------------------------------------|----------------------------------------|  
+| chkControl_Start          | 启动检测对象                       | 需传入chkCreate_xxxx()返回的检测对象ID |  
+| testAddCondition          | 将统计信息加入自动化测试报告       | 检测对象ID                             |  
+| testWaitForTimeout        | 等待指定时间（单位：ms）           | 等待时长（ms）                         |  
+| testRemoveCondition       | 结束统计并移除检测条件             | 检测对象ID                             |  
+
+7. 示例  
+功能：检测信号的周期是否稳定在29ms至32ms范围内。  
+示例代码：  
+```vba  
+checkId = ChkStart_SignalCycleTimeViolation(  
+    Motor1State_Cycl.Motor1Temp,  // 信号对象  
+    29,                           // 最小周期（ms）  
+    32                            // 最大周期（ms）  
+);  
+testAddCondition(checkId);        // 将统计信息加入测试报告  
+testWaitForTimeout(1000);         // 统计持续1000ms  
+testRemoveCondition(checkId);     // 结束统计  
+```  
+
+8. 其他相关说明  
+- 需配合`chkControl_Start`启动检测，或直接使用`chkStart_SignalCycleTimeViolation`。  
+- 周期单位为毫秒（ms），参数需明确范围边界。  
+- 检测结果可通过自动化测试框架生成报告。

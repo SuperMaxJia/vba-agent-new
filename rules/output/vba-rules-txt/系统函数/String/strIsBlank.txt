@@ -1,0 +1,28 @@
+1. 函数名
+strIsBlank
+
+2. 函数描述
+判断sourceStr是否为None或者空字符
+
+3. 函数体
+strIsBlank(sourceStr)
+
+4. 返回值
+名称: flag
+类型: boolean
+描述: 返回布尔类型
+
+5. 参数
+名称        类型    描述
+sourceStr   String  需要校验是否为空的字符串
+
+6. 内置函数
+(无内置函数相关信息)
+
+7. 示例
+示例功能: 判断空字符串
+示例代码: strIsBlank('')
+代码注释: 返回True
+
+8. 其他相关信息
+(无其他相关信息)

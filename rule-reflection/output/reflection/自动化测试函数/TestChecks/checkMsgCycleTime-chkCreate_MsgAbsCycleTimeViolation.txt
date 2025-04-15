@@ -1,0 +1,79 @@
+##功能##
+该函数用于检测周期性报文的周期是否在指定的最小和最大时间范围内。适用于验证总线通信中报文周期是否符合预期规范，常用于汽车电子测试中确保CAN/LIN报文周期满足设计要求。
+
+##vba规范##
+函数名: chkCreate_MsgAbsCycleTimeViolation  
+参数:  
+- network: Network类型，指定网段对象  
+- message: 多种类型(CANDBCMessage/str/int等)，指定报文信息  
+- aMinCycleTime: int类型，最小允许周期时间(ms)  
+- aMaxCycleTime: int类型，最大允许周期时间(ms)  
+返回值: int类型，返回检测对象ID(-1表示创建失败)  
+关联函数:  
+- chkControl_Start: 启动检测  
+- testAddCondition: 添加测试条件  
+- testWaitForTimeout: 设置检测时长  
+- testRemoveCondition: 移除测试条件  
+
+##capl规范##
+CAPL对应函数: checkMsgCycleTime  
+参数:  
+- message: 报文对象或ID  
+- minTime: int类型，最小周期(ms)  
+- maxTime: int类型，最大周期(ms)  
+返回值: long类型，检测句柄(-1表示失败)  
+关联函数:  
+- testWaitForTimeout: 等待检测  
+- testCaseAddCondition: 添加测试条件  
+
+示例1:  
+```capl
+long handle;
+handle = checkMsgCycleTime(CAN1::Message1, 90, 110);
+testCaseAddCondition(handle);
+testWaitForTimeout(1000);
+```
+
+示例2:  
+```capl
+on start
+{
+  long monitor = checkMsgCycleTime(0x100, 50, 150);
+  if(monitor != -1) {
+    write("Cycle time check started");
+  }
+}
+```
+
+##capl名##
+checkMsgCycleTime
+
+##转换须知##
+1. CAPL使用::分隔网络和报文，VBA使用.分隔  
+2. CAPL直接返回检测句柄，VBA需要额外调用chkControl_Start  
+3. CAPL的testCaseAddCondition对应VBA的testAddCondition  
+4. CAPL的报文参数可以是ID或对象，VBA支持多种类型  
+5. 超时处理机制在两种语言中相同  
+
+##转换示例##
+CAPL原始代码:  
+```capl
+long monitor;
+monitor = checkMsgCycleTime(CAN1::EngineRPM, 95, 105);
+testCaseAddCondition(monitor);
+testWaitForTimeout(5000);
+```
+
+转换后的VBA代码:  
+```vba
+Dim checkId As Integer
+checkId = chkStart_MsgAbsCycleTimeViolation(CAN1.EngineRPM, 95, 105)
+testAddCondition(checkId)
+testWaitForTimeout(5000)
+```
+
+关键转换说明:  
+1. 将CAPL的::分隔符改为VBA的.分隔符  
+2. 函数名从checkMsgCycleTime改为chkStart_MsgAbsCycleTimeViolation  
+3. 保持相同的参数顺序和测试超时设置  
+4. 条件添加函数名对应修改

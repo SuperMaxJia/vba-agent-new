@@ -1,0 +1,48 @@
+以下是提取的VBA函数`readCurveValueByIndex`的详细信息：
+
+1. **函数名**  
+   `readCurveValueByIndex`
+
+2. **函数描述**  
+   读取Curve变量指定区域内指定索引处的测量值。
+
+3. **函数体**  
+   ```vba
+   readCurveValueByIndex(calNode, variable, index, region)
+   ```
+
+4. **返回值**  
+   | 名称          | 类型        | 描述                                                                 |
+   |---------------|-------------|----------------------------------------------------------------------|
+   | ans           | ResultInfo  | `ans.errorInfo`为读取失败时返回的错误信息，`ans.backPhyValue`为读取成功时获取的测量值 |
+
+5. **参数**  
+   | 名称      | 类型               | 描述                                     |
+   |-----------|--------------------|------------------------------------------|
+   | calNode   | CalNode            | 标定节点对象                             |
+   | variable  | str，CalVariable   | 读取的变量，可以是变量名称或者变量对象   |
+   | index     | int                | 列索引（x方向索引）                      |
+   | region    | int                | 区域类型（0：值区域，1：轴点区域）       |
+
+6. **内置函数**  
+   （此部分未在提供内容中明确列出，故暂缺）
+
+7. **示例**  
+   **示例功能**：读取CAN1网段下`calNode1`标定节点中名称为`"ResistTemp_Y"`的标定量在值区域0索引处的测量值。  
+   **示例代码**：  
+   ```vba
+   ans = readCurveValueByIndex(CAN1.Calibrations.calNode1, 'ResistTemp_Y', 0, 0)
+   ' 或
+   ' ans = readCurveValueByIndex(CAN1.Calibrations.calNode1, CAN1.Calibrations.calNode1.characteristics.ResistTemp_Y)
+   writeInfo(ans.backPhyValue)
+   ```  
+   **代码注释**：  
+   - 第一行通过变量名称读取测量值。  
+   - 第二行（注释）通过变量对象读取测量值。  
+   - `writeInfo`用于输出读取到的测量值。
+
+8. **其他相关**  
+   - 需确保标定节点（`calNode`）和变量（`variable`）存在且可访问。  
+   - 区域类型（`region`）需明确指定为0（值区域）或1（轴点区域）。  
+
+（注：原始内容中未提及内置函数的具体信息，故未提取相关内容。）

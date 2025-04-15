@@ -1,0 +1,49 @@
+##功能##
+该函数用于获取当前系统的时间戳，返回一个整型数值表示的时间戳。常用于记录事件发生时间、计算时间间隔等场景。
+
+##vba规范##
+函数名：getCurrentTime
+返回值：Long类型，表示当前时间戳
+参数：无
+内置函数：无
+备注：VBA中通常使用Now函数获取当前时间，但需要额外处理才能得到时间戳
+
+##capl规范##
+函数名：timeNow
+返回值：dword类型，表示从1970年1月1日开始的毫秒数
+参数：无
+示例1：
+dword timestamp;
+timestamp = timeNow();
+write("Current timestamp: %d", timestamp);
+
+示例2：
+on key 't'
+{
+    dword currentTime = timeNow();
+    write("Time pressed: %d", currentTime);
+}
+
+##capl名##
+timeNow
+
+##转换须知##
+1. CAPL的timeNow返回的是毫秒级时间戳，而Python-VBA通常使用秒级时间戳
+2. CAPL返回的是dword类型，Python-VBA中通常使用long/int类型
+3. 时间戳起点相同(1970年1月1日)
+4. 需要特别注意时间单位的转换(毫秒vs秒)
+
+##转换示例##
+1. CAPL原始代码：
+dword capTime;
+capTime = timeNow();
+
+2. 转换后的VBA代码：
+Function getCurrentTime() As Long
+    getCurrentTime = CLng(Timer * 1000)
+End Function
+
+3. 关键转换说明：
+- CAPL的timeNow直接转换为VBA的自定义函数getCurrentTime
+- VBA中使用Timer函数获取秒数并乘以1000转换为毫秒
+- 使用CLng确保返回Long类型

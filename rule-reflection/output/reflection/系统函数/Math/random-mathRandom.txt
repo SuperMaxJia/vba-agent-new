@@ -1,0 +1,48 @@
+##功能##
+该函数用于生成一个[0,1)范围内的随机实数，常用于模拟、游戏开发、随机抽样等需要随机数的场景。
+
+##vba规范##
+函数名：mathRandom
+函数描述：返回[0,1)范围内的随机实数
+返回值类型：Double
+参数：无
+内置函数：无
+
+##capl规范##
+函数名：random
+函数描述：返回[0,1)范围内的随机实数
+返回值类型：float
+参数：无
+
+示例1：
+float randomNum;
+randomNum = random();
+write("Random number: %f", randomNum);
+
+示例2：
+on timer {
+  float rand = random();
+  write("Timer generated: %f", rand);
+}
+
+##capl名##
+random
+
+##转换须知##
+1. 参数类型和数量：两者都无参数
+2. 返回值类型：VBA返回Double，CAPL返回float
+3. 函数行为：两者都生成[0,1)范围内的随机数
+4. 特殊情况：无特殊处理要求
+
+##转换示例##
+1. CAPL原始代码：
+float r = random();
+
+2. 转换后的VBA代码：
+Dim r As Double
+r = mathRandom()
+
+3. 关键转换步骤说明：
+- 将CAPL的float类型改为VBA的Double
+- 将random()函数名改为mathRandom()
+- 保持相同的变量命名和赋值逻辑

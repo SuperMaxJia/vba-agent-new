@@ -1,0 +1,30 @@
+1. 函数名
+openFile
+
+2. 函数描述
+打开一个文件，并返回文件对象，在对文件进行处理过程都需要使用到这个函数，如果该文件无法被打开，会抛出 OSError。该函数打开一个文件流，使用完毕后一定要调closeFile(file)，将文件流关闭。
+
+3. 函数体
+openFile(filePath, mode='r', buffering=-1, encoding=None, errors=None, newline=None, closefd=True, opener=None)
+
+4. 返回值
+名称  类型  描述
+file  file  返回创建的file文件对象
+
+5. 参数
+名称       类型    描述
+filePath   String  文件路径，为了避免转义，在字符串路径前加r
+mode       String  r:以只读方式打开; r+:打开文件用于读写; w:打开文件只用于写入，如果文件已存在则打开文件从头开始编辑，即原有的内容会被删除，如果文件不存在则创建文件； w+:打开文件用于读写，如果文件已存在则打开文件从头开始编辑，即原有的内容会被删除，如果文件不存在则创建文件 a:打开文件只用于追加，如果文件已存在则文件指针将放在文件的结尾，如果文件不存在则创建文件写入； a+:打开文件用于读写，如果文件已存在则文件指针将放在文件的结尾，如果文件不存在则创建文件写入
+encoding   String  编码方式
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：以只读的方式打开文件，创建文件file对象
+示例代码：
+openFile(r'D:\demo.txt', mode='r', encoding='utf-8')
+closeFile(file)
+
+8. 其他
+使用完毕后一定要调用closeFile(file)关闭文件流

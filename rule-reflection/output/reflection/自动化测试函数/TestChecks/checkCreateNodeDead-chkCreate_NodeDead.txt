@@ -1,0 +1,64 @@
+##功能##
+该函数用于监控指定节点在设定的最大静默时间内是否发送了至少一条Tx消息。如果没有，则触发事件。主要用于检测节点是否处于激活状态，常见于CAN网络节点健康状态监测。
+
+##vba规范##
+函数名：chkCreate_NodeDead  
+参数：  
+- node (ECUNode): 要监控的节点对象  
+- aMaxQuietTime (int): 最大静默时间(毫秒)  
+返回值：int类型，返回创建的检测对象ID，-1表示创建失败  
+功能：创建节点静默检测对象但不自动开始检测，需手动调用chkControl_Start开始检测  
+
+##capl规范##
+函数名：checkCreateNodeDead  
+参数：  
+- node (ECU): 要监控的节点对象  
+- maxQuietTime (int): 最大静默时间(毫秒)  
+返回值：int类型，返回检测对象ID，-1表示创建失败  
+示例1：  
+```capl
+int checkId;
+checkId = checkCreateNodeDead(EMS, 110);
+checkStart(checkId);
+testAddCondition(checkId);
+testWaitForTimeout(1000);
+testRemoveCondition(checkId);
+```
+示例2：  
+```capl
+int monitorId = checkStartNodeDead(BCM, 200);
+if(monitorId == -1) {
+  write("Monitor creation failed");
+}
+```
+
+##capl名##
+checkCreateNodeDead
+
+##转换须知##
+1. 参数顺序和名称不同：VBA使用aMaxQuietTime而CAPL使用maxQuietTime
+2. VBA需要单独调用chkControl_Start开始检测，而CAPL的checkStartNodeDead会自动开始
+3. VBA使用ECUNode类型，CAPL使用ECU类型表示节点
+4. 错误返回值都是-1，但CAPL通常提供更详细的错误输出选项
+
+##转换示例##
+CAPL原始代码：  
+```capl
+int monitor = checkStartNodeDead(ECM, 150);
+testAddCondition(monitor);
+delay(1000);
+testRemoveCondition(monitor);
+```
+转换后的VBA代码：  
+```vba
+Dim monitor As Integer
+monitor = chkStart_NodeDead(CAN1.ECM, 150)
+testAddCondition monitor
+testWaitForTimeout 1000
+testRemoveCondition monitor
+```
+关键转换说明：  
+1. 将checkStartNodeDead直接转换为chkStart_NodeDead
+2. CAPL的delay转换为VBA的testWaitForTimeout
+3. 参数括号从CAPL的()改为VBA的空格分隔
+4. 保持相同的测试条件添加/移除逻辑

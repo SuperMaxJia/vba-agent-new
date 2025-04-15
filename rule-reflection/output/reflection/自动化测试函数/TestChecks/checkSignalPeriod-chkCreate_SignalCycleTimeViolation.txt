@@ -1,0 +1,75 @@
+##功能##
+该函数用于检测CAN或LIN信号/变量的周期时间是否在指定的最小和最大周期范围内。主要用于验证信号周期是否符合预期规范，常见于汽车电子测试中验证总线信号的定时特性。
+
+##vba规范##
+函数定义：chkCreate_SignalCycleTimeViolation(signal, minCycleTime, maxCycleTime)
+参数：
+- signal: CANDBCSignal或LINDBCSignal类型的信号对象
+- minCycleTime: 数值类型，最小允许周期(ms)
+- maxCycleTime: 数值类型，最大允许周期(ms)
+返回值：整数类型，返回检测对象ID，-1表示创建失败
+相关函数：
+- chkControl_Start: 启动检测
+- testAddCondition: 添加测试条件
+- testWaitForTimeout: 设置等待时间
+- testRemoveCondition: 移除测试条件
+
+##capl规范##
+函数定义：checkSignalPeriod(message, signal, minTime, maxTime)
+参数：
+- message: CAN或LIN消息对象
+- signal: 消息中的信号名称(字符串)
+- minTime: 最小周期(ms)
+- maxTime: 最大周期(ms)
+返回值：整数类型，返回检测ID，-1表示失败
+示例1：
+```capl
+checkId = checkSignalPeriod(Motor1Msg, "Motor1Temp", 29, 32);
+testAddCondition(checkId);
+testWaitForTimeout(1000);
+testRemoveCondition(checkId);
+```
+示例2：
+```capl
+checkId = checkSignalPeriod(EngineMsg, "RPM", 50, 55);
+if(checkId != -1) {
+  testAddCondition(checkId);
+  testWaitForTimeout(2000);
+  testRemoveCondition(checkId);
+}
+```
+
+##capl名##
+checkSignalPeriod
+
+##转换须知##
+1. CAPL使用消息和信号名作为参数，而VBA使用信号对象
+2. CAPL中周期参数顺序与VBA一致
+3. CAPL和VBA的返回值类型和含义相同
+4. CAPL需要明确指定消息对象，VBA直接使用信号对象
+5. 辅助函数(testAddCondition等)在两种语言中功能相同
+
+##转换示例##
+CAPL原始代码：
+```capl
+checkId = checkSignalPeriod(BodyMsg, "DoorStatus", 100, 150);
+testAddCondition(checkId);
+testWaitForTimeout(5000);
+testRemoveCondition(checkId);
+```
+转换后的VBA代码：
+```vba
+checkId = ChkStart_SignalCycleTimeViolation(
+    BodyMsg_DoorStatus, 
+    100, 
+    150
+)
+testAddCondition checkId
+testWaitForTimeout 5000
+testRemoveCondition checkId
+```
+关键转换步骤：
+1. 将CAPL的消息和信号名参数转换为VBA的信号对象
+2. 保持周期参数顺序不变
+3. 辅助函数调用方式调整(VBA不加括号)
+4. 保持相同的测试逻辑流程

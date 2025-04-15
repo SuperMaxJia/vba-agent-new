@@ -1,0 +1,31 @@
+1. 函数名
+resetNodeMsgDlc
+
+2. 函数描述
+用于将报文的DLC恢复到数据库定义的DLC值
+
+3. 函数体
+resetNodeMsgDlc(Node, message)
+resetNodeMsgDlc(Node, id)
+
+4. 返回值
+名称 | 类型 | 描述
+res | int | 0代表没有错误。-1出现错误
+
+5. 参数
+名称 | 类型 | 描述
+Node | ECUNode | Node节点对象
+message | CANDBCMessage | 报文对象
+id | int或str | 报文的id，标准帧可以输入数字，扩展帧输入字符串
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：将报文的DLC恢复到数据库定义的DLC值
+示例代码：
+resetNodMsgDlc(Node, message)
+resetNodMsgDlc(Node, id)
+
+8. 其他和函数或变量强相关的内容
+无

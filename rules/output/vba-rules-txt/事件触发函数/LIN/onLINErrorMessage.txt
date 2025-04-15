@@ -1,0 +1,53 @@
+1. 函数名
+onLINErrorMessage
+
+2. 函数描述
+接收到指定LIN报文错误帧时会触发onLINErrorMessage事件的执行，支持同时定义多个onLINErrorMessage事件（函数名称不能相同）。
+
+3. 函数体
+@onLINErrorMessage(onmsg)
+def onLINErrorMessageEvent(linErrorMsg):
+    pass
+
+4. 返回值
+无
+
+5. 参数
+名称            类型        描述
+message_id      int         报文ID：指定报文的id，可以输入十进制，如：100；十六进制,如：0x10
+ID范围字符串    str         ID范围字符串:比如‘0x12-0x16’
+ID列表          list[str]   ID列表:比如[0x10,‘0x12-0x16’]
+linErrorMsg     LinErrorMsg 报文对象:可以是LinErrorMsg对象
+'*'             str         代表该网段下所有的报文
+
+6. 内置函数
+无
+
+7. 示例
+示例1：当出现错误报文的ID为10（十进制）的报文时触发，并将'收到错误帧'输出到控制台上
+@onLINErrorMessage(10)
+def onLINErrorMessageEvent(linErrorMsg):
+    writeInfo('收到错误帧')
+
+示例2：出现错误的lin报文就触发
+@onLINErrorMessage('*')
+def onLINErrorMessageEvent(linErrorMsg):
+    writeInfo('收到错误帧')
+
+示例3：出现LinErrorMsg对象定义的报文ID就触发
+@onLINErrorMessage(LINErrorMsg)
+def onLINErrorMessageEvent(linErrorMsg):
+    writeInfo('收到错误帧')
+
+示例4：任意网段出现符合报文ID的错误lin报文就触发
+@onLINErrorMessage([0x11, '0x100-0x120'])
+def onLINErrorMessageEvent(linErrorMsg):
+    writeInfo('收到错误帧')
+
+示例5：LIN1网段上出现ID为0x11的错误lin报文就触发
+@onLINErrorMessage(0x11, LIN1)
+def onLINErrorMessageEvent(linErrorMsg):
+    writeInfo('收到错误帧')
+
+8. 其他和函数或变量强相关的内容
+无

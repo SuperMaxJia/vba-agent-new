@@ -1,0 +1,73 @@
+##功能##
+用于创建一条UDP报文，包含源端口、目的端口、IPv4报文封装、数据payload和校验和设置功能，适用于网络通信测试和协议分析场景。
+
+##vba规范##
+函数名：UDPPacket
+参数：
+- source_port: int (0-65535)
+- destination_port: int (0-65535)
+- internet_packet: IPv4Packet对象
+- payload: list
+- checksum: int (0x0000-0xFFFF或-1)
+- packet_id: str (UUID)
+- timestamp: float
+返回值：UDPPacket对象实例
+内置方法：
+- setSourcePort(int)
+- setDestinationPort(int)
+- setInternetPacket(IPv4Packet)
+- setPayload(list)
+- setChecksum(int)
+
+##capl规范##
+CAPL中没有直接对应的UDP报文创建函数，但可以通过以下方式实现：
+1. 使用EthernetPacket结构体创建基础报文
+2. 手动设置UDP头部字段
+3. 使用ipUdpPacket函数组合IPv4和UDP层
+
+示例1：
+// 创建基础以太网报文
+EthernetPacket ethPacket;
+ethPacket.sourcePort = 7000;
+ethPacket.destinationPort = 8000;
+
+// 创建UDP报文
+ipUdpPacket udpPacket;
+udpPacket = ethPacket;
+udpPacket.checksum = 0x7695;
+
+示例2：
+// 自动创建带IPv4的UDP报文
+ipUdpPacket udpAuto;
+udpAuto.sourcePort = 7000;
+udpAuto.destinationPort = 8000;
+udpAuto.checksum = -1; // 自动计算
+
+##capl名##
+ipUdpPacket
+
+##转换须知##
+1. CAPL使用结构体而非对象，需要手动设置字段
+2. CAPL中checksum=-1表示自动计算，与VBA一致
+3. CAPL没有内置UUID生成和时间戳功能
+4. payload在CAPL中需要单独设置
+5. CAPL需要显式绑定IPv4层
+
+##转换示例##
+CAPL原始代码：
+ipUdpPacket udpTest;
+udpTest.sourcePort = 7000;
+udpTest.destinationPort = 8000;
+udpTest.checksum = 0x7695;
+
+转换后的VBA代码：
+Dim udpTest As UDPPacket
+Set udpTest = New UDPPacket
+udpTest.setSourcePort 7000
+udpTest.setDestinationPort 8000
+udpTest.setChecksum &H7695
+
+关键转换步骤：
+1. 将CAPL结构体声明转换为VBA对象实例化
+2. CAPL字段赋值改为VBA方法调用
+3. 十六进制表示法转换(&H替代0x)

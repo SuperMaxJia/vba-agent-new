@@ -1,0 +1,70 @@
+##功能##
+用于设置检测事件对象的回调函数，当检测条件被触发时自动调用该函数。常用于自动化测试场景，结合其他检测函数使用。
+
+##vba规范##
+函数定义：result = chkConfig_SetCallback(object, func)  
+参数：  
+- object: 检测对象  
+- func: 函数指针（回调函数）  
+返回值：int类型（0成功，-1失败）
+
+##capl规范##
+函数定义：on checkEvent checkId call func  
+参数：  
+- checkId: 检测ID（对应VBA的object参数）  
+- func: 回调函数名（无需括号）  
+返回值：无（通过系统变量或全局变量传递状态）  
+
+示例1：  
+```capl
+on checkEvent myCheckId
+{
+  write("检测条件触发！");
+}
+```
+
+示例2：  
+```capl
+int gCheckResult;
+
+on checkEvent msgCountCheck
+{
+  gCheckResult = 1;
+  write("报文超过限制");
+}
+```
+
+##capl名##
+on checkEvent
+
+##转换须知##
+1. CAPL使用事件处理语法而非函数调用
+2. CAPL回调函数无需返回值
+3. CAPL通过系统变量或全局变量传递状态
+4. CAPL回调函数直接绑定到检测ID
+
+##转换示例##
+CAPL原始代码：
+```capl
+on checkEvent msgCheck 
+{
+  write("报文出现次数超过上限！");
+}
+```
+
+转换后的VBA代码：
+```vba
+Function callbackFunc()
+    MsgBox "报文出现次数超过上限！"
+End Function
+
+Sub Main()
+    checkId = chkStart_MsgOccurrenceCount(CAN, CAN.MSG, 2)
+    chkConfig_SetCallback checkId, callbackFunc
+End Sub
+```
+
+关键转换步骤说明：
+1. 将CAPL事件处理块转换为VBA函数
+2. 在VBA中需要显式调用chkConfig_SetCallback绑定回调
+3. VBA需要使用MsgBox替代CAPL的write输出

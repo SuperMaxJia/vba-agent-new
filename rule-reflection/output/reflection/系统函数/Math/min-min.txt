@@ -1,0 +1,77 @@
+##功能##
+返回给定参数的最小值，参数可以为序列。常用于比较多个数值并找出最小值，适用于数据分析、条件判断等场景。
+
+##vba规范##
+函数名：min  
+函数描述：返回给定参数的最小值，参数可以为序列。  
+函数体：min(x, y, z, ....)  
+返回值：minNum（int类型，返回给定参数的最小值）  
+参数：x（int类型，数学表达式）、y（int类型，数学表达式）、z（int类型，数学表达式）等  
+内置函数：无  
+
+##capl规范##
+函数名：min  
+函数描述：返回给定参数的最小值，参数可以为序列。  
+函数体：min(x, y, z, ....)  
+返回值：minNum（int类型，返回给定参数的最小值）  
+参数：x（int类型，数学表达式）、y（int类型，数学表达式）、z（int类型，数学表达式）等  
+
+示例1：  
+```capl
+on key 'a'
+{
+  int result = min(10, 20, 5);
+  write("Minimum value is %d", result);
+}
+```
+输出：Minimum value is 5  
+
+示例2：  
+```capl
+variables
+{
+  int a = 15;
+  int b = 25;
+  int c = 10;
+}
+
+on start
+{
+  int result = min(a, b, c);
+  write("Minimum value is %d", result);
+}
+```
+输出：Minimum value is 10  
+
+##capl名##
+min
+
+##转换须知##
+1. 参数类型和数量的差异：CAPL和VBA的参数类型和数量要求一致，均为整数类型，数量可变。  
+2. 返回值类型的差异：两者返回值类型均为整数，无差异。  
+3. 函数行为的差异：两者行为一致，均为返回最小值。  
+4. 特殊情况的处理方法：若参数为空，两者均会报错，需确保至少有一个参数。  
+
+##转换示例##
+1. CAPL原始代码：  
+```capl
+on key 'a'
+{
+  int result = min(80, 100, 1000);
+  write("Minimum value is %d", result);
+}
+```
+
+2. 转换后的VBA代码：  
+```vba
+Sub Example()
+  Dim result As Integer
+  result = min(80, 100, 1000)
+  MsgBox "Minimum value is " & result
+End Sub
+```
+
+3. 关键转换步骤的说明：  
+- 将CAPL的`on key`事件转换为VBA的`Sub`过程。  
+- 将CAPL的`write`函数转换为VBA的`MsgBox`函数。  
+- 函数调用和参数传递方式保持不变。

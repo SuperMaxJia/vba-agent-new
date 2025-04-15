@@ -1,0 +1,45 @@
+1. 函数名  
+chkCreate_UndefinedMessageReceived  
+
+2. 函数描述  
+用于检测指定网段上是否有未在数据库中定义的报文。  
+
+3. 函数体  
+所有检测函数都有对应的chkStart_xxxx()和chkCreate_xxxx()。  
+chkCreate_xxxx()只创建检测对象但不开始检测，需要调用chkControl_Start；  
+chkStart_xxxx()创建检测对象同时直接开始检测。  
+
+4. 返回值  
+名称: res  
+类型: int  
+描述: 代表创建的对象，-1代表创建失败  
+
+5. 参数  
+名称 | 类型 | 描述  
+------|------|------  
+network | Network | 网段对象  
+
+6. 内置函数  
+函数名称 | 函数描述  
+---------|---------  
+chkControl_Start | 开始检测  
+chkStart_UndefinedMessageReceived | 创建检测对象并开始检测  
+
+7. 示例  
+示例功能：检测指定网段上是否有未在数据库中定义的报文。  
+示例代码：  
+```vba  
+checkId = chkStart_UndefinedMessageReceived(CAN1)  
+testAddCondition(checkId)  
+testWaitForTimeout(1000)  
+testRemoveCondition(checkId)  
+```  
+代码注释：  
+- 网段导入数据库文件后，检测该网段是否出现过数据库以外的报文。  
+- 调用该方法后，统计信息将加入到自动化测试报告。  
+- 共统计1000ms。  
+- 结束统计。  
+
+8. 其他和函数或变量强相关的内容  
+- 该函数通常用于自动化测试场景，结合其他测试函数（如testAddCondition、testWaitForTimeout等）使用。  
+- 需要先导入数据库文件，确保网段对象正确配置。

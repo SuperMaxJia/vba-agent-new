@@ -1,0 +1,52 @@
+##功能##
+该函数用于判断输入的字符串是否为None（空值），主要用于字符串有效性检查，常见于数据处理前对输入参数的验证场景。
+
+##vba规范##
+函数定义：Function strIsEmpty(sourceStr As String) As Boolean
+参数：sourceStr（String类型）- 需要检查的字符串
+返回值：Boolean类型 - 如果输入为None返回True，否则返回False
+内置函数：strToLower - 将字符串转换为小写形式
+特殊行为：通过strToLower转换后判断空值
+
+##capl规范##
+函数定义：int isStrEmpty(char sourceStr[])
+参数：sourceStr（char数组）- 需要检查的字符串
+返回值：int类型 - 1表示空字符串，0表示非空
+使用示例1：
+```
+char testStr[10] = "";
+int result = isStrEmpty(testStr); // 返回1
+```
+使用示例2：
+```
+char testStr[10] = "Hello";
+int result = isStrEmpty(testStr); // 返回0
+```
+
+##capl名##
+isStrEmpty
+
+##转换须知##
+1. CAPL使用char数组表示字符串，VBA使用String类型
+2. CAPL返回整型(0/1)，VBA返回布尔型(True/False)
+3. CAPL没有None概念，空字符串用""表示
+4. CAPL版本不需要strToLower转换步骤
+
+##转换示例##
+1. CAPL原始代码：
+```
+char input[20] = "";
+int check = isStrEmpty(input);
+```
+2. 转换后VBA代码：
+```
+Dim input As String
+input = ""
+Dim check As Boolean
+check = strIsEmpty(input)
+```
+3. 关键转换说明：
+- 将char数组改为String类型
+- 将int返回值改为Boolean
+- 移除字符串转换步骤
+- 保持相同的空值检查逻辑

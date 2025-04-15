@@ -1,0 +1,75 @@
+##功能##
+该函数用于启动信号值变化的自动化测试检查，监控信号值的实时变化并触发相应的测试逻辑，适用于需要实时监控信号变化的自动化测试场景。
+
+##vba规范##
+函数定义：chkStart_SignalValueChange(signalName As String, callbackFunction As Function) As Boolean  
+参数：  
+- signalName：String类型，需要监控的信号名称  
+- callbackFunction：Function类型，信号值变化时触发的回调函数  
+返回值：Boolean类型，表示启动是否成功  
+
+##capl规范##
+函数定义：on signal (signalName, callbackFunction)  
+参数：  
+- signalName：char[]类型，需要监控的信号名称  
+- callbackFunction：函数指针类型，信号值变化时触发的回调函数  
+返回值：void  
+
+示例1：  
+```capl
+on signal EngineSpeed
+{
+  write("信号 %s 的值变为: %d", this.name, this.value);
+}
+```
+
+示例2：  
+```capl
+void myCallback(char signalName[], long value)
+{
+  write("信号 %s 的值变为: %d", signalName, value);
+}
+
+on signal * call myCallback
+```
+
+##capl名##
+on signal
+
+##转换须知##
+1. 参数类型差异：VBA使用String和Function类型，CAPL使用char[]和函数指针  
+2. 返回值差异：VBA返回Boolean，CAPL无返回值  
+3. 行为差异：VBA需要显式启动监控，CAPL使用事件驱动自动触发  
+4. 特殊情况：CAPL的"on signal"语法不支持直接返回监控状态，需通过其他方式确认  
+
+##转换示例##
+CAPL原始代码：  
+```capl
+on signal EngineSpeed
+{
+  write("信号 %s 的值变为: %d", this.name, this.value);
+}
+```
+
+转换后的VBA代码：  
+```vba
+Sub Example_chkStart_SignalValueChange()
+    Dim result As Boolean
+    result = chkStart_SignalValueChange("EngineSpeed", AddressOf OnEngineSpeedChange)
+    
+    If result Then
+        WriteInfo "信号监控启动成功"
+    Else
+        WriteWarningInfo "信号监控启动失败"
+    End If
+End Sub
+
+Sub OnEngineSpeedChange(signalName As String, newValue As Variant)
+    WriteInfo "信号 " & signalName & " 的值变为: " & newValue
+End Sub
+```
+
+关键转换步骤：  
+1. 将CAPL的"on signal"事件转换为VBA的函数调用+回调机制  
+2. CAPL的匿名回调函数转换为VBA的命名回调函数  
+3. 添加VBA特有的状态检查逻辑

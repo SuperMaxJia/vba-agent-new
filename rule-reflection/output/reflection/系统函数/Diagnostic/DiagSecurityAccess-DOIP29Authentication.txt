@@ -1,0 +1,67 @@
+##功能##
+该函数用于创建和配置0x29安全认证对象，设置认证类型、私钥文件、PKI证书等参数，实现DoIP协议中的0x29安全认证功能。主要用于车辆诊断中的安全访问控制场景。
+
+##vba规范##
+函数名：DOIP29Authentication
+返回值：DOIP29Authentication对象
+参数：无
+方法：
+- getType(): Integer
+- getKeyFile(): String
+- getPKICertificate(): String
+- getCertificateChainFile(): String
+- getMutualChallengeLength(): Integer
+- setType(type: Integer)
+- setKeyFile(keyFile: String)
+- setPKICertificate(pkiCertificate: String)
+- setCertificateChainFile(certChainFile: String)
+- setMutualChallengeLength(challengeLength: Integer)
+- startAuth(doipConfig, connectHandle): Boolean
+- stopAuth()
+
+##capl规范##
+在CAPL中，使用DiagSetParameter函数配置安全认证参数：
+- 认证类型：DiagSetParameter("SecurityAccessType", value)
+- 私钥文件：DiagSetParameter("SecurityKeyFile", path)
+- PKI证书：DiagSetParameter("SecurityCertificate", path)
+- 证书链文件：DiagSetParameter("SecurityCertChain", path)
+- Challenge长度：DiagSetParameter("SecurityChallengeLength", value)
+
+示例1：
+DiagSetParameter("SecurityAccessType", 0);
+DiagSetParameter("SecurityKeyFile", "");
+DiagSetParameter("SecurityCertificate", "");
+DiagSecurityAccess(handle);
+
+示例2：
+DiagSetParameter("SecurityAccessType", 1);
+DiagSetParameter("SecurityChallengeLength", 16);
+DiagSecurityAccess(handle);
+
+##capl名##
+DiagSecurityAccess
+
+##转换须知##
+1. CAPL使用分散的参数设置函数，而VBA使用集中式对象
+2. CAPL中安全认证是立即执行的，VBA需要显式调用startAuth
+3. CAPL没有显式的stopAuth方法，通过取消诊断会话实现
+4. CAPL的参数名称与VBA属性名称不同但功能对应
+
+##转换示例##
+CAPL原始代码：
+DiagSetParameter("SecurityAccessType", 1);
+DiagSetParameter("SecurityKeyFile", "key.pem");
+DiagSetParameter("SecurityCertificate", "cert.pem");
+DiagSecurityAccess(handle);
+
+转换后的VBA代码：
+Set doip29Authentication = DOIP29Authentication()
+doip29Authentication.setType(1)
+doip29Authentication.setKeyFile("key.pem")
+doip29Authentication.setPKICertificate("cert.pem")
+res = doip29Authentication.startAuth(doipConfig, connectHandle)
+
+关键转换说明：
+1. 将CAPL的DiagSetParameter调用转换为VBA对象的set方法
+2. CAPL的DiagSecurityAccess对应VBA的startAuth方法
+3. 参数名称从CAPL的字符串标识符转换为VBA的方法名

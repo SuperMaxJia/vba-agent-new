@@ -1,0 +1,44 @@
+1. 函数名
+TCPIPStack
+
+2. 函数描述
+用于创建TCPIP协议栈
+
+3. 函数体
+TCPIPStack()
+
+4. 返回值
+返回一个TCPIPStack对象实例
+
+5. 参数
+名称                类型    描述
+source_mac_address  str     源MAC地址，格式为字符串
+source_ip_address   str     源IP地址，格式为字符串
+network_mask        str     网络掩码，格式为字符串
+gateway             str     网关地址，格式为字符串
+vlan                int     VLAN ID值，一个16位的有符号整数
+arp_table           list    ARP表，格式为二维列表，每个条目包含MAC地址和IP地址
+
+6. 内置函数
+函数名称                描述
+setSourceMacAddress     设置源MAC地址
+setSourceIPAddress      设置源IP地址
+setNetworkMask          设置网络掩码
+setGatway               设置网关地址
+setVLAN                 设置VLAN ID
+setARPTable             设置ARP表
+
+7. 示例
+示例功能：创建并配置一个TCPIP协议栈
+示例代码：
+tcpipStack = TCPIPStack()
+tcpipStack.setSourceMacAddress("20:00:00:00:00:01")
+tcpipStack.setSourceIPAddress("192.168.1.0")
+tcpipStack.setNetworkMask("255.255.255.0")
+tcpipStack.setGatway("0.0.0.0")
+tcpipStack.setVLAN(vid) // -1代表VLAN禁用
+tcpipStack.setARPTable([["20:00:00:00:00:01", '192.168.2.1'], ["20:00:00:00:00:02", '192.168.2.12']])
+
+8. 其他说明
+- VLAN ID值为-1时表示禁用VLAN功能
+- ARP表需要以二维列表形式提供，每个子列表包含MAC地址和对应的IP地址

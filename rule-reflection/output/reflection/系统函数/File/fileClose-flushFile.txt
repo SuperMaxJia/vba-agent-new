@@ -1,0 +1,54 @@
+##功能##
+该函数用于强制将文件缓冲区中的数据立即写入物理文件，而不是等待缓冲区自动刷新。这在需要确保数据立即持久化到存储介质时非常有用，例如在关键数据记录或意外断电前确保数据安全。
+
+##vba规范##
+函数名：flushFile
+参数：file (文件对象)
+返回值：无
+功能：强制刷新指定文件对象的缓冲区
+
+##capl规范##
+CAPL中没有直接的flush函数，但可以通过关闭文件来强制刷新缓冲区：
+1. 使用fileClose()函数关闭文件
+2. 无返回值
+3. 参数：文件句柄（long类型）
+
+示例1：
+long fileHandle;
+fileHandle = openFile("log.txt", 2);
+// 写入操作...
+fileClose(fileHandle); // 相当于flush
+
+示例2：
+on key 'f' {
+    fileClose(myLogFile); // 手动触发刷新
+}
+
+##capl名##
+fileClose
+
+##转换须知##
+1. CAPL使用文件句柄而不是文件对象
+2. CAPL的fileClose会完全关闭文件，而VBA的flushFile只是刷新缓冲区
+3. 在CAPL中要实现类似功能需要重新打开文件
+4. CAPL没有直接的缓冲区刷新函数
+
+##转换示例##
+CAPL原始代码：
+long fh;
+fh = openFile("data.txt", 2);
+writeFile(fh, "important data");
+fileClose(fh);
+
+转换后的VBA代码：
+Dim f As Integer
+f = FreeFile()
+Open "data.txt" For Output As #f
+Print #f, "important data"
+flushFile #f
+
+关键转换步骤：
+1. 将openFile转换为VBA的Open语句
+2. 将writeFile转换为Print #语句
+3. 将fileClose替换为flushFile
+4. 注意VBA使用#号表示文件号

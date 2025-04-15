@@ -1,0 +1,61 @@
+##功能##
+该函数用于在接收到指定LIN报文错误帧时触发事件处理，支持对特定报文ID、ID范围或所有错误帧进行监控和处理，常用于LIN网络错误诊断和调试。
+
+##vba规范##
+函数定义：@onLINErrorMessage装饰器标记事件处理函数
+参数：
+1. message_id: int/str/list[str] 指定触发条件的报文ID
+2. linErrorMsg: LinErrorMsg 错误报文对象
+返回值：无
+特殊值：'*'表示监控所有错误帧
+支持多网段指定（如LIN1）
+
+##capl规范##
+CAPL使用on linErrorFrame事件处理LIN错误帧：
+on linErrorFrame(int id, byte flags)
+{
+    // 处理逻辑
+}
+
+示例1：监控特定ID错误帧
+on linErrorFrame(int id, byte flags)
+{
+    if(id == 0x10) {
+        write("收到错误帧");
+    }
+}
+
+示例2：监控所有错误帧
+on linErrorFrame(int id, byte flags)
+{
+    write("收到错误帧 ID:0x%02X", id);
+}
+
+##capl名##
+on linErrorFrame
+
+##转换须知##
+1. CAPL使用单独事件处理函数而非装饰器语法
+2. CAPL通过if语句实现ID过滤，而非参数指定
+3. CAPL的flags参数包含错误标志位信息
+4. CAPL不支持直接的范围语法，需手动实现范围判断
+5. 多网段处理需在CAPL中通过环境变量区分
+
+##转换示例##
+CAPL原始代码：
+on linErrorFrame(int id, byte flags)
+{
+    if(id == 0x11 || (id >= 0x100 && id <= 0x120)) {
+        write("收到错误帧");
+    }
+}
+
+转换后的VBA代码：
+@onLINErrorMessage([0x11, '0x100-0x120'])
+def onLINErrorMessageEvent(linErrorMsg):
+    writeInfo('收到错误帧')
+
+关键转换说明：
+1. CAPL的if条件转换为VBA的ID范围列表参数
+2. CAPL的write函数对应VBA的writeInfo
+3. CAPL的flags参数在VBA中通过linErrorMsg对象访问

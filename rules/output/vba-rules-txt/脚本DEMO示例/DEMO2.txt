@@ -1,0 +1,58 @@
+1. 函数名: onKeyEvent1
+
+2. 函数描述: 通过按键触发的方式，计算和修改DBC中ACC_PEBS2378报文的Checksum和livecounter信号值，并按照10ms周期把报文发到CAN1网段上。
+
+3. 函数体:
+```vba
+def onKeyEvent1():
+    '''定义变量，并启动周期函数'''
+    global checkSumDemo
+    global aliveCounterVal
+    global cycle
+    aliveCounterVal = 0
+    acc_msg = CAN1.ACC_PEBS2378  # 获取到DBC里定义的报文对象
+    signal_aliveCounter = acc_msg.ACC_PEBS_AliveCounter  # 根据报文对象获取AliveCounter信号对象
+    signal_chkSum = acc_msg.ACC_PEBS_ChkSum  # 根据报文对象获取ChkSum信号对象
+    cycle = cycleFunction(10, checkSumDemo, acc_msg, signal_aliveCounter, signal_chkSum)  # 构建周期函数对象
+    cycle.startSchedule()  # 启动周期函数调度
+```
+
+4. 返回值: 无
+
+5. 参数: 无
+
+6. 内置函数:
+- cycleFunction
+  - 描述: 创建一个周期执行函数
+  - 参数: 
+    - interval: 执行间隔(ms)
+    - callback: 回调函数
+    - args: 传递给回调函数的参数
+
+7. 示例:
+示例功能: 计算和修改DBC中ACC_PEBS2378报文的Checksum和livecounter信号值
+示例代码:
+```vba
+def checkSumDemo(acc_msg, signal_aliveCounter, signal_chkSum):
+    '''执行CheckSum实例'''
+    global aliveCounterVal
+    if aliveCounterVal <= signal_aliveCounter.getMaxVal():
+        signal_aliveCounter.setPhysVal(aliveCounterVal)  # 设置AliveCounter信号的物理值
+        aliveCounterVal = aliveCounterVal + 0x01
+    else:
+        signal_aliveCounter.setPhysVal(0)
+        aliveCounterVal = 0x01
+    
+    msg_data = acc_msg.getData()  # 获取报文的数据场列表
+    value = msg_data[0] + msg_data[1] + msg_data[2] + msg_data[3] + msg_data[4] + msg_data[5] + msg_data[6]
+    if value/255 > 1:
+        value = value % 256
+    chkSumVal = value ^ 0xFF
+    signal_chkSum.setPhysVal(chkSumVal)  # 设置ChkSumr信号的物理值
+    sendMsg(acc_msg, CAN1)  # 将设置好信号值得报文发送到CAN1网段上
+```
+
+8. 其他相关内容:
+- 使用@onKey装饰器绑定按键事件
+- 需要定义全局变量checkSumDemo, aliveCounterVal, cycle
+- 配套使用onKeyEvent2函数停止周期函数运行

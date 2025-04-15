@@ -1,0 +1,55 @@
+##功能##
+该函数用于创建一个对话框等待测试人员确认，常用于测试过程中需要人工干预或确认的场景。通过显示一个带有自定义文本和标题的对话框，等待用户选择"是"、"否"或超时，并根据用户选择返回相应结果。
+
+##vba规范##
+函数定义：testWaitForTesterConfirmation(text As String, heading As String, Optional timeout As Integer = 0) As Integer
+参数：
+- text: String类型，对话框显示的描述文本
+- heading: String类型，对话框标题
+- timeout: Integer类型，超时时间(毫秒)，0表示无限等待
+返回值：Integer类型，0=超时，1=选择是，2=选择否，-1=错误
+
+##capl规范##
+函数定义：int TestConfirmation(char text[], char heading[], dword timeout = 0)
+参数：
+- text: char[]类型，对话框显示的描述文本
+- heading: char[]类型，对话框标题
+- timeout: dword类型，超时时间(毫秒)，0表示无限等待
+返回值：int类型，0=超时，1=选择是，2=选择否，-1=错误
+
+示例1：
+int result;
+result = TestConfirmation("请确认测试结果", "测试确认", 5000);
+write("用户选择: %d", result);
+
+示例2：
+if(TestConfirmation("继续执行?", "确认") == 1) {
+    // 用户选择是
+    testStepPass();
+} else {
+    testStepFail();
+}
+
+##capl名##
+TestConfirmation
+
+##转换须知##
+1. 参数类型差异：VBA使用String而CAPL使用char[]
+2. 返回值完全一致
+3. 函数行为一致，都是模态对话框
+4. 超时处理方式相同
+5. CAPL中dword对应VBA的Long/Integer
+
+##转换示例##
+1. CAPL原始代码：
+int res = TestConfirmation("测试完成?", "确认结果", 3000);
+
+2. 转换后VBA代码：
+Dim res As Integer
+res = testWaitForTesterConfirmation("测试完成?", "确认结果", 3000)
+
+3. 关键转换说明：
+- 函数名从TestConfirmation改为testWaitForTesterConfirmation
+- 参数类型从char[]改为String
+- 返回值类型保持int/Integer不变
+- 调用语法保持一致

@@ -1,0 +1,65 @@
+##功能##
+该函数用于创建一个显示给定字符串的弹出窗口，测试员通过确认操作，并将操作结果或备注生成到测试报告中。主要用于测试过程中需要人工确认的场景，如测试步骤的验证、测试结果的确认等。
+
+##vba规范##
+函数定义：testValidateTesterConfirmation(questionText, heading, timeoutResult, timeout)  
+参数：  
+- questionText: str，测试结果确认的描述  
+- heading: str，测试弹框的标题  
+- timeoutResult: int，测试结果超时后处理的结果（1代表pass，0代表fail）  
+- timeout: int，超时的时间（单位：秒）  
+返回值：int，0代表超时，1代表选择的yes，2代表用户no，3代表不清楚，-1代表产生未知错误  
+
+##capl规范##
+函数定义：testConfirmation(text, title, defaultResult, timeout)  
+参数：  
+- text: char[]，测试结果确认的描述  
+- title: char[]，测试弹框的标题  
+- defaultResult: int，测试结果超时后处理的结果（1代表pass，0代表fail）  
+- timeout: int，超时的时间（单位：毫秒）  
+返回值：int，0代表超时，1代表选择的yes，2代表用户no，3代表不清楚，-1代表产生未知错误  
+
+示例1：  
+```capl
+int result;
+result = testConfirmation("Please confirm the test result", "Test Confirmation", 1, 5000);
+write("Test result: %d", result);
+```
+
+示例2：  
+```capl
+int result;
+result = testConfirmation("Is the signal valid?", "Signal Validation", 0, 3000);
+if (result == 1) {
+  write("Signal is valid");
+} else {
+  write("Signal is invalid");
+}
+```
+
+##capl名##
+testConfirmation
+
+##转换须知##
+1. 参数类型和数量的差异：CAPL使用char[]代替VBA的str，timeout单位在CAPL中是毫秒，VBA中是秒。  
+2. 返回值类型的差异：返回值类型和含义一致，但CAPL中timeout的单位是毫秒，VBA中是秒。  
+3. 函数行为的差异：CAPL中的函数名和参数名略有不同，但功能一致。  
+4. 特殊情况的处理方法：超时处理结果和返回值含义一致，无需特殊处理。  
+
+##转换示例##
+CAPL原始代码：  
+```capl
+int result;
+result = testConfirmation("Confirm test step", "Test Step", 1, 5000);
+```
+
+转换后的VBA代码：  
+```vba
+Dim result As Integer
+result = testValidateTesterConfirmation("Confirm test step", "Test Step", 1, 5)
+```
+
+关键转换步骤的说明：  
+1. 函数名从testConfirmation改为testValidateTesterConfirmation。  
+2. timeout参数从5000毫秒改为5秒。  
+3. 参数名和返回值类型保持一致。

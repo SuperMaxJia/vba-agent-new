@@ -1,0 +1,68 @@
+##功能##
+该函数用于将输入字符串按照指定的分隔字符拆分成多个子字符串，并返回这些子字符串组成的列表。常用于文本处理、数据解析等场景，如日志分析、CSV文件处理等。
+
+##vba规范##
+函数名：strSplit
+参数：
+- sourceStr (String): 要拆分的原始字符串
+- code (char): 用作分隔符的字符
+返回值：
+- splits (List): 包含拆分后子字符串的列表
+
+##capl规范##
+CAPL中没有直接对应的列表类型和字符串拆分函数，但可以使用字符数组和strsplit()函数实现类似功能：
+1. 使用strsplit()将字符串拆分为字符数组
+2. 使用strjoin()将字符数组合并为字符串
+
+示例1：
+```
+char sourceStr[] = "ABCdedf";
+char delimiter = 'd';
+char result[10][20];
+int count;
+
+count = strsplit(sourceStr, delimiter, result);
+// count = 3, result = ["ABC", "e", "f"]
+```
+
+示例2：
+```
+char csvData[] = "apple,orange,banana";
+char fruits[3][10];
+int fruitCount;
+
+fruitCount = strsplit(csvData, ',', fruits);
+// fruitCount = 3, fruits = ["apple", "orange", "banana"]
+```
+
+##capl名##
+strsplit
+
+##转换须知##
+1. CAPL使用字符数组而非列表作为返回值
+2. CAPL需要预先定义结果数组的大小
+3. CAPL返回的是实际拆分出的元素数量
+4. CAPL的分隔符是char类型而非字符串
+5. 在VBA中处理空字符串时可能需要额外检查
+
+##转换示例##
+CAPL原始代码：
+```
+char data[] = "John,Doe,30";
+char items[3][20];
+int itemCount;
+
+itemCount = strsplit(data, ',', items);
+```
+
+转换后的VBA代码：
+```
+Dim result As Variant
+result = strSplit("John,Doe,30", ",")
+```
+
+关键转换步骤：
+1. 将CAPL的字符数组转换为VBA的Variant数组
+2. 移除CAPL中显式的数组大小声明
+3. 将CAPL的char分隔符改为VBA字符串形式
+4. 移除CAPL中显式的计数变量

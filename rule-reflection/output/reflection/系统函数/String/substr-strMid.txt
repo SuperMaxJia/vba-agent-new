@@ -1,0 +1,63 @@
+##功能##
+从字符串的指定位置开始截取指定长度的子串，常用于字符串处理和数据分析中提取特定部分。
+
+##vba规范##
+函数名：strMid  
+参数：  
+- sourceStr：String类型，原始字符串  
+- start：int类型，起始索引（0-based）  
+- length：int类型，截取长度  
+返回值：String类型，截取的子串  
+
+##capl规范##
+CAPL中使用substr函数实现类似功能：  
+```c
+char substr(char sourceStr[], int start, int length);
+```
+参数：  
+- sourceStr：char数组，原始字符串  
+- start：int类型，起始索引（0-based）  
+- length：int类型，截取长度  
+返回值：char数组，截取的子串  
+
+示例1：  
+```c
+char result[10];
+strncpy(result, substr("abcdef", 2, 3), 10);
+// result = "cde"
+```
+
+示例2：  
+```c
+char output[20];
+strncpy(output, substr("HelloWorld", 5, 5), 20);
+// output = "World"
+```
+
+##capl名##
+substr
+
+##转换须知##
+1. CAPL的substr返回char数组，VBA返回String  
+2. CAPL需要手动处理字符串拷贝（strncpy）  
+3. CAPL索引从0开始，与VBA一致  
+4. 边界处理逻辑可能不同  
+
+##转换示例##
+CAPL原始代码：  
+```c
+char output[10];
+strncpy(output, substr("CAPLTest", 2, 4), 10);
+```
+
+转换后的VBA代码：  
+```vba
+Dim result As String
+result = strMid("CAPLTest", 2, 4)
+```
+
+关键转换步骤：  
+1. 移除CAPL的char数组声明  
+2. 将strncpy调用改为直接赋值  
+3. 将substr改为strMid  
+4. 保持相同的参数顺序和值

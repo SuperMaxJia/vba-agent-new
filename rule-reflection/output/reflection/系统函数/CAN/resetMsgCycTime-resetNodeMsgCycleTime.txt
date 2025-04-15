@@ -1,0 +1,68 @@
+##功能##
+该函数用于将指定节点(Node)上的报文(message或通过id指定的报文)的发送周期重置为数据库(DBC)中定义的默认周期。常用于在测试过程中临时修改报文周期后，需要恢复默认配置的场景。
+
+##vba规范##
+函数定义：
+resetNodeMsgCycleTime(Node As ECUNode, message As CANDBCMessage) As Integer
+resetNodeMsgCycleTime(Node As ECUNode, id As Variant) As Integer
+
+参数：
+- Node: ECUNode类型，表示目标ECU节点
+- message: CANDBCMessage类型，表示要重置的报文对象
+- id: Variant类型，可以是数字(标准帧)或字符串(扩展帧)，表示报文ID
+
+返回值：
+Integer类型，0表示成功，-1表示失败
+
+##capl规范##
+函数定义：
+long resetMsgCycTime(dword node, dword msgId)
+long resetMsgCycTime(dword node, char msgName[])
+
+参数：
+- node: dword类型，节点句柄
+- msgId: dword类型，报文ID
+- msgName: char数组类型，报文名称
+
+返回值：
+long类型，0表示成功，-1表示失败
+
+示例1：
+// 通过报文ID重置周期
+dword nodeHandle = 0x123;
+dword msgId = 0x100;
+long result = resetMsgCycTime(nodeHandle, msgId);
+
+示例2：
+// 通过报文名称重置周期
+dword nodeHandle = 0x123;
+char msgName[] = "EngineMsg";
+long result = resetMsgCycTime(nodeHandle, msgName);
+
+##capl名##
+resetMsgCycTime
+
+##转换须知##
+1. 参数差异：CAPL使用节点句柄(dword)而不是节点对象，VBA使用节点对象
+2. 参数差异：CAPL可以直接使用报文名称(char[])作为参数，VBA需要报文对象或ID
+3. 返回值：两者都使用整数返回状态，但CAPL是long类型，VBA是Integer
+4. 异常处理：CAPL没有异常机制，需要检查返回值；VBA可能需要额外错误处理
+5. 扩展帧处理：CAPL中所有ID都使用dword，VBA中扩展帧需要特殊处理
+
+##转换示例##
+CAPL原始代码：
+dword node = 0x101;
+char msgName[] = "VehicleSpeed";
+long res = resetMsgCycTime(node, msgName);
+
+转换后的VBA代码：
+Dim node As ECUNode
+Set node = GetECUNode(0x101)
+Dim res As Integer
+res = resetNodeMsgCycleTime(node, "VehicleSpeed")
+
+关键转换说明：
+1. 将CAPL的节点句柄转换为VBA的节点对象
+2. 保持相同的报文名称参数
+3. 将CAPL的long返回值改为VBA的Integer
+4. 添加了VBA特有的对象设置语法(Set)

@@ -1,0 +1,70 @@
+##功能##
+该函数用于禁止指定节点发送所有CAN报文。在CAN总线仿真测试中，常用于模拟节点故障或测试总线容错能力。
+
+##vba规范##
+函数定义：disableNodeMsgAllTx(Node)
+参数：
+- Node: ECUNode类型，表示要禁止发送的节点对象
+返回值：
+- res: 整型，0表示成功，-1表示失败
+注意事项：
+- 需要传入有效的ECUNode对象
+- 属于CAN总线仿真功能组
+
+##capl规范##
+函数定义：disableAllTx(nodeName)
+参数：
+- nodeName: char数组，表示节点名称字符串
+返回值：
+- 整型，0表示成功，-1表示失败
+示例1：
+```
+on start {
+  int result;
+  result = disableAllTx("ECU1");
+  if(result == 0) {
+    write("ECU1所有发送报文已禁止");
+  }
+}
+```
+示例2：
+```
+variables {
+  char node[10] = "EngineECU";
+}
+on key 'a' {
+  if(disableAllTx(node) == -1) {
+    write("禁止发送失败");
+  }
+}
+```
+
+##capl名##
+disableAllTx
+
+##转换须知##
+1. 参数差异：VBA使用ECUNode对象，CAPL使用节点名称字符串
+2. 返回值一致：都是0/-1表示成功/失败
+3. 行为差异：CAPL函数直接操作节点名称，VBA需要节点对象
+4. 异常处理：CAPL需要手动检查返回值，VBA可能抛出异常
+
+##转换示例##
+CAPL原始代码：
+```
+on start {
+  disableAllTx("BodyECU");
+}
+```
+
+转换后的VBA代码：
+```
+Sub Example()
+    Dim res As Integer
+    res = disableNodeMsgAllTx(BodyECU_Node)
+End Sub
+```
+
+关键转换步骤：
+1. 将CAPL的字符串参数"BodyECU"替换为VBA的节点对象BodyECU_Node
+2. 保持相同的函数功能，但使用不同的参数传递方式
+3. VBA中需要预先定义好节点对象

@@ -1,0 +1,50 @@
+##功能##
+该函数用于获取指定CAN网络网段中的所有信号对象列表，主要用于在CAN通信测试中访问和分析网络信号数据。
+
+##vba规范##
+函数定义：getSignals(network)
+参数：
+- network：Network类型，表示要查询的CAN网段对象
+返回值：
+- signals：list[CANDBCSignal]类型，返回该网段中的所有信号对象列表
+
+##capl规范##
+在CAPL中，可以使用dbSignal函数获取信号信息，但需要结合报文和信号名来访问。
+示例1：
+// 获取CAN1网段中报文0x100的信号列表
+message 0x100 msg;
+dbSignal sig[100];
+int sigCount = 0;
+getSignalNames(msg, sig, sigCount);
+
+示例2：
+// 遍历获取所有报文的信号
+message * m;
+dbSignal sig;
+for(m = getFirstMessage(); m; m = getNextMessage(m)) {
+  getSignalNames(m, sig, elcount(sig));
+}
+
+##capl名##
+dbSignal
+
+##转换须知##
+1. CAPL需要明确指定报文对象，而VBA直接通过网段获取
+2. CAPL返回的是信号名数组，VBA返回的是信号对象列表
+3. CAPL需要预先分配数组空间，VBA自动管理内存
+4. 在CAPL中需要结合报文对象使用，VBA则直接通过网段访问
+
+##转换示例##
+CAPL原始代码：
+message 0x100 msg;
+dbSignal sig[20];
+int count;
+getSignalNames(msg, sig, count);
+
+转换后的VBA代码：
+signals = getSignals(CAN1)
+
+关键转换说明：
+1. 将CAPL中基于报文的信号获取改为VBA中基于网段的获取
+2. VBA版本无需预先分配数组空间
+3. VBA返回的是可直接操作的对象列表而非名称数组

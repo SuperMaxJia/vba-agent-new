@@ -1,0 +1,73 @@
+##功能##
+fileRead函数用于从文件中读取指定大小的字节数据。如果未指定大小或大小为负数，则读取整个文件内容。常用于需要从文件获取特定长度数据的场景，如读取配置文件、日志分析等。
+
+##vba规范##
+函数定义：fileRead(file, size = -1)
+参数：
+- file: 文件对象，通过openFile打开的文件句柄
+- size: 整数类型，可选参数，默认值为-1，表示要读取的字节数
+返回值：
+- len: 整数类型，返回实际读取的字节数
+
+##capl规范##
+函数定义：fileGet(file, size)
+参数：
+- file: 文件句柄，通过fileOpen获取
+- size: dword类型，可选参数，表示要读取的字节数
+返回值：
+- 实际读取的字节数，dword类型
+
+示例1：
+```capl
+variables {
+  dword fileHandle;
+  byte buffer[100];
+}
+fileHandle = fileOpen("C:\\demo.txt", 0);
+fileGet(fileHandle, buffer, 5);
+fileClose(fileHandle);
+```
+
+示例2：
+```capl
+variables {
+  dword fileHandle;
+  byte buffer[1000];
+}
+fileHandle = fileOpen("C:\\data.bin", 0);
+fileGet(fileHandle, buffer, elcount(buffer));
+fileClose(fileHandle);
+```
+
+##capl名##
+fileGet
+
+##转换须知##
+1. CAPL使用fileGet需要预先分配缓冲区，而VBA自动处理内存分配
+2. CAPL的fileGet需要显式传递缓冲区参数，VBA的fileRead返回数据
+3. CAPL中文件打开模式参数不同，0表示只读
+4. CAPL需要手动关闭文件，VBA也需要但语法不同
+
+##转换示例##
+CAPL原始代码：
+```capl
+variables {
+  dword fh;
+  byte data[10];
+}
+fh = fileOpen("test.txt", 0);
+fileGet(fh, data, 5);
+fileClose(fh);
+```
+
+转换后的VBA代码：
+```vba
+file = openFile("test.txt", mode="r")
+fileRead(file, 5)
+closeFile(file)
+```
+
+关键转换步骤说明：
+1. 将fileOpen转换为openFile，注意模式参数差异
+2. fileGet调用转换为fileRead，省略缓冲区参数
+3. 保持相同的文件关闭操作，但使用不同的函数名

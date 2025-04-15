@@ -1,0 +1,48 @@
+1. 函数名
+onSignalUpdate
+
+2. 函数描述
+接收到指定信号更新时会触发此事件，支持同时定义多个onSignalUpdate事件（函数名称不能相同，且只能监听本网段的信号）
+
+3. 函数体
+@onSignalUpdate(onsignal)
+def onSignalUpdateEvent(signal):
+    pass
+
+4. 返回值
+无返回值
+
+5. 参数
+| 名称      | 类型         | 描述                                                                 |
+|-----------|--------------|----------------------------------------------------------------------|
+| onsignal  | CANDBCSignal | 指定的DBC数据库中定义的信号对象，比如：CAN1.ESP_Statu.ESP_VehicleSpeed |
+| signal    | CANDBCSignal | 接收到的总线上的信号对象，包含属性：name,comment,rawval,physVal        |
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：当收到报文ESP_Status的信号ESP_VehicleSpeed时触发，并将触发的信号所有属性输出到控制台上
+
+示例代码：
+@onSignalUpdate(CAN1.ESP_Status.ESP_VehicleSpeed)
+def onSignalUpdateEvent(signal):
+    writeInfo(signal.getName())
+    writeInfo(signal.getComment())
+    writeInfo(signal.getPhysVal())
+    writeInfo(signal.getRawVal())
+
+代码注释：
+- @onSignalUpdate 装饰器用于指定要监听的信号
+- signal参数包含接收到的信号对象
+- writeInfo()函数用于将信息输出到控制台
+- getName()获取信号名称
+- getComment()获取信号注释
+- getPhysVal()获取物理值
+- getRawVal()获取总线值
+
+8. 其他说明
+- 可以同时定义多个onSignalUpdate事件，但函数名称必须不同
+- 只能监听本网段的信号
+- 信号对象包含name,comment,rawval,physVal等属性
+- 属性值可以通过对应的get方法获取

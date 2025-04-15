@@ -1,0 +1,53 @@
+##功能##
+创建LIN报头帧对象，用于LIN报文调度服务。该函数在实际应用中用于定义LIN通信中的帧结构，包括ID、数据长度和延迟时间，通常用于配置LIN调度表。
+
+##vba规范##
+函数名：LINFrameItem  
+参数：  
+- id (int)：LIN报文ID  
+- dlc (int)：LIN报文数据长度  
+- delay (Double)：LIN报文延迟时间（ms）  
+返回值：LINFrameItem类型对象  
+
+##capl规范##
+CAPL中没有直接对应的单函数实现，但可以通过以下方式组合实现：  
+1. 使用`linSetFrame`设置帧参数  
+2. 使用`linSetSchedule`配置调度表  
+
+示例1：  
+```capl
+linSetFrame(0x10, 4);
+linSetSchedule(10, 0x10);
+```  
+
+示例2：  
+```capl
+linSetFrame(0x11, 8);
+linSetSchedule(20, 0x11);
+```  
+
+##capl名##
+linSetFrame  
+
+##转换须知##
+1. CAPL需要分两步实现：先设置帧参数，再配置调度  
+2. CAPL的延迟时间参数在`linSetSchedule`中单独设置  
+3. VBA返回对象，CAPL无返回值  
+4. CAPL的帧ID和长度设置是分开的  
+
+##转换示例##
+CAPL原始代码：  
+```capl
+linSetFrame(0x12, 4);
+linSetSchedule(10, 0x12);
+```  
+
+转换后的VBA代码：  
+```vba
+LINframe = LINFrameItem(0x12, 4, 10)
+```  
+
+关键转换说明：  
+1. CAPL的`linSetFrame`对应VBA的ID和dlc参数  
+2. CAPL的`linSetSchedule`对应VBA的delay参数  
+3. VBA将两步操作合并为一个函数调用

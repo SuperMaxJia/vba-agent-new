@@ -1,0 +1,51 @@
+##功能##
+该函数用于清除指定的Socket连接，释放网络资源。在实际应用中，常用于完成网络通信后关闭连接，避免资源泄漏。
+
+##vba规范##
+函数名：ethCloseSocket
+参数：
+- network: NetworkI类型，表示网段信息
+- socketid: int类型，表示要关闭的连接对应的socketid
+返回值：无
+函数行为：关闭指定socket连接
+
+##capl规范##
+在CAPL中，对应的功能可以使用socketClose函数实现：
+函数定义：socketClose(long socket)
+参数：
+- socket: long类型，表示要关闭的socket句柄
+返回值：int类型，返回0表示成功，-1表示失败
+
+示例1：
+// 关闭socket连接
+long socket = 1;
+int result = socketClose(socket);
+
+示例2：
+// 检查关闭结果
+if(socketClose(mySocket) == 0)
+{
+    write("Socket closed successfully");
+}
+
+##capl名##
+socketClose
+
+##转换须知##
+1. CAPL的socketClose只需要一个socket参数，而VBA需要network和socketid两个参数
+2. CAPL有返回值(int)表示操作结果，而VBA无返回值
+3. 在转换时需要忽略VBA中的network参数
+4. 如果需要检查关闭结果，需要在VBA中添加额外逻辑
+
+##转换示例##
+1. CAPL原始代码：
+long sock = 2;
+int ret = socketClose(sock);
+
+2. 转换后的VBA代码：
+ethCloseSocket network, 2
+
+3. 关键转换说明：
+- 将CAPL的socket句柄(2)直接作为VBA的socketid参数
+- 忽略CAPL的返回值检查
+- 需要添加VBA中network参数的实际值

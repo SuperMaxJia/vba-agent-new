@@ -1,0 +1,70 @@
+##功能##
+该函数用于判断传入的报文数据是否是诊断协议中定义的首帧。在汽车诊断通信中，首帧用于标识多帧传输的开始，通常具有特定的格式或标识符。该功能在解析诊断响应或请求时非常关键，特别是在处理长消息的分帧传输时。
+
+##vba规范##
+函数名：diagIsFirstFrame
+参数：
+- data: List类型，表示待检查的报文数据列表
+返回值：
+- ans: boolean类型，True表示是首帧，False表示不是首帧
+函数行为：检查传入的数据列表是否符合诊断首帧的格式要求
+
+##capl规范##
+在CAPL中，可以使用以下方式实现类似功能：
+1. 使用预定义的诊断相关函数或直接检查首字节
+2. 典型实现方式：
+   - 检查数据长度是否符合要求
+   - 检查首字节是否符合首帧标识（如0x10）
+
+示例1：
+```
+on message CAN1.0x7E0
+{
+  if (this.dlc >= 1 && this.byte(0) == 0x10) {
+    write("This is a first frame");
+  }
+}
+```
+
+示例2：
+```
+boolean isFirstFrame(byte data[])
+{
+  return (sizeof(data) > 0 && data[0] == 0x10);
+}
+```
+
+##capl名##
+isFirstFrame
+
+##转换须知##
+1. CAPL中通常直接处理CAN消息对象或字节数组，而VBA使用List
+2. CAPL有内置的CAN消息处理能力，VBA需要自行实现
+3. 诊断协议的具体实现可能因厂商而异
+4. 在CAPL中可能需要考虑消息ID等额外信息
+
+##转换示例##
+1. CAPL原始代码：
+```
+boolean checkFirstFrame(byte data[])
+{
+  return (sizeof(data) > 0 && data[0] == 0x10);
+}
+```
+
+2. 转换后的VBA代码：
+```
+Function diagIsFirstFrame(data As Variant) As Boolean
+    If UBound(data) >= LBound(data) Then
+        diagIsFirstFrame = (data(LBound(data)) = &H10
+    Else
+        diagIsFirstFrame = False
+    End If
+End Function
+```
+
+3. 关键转换说明：
+- 将CAPL的字节数组转换为VBA的Variant数组
+- 使用UBound/LBound代替sizeof
+- 保持相同的首字节检查逻辑(0x10)
+- 处理空数组的特殊情况

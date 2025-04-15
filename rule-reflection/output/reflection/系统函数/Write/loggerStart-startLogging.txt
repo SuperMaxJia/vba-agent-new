@@ -1,0 +1,48 @@
+##功能##
+该函数用于启动指定的logger模块进行数据录制。可以基于预配置的logger节点名称或自定义配置来开始录制，并将数据保存到指定文件中。主要用于自动化测试中记录总线数据或系统日志。
+
+##vba规范##
+函数定义：startLogging(logger_name, file_name='', loggerConfig=None)
+参数：
+- logger_name: String类型，指定Loggers模块下的节点名称
+- file_name: String类型（可选），指定录制文件名
+- loggerConfig: String类型（可选），指定文件格式后缀（asc/blf/pacp）
+返回值：无
+
+##capl规范##
+函数定义：loggerStart(char loggerName[], char fileName[] = "", char config[] = "")
+参数：
+- loggerName: char数组，指定logger名称
+- fileName: char数组（可选），指定录制文件名
+- config: char数组（可选），指定配置参数
+返回值：void
+
+示例1：
+// 启动预配置logger
+loggerStart("CAN_Logger");
+
+示例2：
+// 启动自定义录制
+loggerStart("", "diagnostic_log", "blf");
+
+##capl名##
+loggerStart
+
+##转换须知##
+1. CAPL使用char数组而非String类型
+2. CAPL参数默认值使用=而非None
+3. CAPL不支持大小写自动转换，需确保格式后缀正确
+4. CAPL中空字符串""表示参数未指定
+
+##转换示例##
+1. CAPL原始代码：
+loggerStart("CAN_Data", "session1", "asc");
+
+2. 转换后的VBA代码：
+startLogging "CAN_Data", "session1", "asc"
+
+3. 关键转换说明：
+- 函数名从loggerStart改为startLogging
+- 参数格式从C风格改为VBA风格
+- 移除参数间的逗号改为空格
+- 字符串引号从双引号改为单引号（VBA支持两种）

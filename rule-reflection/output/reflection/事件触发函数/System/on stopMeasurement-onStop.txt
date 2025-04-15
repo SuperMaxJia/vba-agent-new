@@ -1,0 +1,59 @@
+##功能##
+onStop函数用于在工程停止运行时触发特定操作，常用于资源清理、状态记录或通知输出等场景。例如在测试结束后自动保存日志、释放设备连接或发送测试完成通知。
+
+##vba规范##
+函数定义：使用@onStop装饰器标记的无参无返回值函数
+参数：无
+返回值：无
+特性：支持多处理函数（需不同名称），自动触发
+内置函数：writeInfo()用于控制台输出
+
+##capl规范##
+对应CAPL的on stopMeasurement预定义事件
+参数：无
+返回值：无
+特性：测试停止时自动执行，支持多事件处理（需不同变量名）
+
+示例1：
+on stopMeasurement
+{
+  write("Measurement stopped");  //输出停止信息
+}
+
+示例2：
+on stopMeasurement
+{
+  setSignal(0x123, 0);  //停止时重置信号
+  write("Signals reset");
+}
+
+##capl名##
+on stopMeasurement
+
+##转换须知##
+1. CAPL使用大括号{}而非缩进定义代码块
+2. CAPL输出函数为write()而非writeInfo()
+3. CAPL事件名包含空格（stopMeasurement）
+4. CAPL语句必须以分号结尾
+5. 装饰器语法需转换为on关键字+事件名
+
+##转换示例##
+CAPL原始代码：
+on stopMeasurement 
+{
+  write("Engine test completed");
+  setTimer(0, 500);  //0.5秒后执行回调
+}
+
+转换后的VBA代码：
+@onStop
+def stopEngineTest():
+    writeInfo('Engine test completed')
+    setTimer(0, 500) 
+
+关键转换步骤：
+1. 将"on stopMeasurement"替换为"@onStop def"
+2. 大括号改为冒号和缩进
+3. write()改为writeInfo()
+4. 保持函数核心逻辑不变
+5. 移除语句结束分号

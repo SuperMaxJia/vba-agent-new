@@ -1,0 +1,53 @@
+##功能##
+该函数用于获取TCP服务器的连接状态信息，包括连接序号、IP地址、端口号等，并额外提供socketid以便后续关闭TCP连接。主要用于网络通信监控和管理场景。
+
+##vba规范##
+函数名：ethGetTCPServerLinkStates
+参数：
+- network: NetworkI类型，表示网段信息
+- socketid: int类型，表示连接对应的socket标识符
+返回值：List类型，包含多个Link对象，每个对象具有连接序号、IP、端口和socketid属性
+
+##capl规范##
+在CAPL中，可以使用tcpGetConnectionInfo函数获取TCP连接信息：
+- 参数：
+  - socket: long类型，表示TCP socket句柄
+- 返回值：结构体，包含remoteIpAddress、remotePort等字段
+
+示例1：
+long socket;
+tcpConnectionInfo info;
+socket = tcpOpen(12345);
+info = tcpGetConnectionInfo(socket);
+
+示例2：
+on tcpConnected
+{
+  tcpConnectionInfo connInfo;
+  connInfo = tcpGetConnectionInfo(this.socket);
+  write("Remote IP: %s", connInfo.remoteIpAddress);
+}
+
+##capl名##
+tcpGetConnectionInfo
+
+##转换须知##
+1. CAPL使用结构体返回连接信息，而VBA使用List对象
+2. CAPL需要先通过tcpOpen建立连接获取socket，而VBA直接传入socketid
+3. CAPL的IP地址和端口是分开的字段，VBA可能组合在Link对象中
+4. CAPL没有network参数，网络选择通过总线配置实现
+
+##转换示例##
+CAPL原始代码：
+long socket = 1234;
+tcpConnectionInfo info;
+info = tcpGetConnectionInfo(socket);
+
+转换后的VBA代码：
+Dim links As List
+Set links = ethGetTCPServerLinkStates(network, 1234)
+
+关键转换步骤：
+1. 将CAPL的socket变量转换为VBA的socketid参数
+2. 将CAPL的结构体返回值转换为VBA的List对象
+3. 移除CAPL中的网络配置部分，使用VBA的network参数替代

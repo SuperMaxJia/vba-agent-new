@@ -1,0 +1,58 @@
+##功能##
+该函数用于获取仿真节点中特定报文的数据场内容，适用于CAN和LIN网络。主要用途是在网络仿真和测试中提取报文数据进行分析或验证，常用于自动化测试脚本中获取实时或记录的报文信息。
+
+##vba规范##
+函数定义：getNodeMessageData(DBMessage)
+参数：
+- DBMessage: CANDBCMessage或LINDBCMessage类型，表示CAN或LIN数据库中的报文对象
+返回值：
+- dataList: list类型，包含报文数据场的列表
+
+##capl规范##
+在CAPL中，可以使用message对象的data字段直接访问报文数据场。CAPL中报文数据以字节数组形式存在。
+
+示例1：
+on key 'k' {
+    byte data[8];
+    data = CAN1.ESP.ESP_Status.data;
+    write("ESP_Status data: %x", data);
+}
+
+示例2：
+variables {
+    message CAN1.ESP.ESP_Status msg;
+}
+on message CAN1.ESP.ESP_Status {
+    byte msgData[8];
+    msgData = this.data;
+    write("Received data: %x", msgData);
+}
+
+##capl名##
+data
+
+##转换须知##
+1. CAPL中直接使用message对象的data字段访问数据，而VBA需要调用函数
+2. CAPL返回的是字节数组，VBA返回的是list
+3. CAPL中数据长度固定为8字节(CAN)或可变(LIN)，VBA中长度取决于实际报文定义
+4. 在CAPL中需要预先知道报文的数据长度
+
+##转换示例##
+CAPL原始代码：
+on key 'k' {
+    byte data[8];
+    data = CAN1.ESP.ESP_Status.data;
+    write("Data: %x", data);
+}
+
+转换后的VBA代码：
+@onKey('K')
+def onKeyEvent():
+    dataList = getNodeMessageData(CAN1.ESP.ESP_Status)
+    writeInfo(dataList)
+
+关键转换步骤：
+1. 将CAPL的按键事件转换为VBA的按键事件装饰器
+2. 将直接访问data字段改为调用getNodeMessageData函数
+3. 将CAPL的write函数改为VBA的writeInfo函数
+4. 注意数据类型从字节数组变为list

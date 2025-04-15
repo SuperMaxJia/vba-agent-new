@@ -1,0 +1,53 @@
+##功能##
+disableNodeMsg函数用于禁止发送某个指定的报文。在实际应用中，通常用于测试或调试过程中临时阻止特定报文的发送，以便观察系统行为或避免干扰。
+
+##vba规范##
+函数定义：disableNodeMsg(network, message) 或 disableNodeMsg(network, id)
+参数：
+- network：网络对象，表示当前通信的网络
+- message：CANDBCMessage类型的报文对象
+- id：int或str类型，表示报文ID（标准帧用数字，扩展帧用字符串）
+返回值：int类型，0表示成功，-1表示失败
+
+##capl规范##
+函数定义：disableMsg(messageId)
+参数：
+- messageId：dword类型，表示报文ID
+返回值：无（CAPL中通常通过系统变量或事件处理来确认操作结果）
+
+示例1：
+```capl
+disableMsg(0x123);  // 禁止发送ID为0x123的报文
+```
+
+示例2：
+```capl
+dword msgId = 0x456;
+disableMsg(msgId);  // 通过变量禁止发送报文
+```
+
+##capl名##
+disableMsg
+
+##转换须知##
+1. 参数差异：VBA需要网络对象参数，而CAPL不需要
+2. 返回值差异：VBA返回状态码，CAPL无返回值
+3. 报文ID处理：VBA支持字符串形式的扩展帧ID，CAPL只支持dword类型
+4. 对象处理：VBA使用报文对象，CAPL直接使用ID
+
+##转换示例##
+CAPL原始代码：
+```capl
+disableMsg(0x123);
+```
+
+转换后的VBA代码：
+```vba
+Dim result As Integer
+result = disableNodeMsg(network, "0x123")
+```
+
+关键转换步骤：
+1. 移除网络参数（在VBA中必须保留）
+2. 将dword类型的ID转换为字符串形式（VBA扩展帧要求）
+3. 添加返回值处理（VBA需要检查操作结果）

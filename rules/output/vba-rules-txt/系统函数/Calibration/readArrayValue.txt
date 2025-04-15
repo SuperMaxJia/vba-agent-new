@@ -1,0 +1,46 @@
+1. 函数名
+readArrayValue
+
+2. 函数描述
+读取数组变量值信息
+
+3. 函数体
+readArrayValue(calNode, variable, isMeasurement)
+
+4. 返回值
+名称：ans
+类型：ArrayValueInfo
+描述：
+- ans.columnNumber为数组列(x)方向维数
+- ans.rowNumber为数组行(y)方向维数
+- ans.value为数组值列表
+- ans.info为接口执行执行失败的原因
+
+5. 参数
+| 名称          | 类型          | 描述                                                                 |
+|---------------|---------------|----------------------------------------------------------------------|
+| calNode       | CalNode       | 标定节点对象                                                        |
+| variable      | str，CalVariable | 读取的变量，可以是变量名称或者变量对象                              |
+| isMeasurement | bool          | 是否为测量量，True为测量量，False为标定量                           |
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：读取CAN1网段下calNode1标定节点中名称为"NewArray"的标定量的变量值信息
+
+示例代码：
+ans = readArrayValue(CAN1.Calibrations.calNode1, "NewArray", False)
+#or
+#ans = readArrayValueByIndex(CAN1.Calibrations.calNode1, CAN1.Calibrations.calNode1.characteristics.NewArray, False)
+writeInfo(ans.value)
+
+代码注释：
+- 第一行代码演示了通过变量名读取数组值
+- 注释部分演示了通过变量对象读取数组值的替代方法
+- 最后一行将读取的数组值写入信息输出
+
+8. 其他说明
+- 该函数属于Calibration类别函数
+- 返回值是ArrayValueInfo对象，包含多维数组信息和实际值
+- 可以通过writeInfo等函数输出或处理返回的数组值

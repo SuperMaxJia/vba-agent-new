@@ -1,0 +1,40 @@
+1. 函数名
+MainTest
+
+2. 函数描述
+该注解是测试脚本的主函数启动入口，在函数上面加上该注解后，脚本执行时会首先执行此方法，相当于python脚本的main方法，并且所有测试用例必须在此函数中书写才生效。
+注：每个脚本只能且必须只有一个此注解，否则脚本无法运行。
+
+3. 函数体
+@MainTest
+def MainTestExecute():
+    pass
+
+4. 返回值
+无返回值
+
+5. 参数
+无参数
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：创建一个加@mainTest的函数MainTestExecute，当作脚本的执行入口
+示例代码：
+@MainTest
+def MainTestExecute():
+    testGroupBegin('title', 'description')
+    test01()
+    testGroupEnd()
+
+代码注释：
+- @MainTest注解标识该函数为脚本主入口
+- testGroupBegin开始一个测试组
+- test01()执行测试用例
+- testGroupEnd()结束测试组
+
+8. 其他说明
+- 每个脚本只能且必须包含一个@MainTest注解的函数
+- 所有测试用例必须在该函数中编写才能生效
+- 该函数相当于Python中的main函数

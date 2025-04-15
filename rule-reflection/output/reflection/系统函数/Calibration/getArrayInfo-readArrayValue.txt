@@ -1,0 +1,72 @@
+##功能##
+该函数用于读取标定节点中数组变量的值信息，包括数组的维度（行数和列数）和实际值。适用于需要获取多维数组数据的标定或测量场景，如ECU参数配置、实时数据监控等。
+
+##vba规范##
+函数定义：readArrayValue(calNode, variable, isMeasurement)
+参数：
+- calNode: CalNode类型，标定节点对象
+- variable: str或CalVariable类型，变量名或变量对象
+- isMeasurement: bool类型，True表示测量量，False表示标定量
+返回值：ArrayValueInfo对象，包含：
+- columnNumber: 数组列数
+- rowNumber: 数组行数
+- value: 数组值列表
+- info: 执行失败原因
+
+##capl规范##
+函数定义：getArrayInfo(node, varName, isMeas)
+参数：
+- node: 标定节点引用
+- varName: char[]类型，变量名
+- isMeas: int类型，0表示标定量，1表示测量量
+返回值：结构体包含：
+- cols: 数组列数
+- rows: 数组行数
+- vals: 数组值
+- status: 执行状态码
+
+示例1：
+struct arrayInfo info;
+info = getArrayInfo(CAN1::Calibrations::node1, "EngineRPM", 0);
+write("Columns: %d, Rows: %d", info.cols, info.rows);
+
+示例2：
+on key 'a'
+{
+  struct arrayInfo data;
+  data = getArrayInfo(Diag::Params::coolantTemp, "TempArray", 1);
+  for(i=0; i<data.rows; i++)
+  {
+    for(j=0; j<data.cols; j++)
+    {
+      write("Value[%d][%d]: %f", i, j, data.vals[i][j]);
+    }
+  }
+}
+
+##capl名##
+getArrayInfo
+
+##转换须知##
+1. 参数差异：CAPL使用char[]表示变量名，VBA支持字符串和对象两种形式
+2. 返回值差异：CAPL返回结构体，VBA返回对象
+3. 布尔值处理：CAPL用0/1表示，VBA用True/False
+4. 错误处理：CAPL通过status字段，VBA通过info属性
+5. 数组访问：CAPL直接使用二维数组，VBA可能需要特殊处理
+
+##转换示例##
+CAPL原始代码：
+struct arrayInfo arrData;
+arrData = getArrayInfo(CAN::Cal::engineNode, "InjectionMap", 0);
+write("Map values: %v", arrData.vals);
+
+转换后的VBA代码：
+Dim arrData As ArrayValueInfo
+Set arrData = readArrayValue(CAN.Calibrations.engineNode, "InjectionMap", False)
+Call writeInfo(arrData.value)
+
+关键转换说明：
+1. 将CAPL结构体声明改为VBA对象声明
+2. 参数中的0改为False表示标定量
+3. 输出函数从write改为writeInfo
+4. 值访问从.vals改为.value属性

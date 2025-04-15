@@ -1,0 +1,44 @@
+##功能##
+用于在测试用例中添加备注信息，该信息会显示在测试报告中但不影响测试功能，主要用于记录用户自定义的注释内容。
+
+##vba规范##
+函数名：testcaseComment
+参数：comment (str类型)，描述信息字符串
+返回值：无
+功能：在测试用例中添加备注信息，仅用于报告显示
+
+##capl规范##
+函数名：comment
+参数：msg (char[]类型)，描述信息字符串
+返回值：无
+功能：在测试用例中添加备注信息到测试报告
+
+示例1：
+comment("System initialization complete");
+
+示例2：
+on start
+{
+  comment("Starting main test sequence");
+}
+
+##capl名##
+comment
+
+##转换须知##
+1. 参数类型差异：VBA使用str类型，CAPL使用char[]类型
+2. 函数名差异：VBA为testcaseComment，CAPL为comment
+3. 两者都不需要返回值
+4. 功能完全一致，都是添加非功能性备注
+
+##转换示例##
+1. CAPL原始代码：
+comment("ECU communication established");
+
+2. 转换后的VBA代码：
+testcaseComment("ECU communication established")
+
+3. 关键转换说明：
+- 函数名从comment改为testcaseComment
+- 参数类型从char[]隐式转换为str
+- 保持相同的备注文本内容

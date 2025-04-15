@@ -1,0 +1,45 @@
+1. 函数名  
+chkStart_UndefinedMessageReceived  
+
+2. 函数描述  
+该函数用于启动自动化测试中“未定义报文接收”的检查功能。当总线上出现未在工程中定义的报文时，该检查会触发相关事件并记录测试结果。  
+
+3. 函数体  
+函数属于自动化测试函数分类下的检查控制函数，需在测试脚本中调用以启动对未定义报文的监控。  
+
+4. 返回值  
+无明确返回值，但会通过测试报告接口记录检查结果（如事件计数、触发状态等）。  
+
+5. 参数  
+无显式输入参数，依赖工程配置中定义的报文范围和过滤器设置。  
+
+6. 内置函数  
+无直接关联的内置函数，但可能间接调用以下测试框架函数：  
+- `testReportAddExternalRef`：记录外部引用到测试报告  
+- `testStepFail`：标记测试步骤为失败（当检测到未定义报文时）  
+
+7. 示例  
+示例功能：启动未定义报文检查并处理检测事件  
+示例代码：  
+```vba
+Sub TestCase_UndefinedMsg()  
+    ' 启动未定义报文检查  
+    chkStart_UndefinedMessageReceived  
+    
+    ' 模拟测试运行（实际项目中此处为总线通信或等待逻辑）  
+    threadSleep(5000)  
+    
+    ' 检查事件数量（需配合chkQuery_NumEvents等函数使用）  
+    If chkQuery_NumEvents("UndefinedMessageReceived") > 0 Then  
+        testStepFail("检测到未定义报文")  
+    End If  
+End Sub  
+```  
+代码注释：  
+- `threadSleep` 用于模拟测试运行时间  
+- `chkQuery_NumEvents` 需配合使用以查询触发事件数  
+
+8. 其他相关说明  
+- 需确保工程已正确配置合法报文范围  
+- 检查结果可通过自动化测试模块的报告功能查看  
+- 属于实时检查函数，需在总线活动期间调用

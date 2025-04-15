@@ -1,0 +1,31 @@
+1. 函数名
+diagDOIPUpdateGatewayIp
+
+2. 函数描述
+更新网关IP
+
+3. 函数体
+diagDOIPUpdateGatewayIp(connectHandle, gatewayIp)
+
+4. 返回值
+无明确返回值说明
+
+5. 参数
+| 名称          | 类型   | 描述            |
+|---------------|--------|-----------------|
+| connectHandle | int    | DOIP连接句柄    |
+| gatewayIp     | String | 网关IP地址      |
+
+6. 内置函数
+无相关内置函数信息
+
+7. 示例
+示例功能：更新网关IP地址
+示例代码：
+diagDOIPUpdateGatewayIp(connectHandle, "192.168.1.1")
+代码注释：将当前连接的网关IP更新为192.168.1.1
+
+8. 其他信息
+- 该函数属于Diagnostic类别下的DOIP相关函数
+- 需要先建立DOIP连接获取connectHandle后才能调用此函数
+- 函数调用后立即生效，无需额外操作

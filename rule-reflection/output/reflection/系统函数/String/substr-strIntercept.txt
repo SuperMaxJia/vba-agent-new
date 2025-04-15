@@ -1,0 +1,53 @@
+##功能##
+该函数用于从源字符串中截取指定起始和结束索引之间的子字符串。常用于处理字符串数据，如日志解析、数据提取等场景。
+
+##vba规范##
+函数定义：Function strIntercept(sourceStr As String, start As Integer, end As Integer) As String
+参数：
+- sourceStr：String类型，原始输入字符串
+- start：Integer类型，截取起始索引（从0开始）
+- end：Integer类型，截取结束索引（不包含该位置字符）
+返回值：String类型，返回截取的子字符串
+
+##capl规范##
+函数定义：char[] substr(char sourceStr[], int start, int end)
+参数：
+- sourceStr：字符数组，原始输入字符串
+- start：整数，截取起始索引（从0开始）
+- end：整数，截取结束索引（不包含该位置字符）
+返回值：字符数组，返回截取的子字符串
+
+示例1：
+char result[10];
+strncpy(result, "abcdef", 3);
+// 结果：result包含"abc"
+
+示例2：
+char output[20];
+strncpy(output, &"HelloWorld"[5], 5);
+// 结果：output包含"World"
+
+##capl名##
+substr
+
+##转换须知##
+1. CAPL使用字符数组而非String类型
+2. CAPL的strncpy需要目标缓冲区预先分配
+3. CAPL索引从0开始与VBA一致
+4. CAPL需要显式处理字符串终止符
+5. CAPL没有内置的字符串截取函数，需使用strncpy实现
+
+##转换示例##
+1. CAPL原始代码：
+char result[10];
+strncpy(result, "abcdef", 3);
+
+2. 转换后的VBA代码：
+Dim result As String
+result = strIntercept("abcdef", 0, 3)
+
+3. 关键转换说明：
+- CAPL的strncpy调用转换为VBA的strIntercept
+- CAPL的字符数组声明转换为VBA的String变量
+- 保持相同的索引参数(0,3)
+- 移除CAPL中显式的缓冲区操作

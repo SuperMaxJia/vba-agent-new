@@ -1,0 +1,35 @@
+以下是提取的VBA函数详细信息：
+
+1. 函数名  
+diagDOIPTCPDisConnect  
+
+2. 函数描述  
+断开TCP连接  
+
+3. 函数体  
+diagDOIPTCPDisConnect(connectHandle, Ip)  
+
+4. 返回值  
+无  
+
+5. 参数  
+| 名称           | 类型   | 描述             |  
+|----------------|--------|------------------|  
+| connectHandle  | int    | DOIP连接句柄     |  
+| Ip             | String | ECU的IP地址      |  
+
+6. 内置函数  
+无  
+
+7. 示例  
+功能：断开TCP连接  
+示例代码：  
+```vba
+diagDOIPTCPDisConnect(connectHandle, "192.168.1.1")
+```  
+代码注释：  
+- `connectHandle` 是DOIP连接句柄  
+- `"192.168.1.1"` 是ECU的IP地址  
+
+8. 其他和函数或变量强相关的内容  
+无

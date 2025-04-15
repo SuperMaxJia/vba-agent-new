@@ -1,0 +1,141 @@
+CAPL (CAN Access Programming Language) 是 Vector CANoe 环境中使用的脚本语言，具有丰富的内置函数和结构体。以下是对 CAPL 语法中重要但未被列出的函数和结构体的全面补充：
+
+### 一、核心消息处理函数
+1. **发送函数**：
+   - `output(message)` - 发送CAN消息
+   - `output(message)` - 发送LIN消息
+   - `output(message)` - 发送FlexRay消息
+   - `setMessage(message)` - 修改消息内容
+
+2. **接收处理**：
+   - `on message` - 消息接收事件处理器
+   - `on sysvar` - 系统变量变化处理器
+   - `on signal` - 信号值变化处理器
+
+### 二、定时器相关
+1. **定时器控制**：
+   - `setTimer(timer, delay)`
+   - `cancelTimer(timer)`
+   - `msTimer` - 毫秒级定时器
+   - `sTimer` - 秒级定时器
+
+2. **事件处理器**：
+   - `on timer` - 定时器到期事件
+
+### 三、诊断功能
+1. **基础服务**：
+   - `diagRequest` - 诊断请求对象
+   - `diagSendRequest(request)`
+   - `on diagResponse` - 诊断响应事件
+
+2. **UDS服务**：
+   - `DiagnosticSessionControl()`
+   - `ReadDataByIdentifier()`
+   - `WriteDataByIdentifier()`
+
+### 四、总线通信控制
+1. **总线状态**：
+   - `setBusStatus(bus, status)`
+   - `getBusStatus(bus)`
+
+2. **流量控制**：
+   - `startCanTx()`
+   - `stopCanTx()`
+
+### 五、测试功能
+1. **测试判断**：
+   - `testWaitForMessage()`
+   - `testWaitForSignal()`
+   - `testStepPass()`
+   - `testStepFail()`
+
+2. **测试控制**：
+   - `testCaseBegin()`
+   - `testCaseEnd()`
+
+### 六、信号处理
+1. **信号操作**：
+   - `getSignal(message, signal)`
+   - `setSignal(message, signal, value)`
+   - `@sysvar::` - 系统变量访问
+
+### 七、数学运算
+1. **随机数**：
+   - `random()`
+   - `randomize()`
+
+2. **位操作**：
+   - `bitSet()`
+   - `bitClear()`
+
+### 八、文件操作
+1. **文件IO**：
+   - `fileOpen()`
+   - `fileWrite()`
+   - `fileRead()`
+   - `fileClose()`
+
+### 九、结构体类型
+1. **消息结构体**：
+   ```c
+   struct Message {
+     long id;
+     byte dlc;
+     byte data[8];
+     long flags;
+   }
+   ```
+
+2. **诊断结构体**：
+   ```c
+   struct DiagRequest {
+     byte service;
+     byte data[];
+     dword timeout;
+   }
+   ```
+
+3. **定时器结构体**：
+   ```c
+   struct Timer {
+     qword startTime;
+     dword duration;
+   }
+   ```
+
+### 十、环境交互
+1. **面板控制**：
+   - `setPanelValue()`
+   - `getPanelValue()`
+
+2. **系统命令**：
+   - `sysExecute()`
+   - `sysGetVariable()`
+
+### 十一、错误处理
+1. **错误检测**：
+   - `getLastError()`
+   - `clearError()`
+
+### 十二、多总线支持
+1. **总线特定函数**：
+   - `canGetBusLoad()`
+   - `linScheduleTable()`
+   - `flexraySync()`
+
+### 十三、新版新增功能
+1. **CAPL5特性**：
+   - `async` 异步函数支持
+   - `try/catch` 异常处理
+   - 类对象支持
+
+2. **网络通信**：
+   - `tcpConnect()`
+   - `udpSend()`
+
+以上列出了CAPL语言中绝大多数关键函数和结构体。实际使用时需要注意：
+1. 不同CANoe版本可能支持不同函数集
+2. 部分函数需要特定license支持
+3. 总线类型(CAN/LIN/FlexRay/Ethernet)对应的函数可能不同
+
+建议通过CAPL Browser的自动补全功能或官方文档获取最准确的函数列表。

@@ -1,0 +1,42 @@
+##功能##
+该函数用于获取以太网SOMEIPMessage对象，可以通过报文名称或MessageID以及网段对象或ETHDBCService对象来定位特定的SOMEIP报文。常用于车载以太网通信测试中，用于访问和操作特定的SOMEIP报文。
+
+##vba规范##
+函数定义：getETHSOMEIPMessage(nameOrMessageID, networkOrService)
+参数：
+- nameOrMessageID：可以是整数类型（MessageID）或字符串类型（报文名称）
+- networkOrService：可以是Network对象或ETHDBCService对象
+返回值：ETHSOMEIPMessage对象
+
+##capl规范##
+在CAPL中，可以使用message关键字直接访问SOMEIP报文。对于通过ID或名称获取报文，通常使用以下方式：
+1. 通过ID获取：message <id> <network>
+2. 通过名称获取：message <name> <network>
+
+示例1（通过ID）：
+message 0x123 Ethernet
+
+示例2（通过名称）：
+message "SOMEIP_Message_1" Ethernet
+
+##capl名##
+message
+
+##转换须知##
+1. CAPL中使用message关键字直接访问报文，而VBA需要调用函数
+2. CAPL中网络参数通常是网络名称（如"Ethernet"），而VBA中需要网络对象
+3. CAPL中message关键字可以同时处理ID和名称，而VBA需要统一函数处理
+4. CAPL没有显式的返回值类型声明
+
+##转换示例##
+CAPL原始代码：
+message 0x123 Ethernet;
+
+转换后的VBA代码：
+Dim someipMsg As ETHSOMEIPMessage
+Set someipMsg = getETHSOMEIPMessage(0x123, EthernetNetwork)
+
+关键转换步骤：
+1. 将CAPL的message关键字替换为VBA函数调用
+2. 将网络名称"Ethernet"替换为实际的网络对象
+3. 在VBA中需要显式声明变量并接收返回值

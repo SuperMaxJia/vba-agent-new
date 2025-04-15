@@ -1,0 +1,57 @@
+##功能##
+该函数用于在车载以太网通信中监听SOME/IP协议的数据包，当接收到数据库中定义的特定服务数据包时触发事件。适用于需要实时处理SOME/IP消息的场景，如车载网络诊断、服务调用等。
+
+##vba规范##
+函数定义：onSOMEIPMessage(DB_SOMEIPPacket, network=None, VLAN=['0x88A8:0x0003', '0x8100:0x0002'])
+参数：
+- DB_SOMEIPPacket：ETHDBCCommand类型，必需参数，包含SOME/IP协议定义的服务信息
+- network：NetworkI类型，可选参数，默认为None，指定网段对象
+- VLAN：str或list类型，可选参数，默认值为['0x88A8:0x0003', '0x8100:0x0002']，指定VLAN标签
+返回值：无（事件触发函数）
+
+##capl规范##
+在CAPL中，对应功能可以通过on message事件处理程序实现：
+1. 基本形式：
+```capl
+on message DB_SOMEIPPacket.*
+{
+  write("Received SOME/IP message with ID %x", this.id);
+  write("Timestamp: %f", this.time);
+}
+```
+2. 带VLAN过滤的扩展形式：
+```capl
+on message VLAN(0x88A8, 0x0003).DB_SOMEIPPacket.*
+{
+  write("Received VLAN-tagged SOME/IP message");
+  // 处理逻辑
+}
+```
+
+##capl名##
+on message
+
+##转换须知##
+1. CAPL使用基于消息ID的直接过滤，而VBA使用装饰器语法
+2. VLAN处理在CAPL中通过VLAN()修饰符实现，而非参数传递
+3. CAPL的时间戳通过this.time访问，VBA使用gettimestamp()方法
+4. CAPL需要显式指定消息ID或使用通配符，VBA通过数据库对象隐式定义
+
+##转换示例##
+1. CAPL原始代码：
+```capl
+on message 0x1234::DB_SOMEIPPacket
+{
+  write("Message received at %f", this.time);
+}
+```
+2. 转换后的VBA代码：
+```vba
+@onSOMEIPMessageID(DB_SOMEIPPacket)
+def onEthernetPacketEvent(ETHFrame):
+    ETHFrame.gettimestamp()
+```
+3. 关键转换说明：
+- CAPL的消息ID 0x1234对应VBA中的数据库对象DB_SOMEIPPacket
+- CAPL的this.time对应VBA的gettimestamp()方法
+- CAPL的write函数在VBA中通常转换为日志记录或调试输出

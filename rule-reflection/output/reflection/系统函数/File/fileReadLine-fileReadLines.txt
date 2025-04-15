@@ -1,0 +1,86 @@
+##功能##
+从文件读取所有行并返回字符串列表，用于处理文本文件的逐行读取操作，常见于日志分析、配置文件读取等场景。
+
+##vba规范##
+函数名：fileReadLines
+参数：file (文件对象)
+返回值：List (字符串行列表)
+功能：读取打开的文件对象的所有行
+
+##capl规范##
+CAPL中没有直接对应的多行读取函数，但可以通过以下方式实现：
+1. 使用fileReadLine循环读取直到EOF
+2. 使用fileReadAll一次性读取整个文件再分割
+
+示例1（逐行读取）：
+```
+variables {
+  dword fileHandle;
+  char line[1000];
+  char lines[100][1000];
+  int lineCount;
+}
+
+fileHandle = openFile("demo.txt", 0);
+lineCount = 0;
+while(fileReadLine(fileHandle, line, elcount(line)) > 0) {
+  strncpy(lines[lineCount], line, elcount(lines[0]));
+  lineCount++;
+}
+closeFile(fileHandle);
+```
+
+示例2（整体读取）：
+```
+variables {
+  dword fileHandle;
+  char content[10000];
+  char lines[100][1000];
+  int lineCount;
+}
+
+fileHandle = openFile("demo.txt", 0);
+fileReadAll(fileHandle, content, elcount(content));
+closeFile(fileHandle);
+lineCount = splitString(content, lines, '\n', elcount(lines));
+```
+
+##capl名##
+fileReadLine
+
+##转换须知##
+1. CAPL需要手动处理文件打开/关闭，VBA封装在函数内
+2. CAPL返回单行或整个文件，VBA返回行列表
+3. CAPL需要预分配缓冲区，VBA动态分配内存
+4. CAPL的字符串处理需要显式长度控制
+
+##转换示例##
+CAPL原始代码：
+```
+variables {
+  dword fh;
+  char line[256];
+}
+
+fh = openFile("data.txt", 0);
+while(fileReadLine(fh, line, elcount(line)) > 0) {
+  write(line);
+}
+closeFile(fh);
+```
+
+转换后的VBA代码：
+```
+file = openFile("data.txt", mode="r")
+lines = fileReadLines(file)
+For Each line In lines
+    Debug.Print line
+Next
+closeFile(file)
+```
+
+关键转换步骤：
+1. 将CAPL的while循环转换为VBA的For Each
+2. 用fileReadLines替换手动逐行读取
+3. 移除显式的缓冲区声明
+4. 保持相同的文件打开/关闭逻辑

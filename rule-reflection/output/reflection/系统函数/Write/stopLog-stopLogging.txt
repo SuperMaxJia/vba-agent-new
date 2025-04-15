@@ -1,0 +1,57 @@
+##功能##
+停止指定的logger模块的录制功能。可用于停止工程Loggers模块下配置的logger节点录制，或停止自定义配置的logger录制。在实际应用中常用于控制报文录制的中断，节省存储空间或结束数据采集。
+
+##vba规范##
+函数定义：stopLogging(logger_name, file_name, loggerConfig)
+参数：
+- logger_name: String类型，工程Loggers模块下配置的logger节点名称
+- file_name: String类型，录制文件的名称
+- loggerConfig: String类型，logger的自定义配置
+返回值：无
+说明：当loggerConfig为None时，使用logger_name和file_name参数；当loggerConfig不为None时，忽略前两个参数。
+
+##capl规范##
+函数定义：stopLog()
+参数：无
+返回值：void
+说明：CAPL中停止录制的函数不需要参数，会停止当前所有激活的录制。
+
+示例1：
+```capl
+// 停止所有录制
+stopLog();
+```
+
+示例2：
+```capl
+on key 's'
+{
+    // 按下s键停止录制
+    stopLog();
+}
+```
+
+##capl名##
+stopLog
+
+##转换须知##
+1. 参数差异：CAPL的stopLog()无参数，而VBA需要指定logger名称或配置
+2. 功能差异：CAPL会停止所有录制，VBA可针对特定logger停止
+3. 在CAPL中需要额外逻辑才能实现VBA的选择性停止功能
+4. 无返回值的情况两者一致
+
+##转换示例##
+1. CAPL原始代码：
+```capl
+stopLog();
+```
+
+2. 转换后的VBA代码：
+```vba
+stopLogging "CAN1Logger", "can1_log.blf", None
+```
+
+3. 关键转换说明：
+- CAPL的无参数stopLog()对应VBA中需要明确指定logger名称和文件名
+- 在VBA中必须提供至少logger_name参数才能实现类似功能
+- 转换后需要根据实际logger配置调整参数

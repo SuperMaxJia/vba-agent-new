@@ -1,0 +1,29 @@
+1. 函数名
+strSplit
+
+2. 函数描述
+将字符串sourceStr以字符串code拆分成字符串列表
+
+3. 函数体
+strSplit(sourceStr, code)
+
+4. 返回值
+名称      类型    描述
+splits    List    返回字符串列表
+
+5. 参数
+名称        类型    描述
+sourceStr  String  字符串
+code       char    字符
+new        String  替换的字符串
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：将字符串'ABCdedf'以字符'd'拆分
+示例代码：strSplit('ABCdedf', 'd')
+代码注释：返回结果为[ABC,e,f]
+
+8. 其他
+无其他相关信息

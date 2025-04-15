@@ -1,0 +1,65 @@
+##功能##
+该函数用于检测指定信号或变量值是否发生变化，属于自动化测试函数，常用于总线信号监控或变量监控场景。通过创建检测对象并启动检测，可以绑定回调函数在值变化时触发相应操作。
+
+##vba规范##
+函数名：chkCreate_SignalValueChange  
+描述：创建信号值变化检测对象但不启动检测  
+返回值：int类型，代表创建的对象ID，-1表示创建失败  
+参数：object（VariableEntity/CANDBCSignal/LINDBCSignal类型），表示要监控的信号对象  
+相关函数：  
+- chkControl_Start()：启动检测  
+- testAddCondition()：将检测加入测试报告  
+- testWaitForTimeout()：等待指定时间  
+- testRemoveCondition()：移除检测条件  
+
+##capl规范##
+CAPL中使用on signal或on variable事件处理器来监控值变化：  
+1. 监控CAN信号：  
+```capl
+on signal CAN1::MS::SignalToObserve
+{
+  write("Signal changed to %d", this);
+  testStepPass("Signal value changed detected");
+}
+```  
+2. 监控环境变量：  
+```capl
+on envVar EnvVarToMonitor
+{
+  write("Environment variable changed to %d", @this);
+  testStepPass("Variable change detected");
+}
+```  
+返回值：无直接对应返回值，通过事件回调处理  
+
+##capl名##
+on
+
+##转换须知##
+1. CAPL使用事件驱动模型，而VBA使用显式检测对象  
+2. CAPL没有直接的返回值对应关系  
+3. CAPL的回调处理需要单独实现，VBA通过检测ID管理  
+4. CAPL的监控是持续性的，VBA需要手动控制检测周期  
+
+##转换示例##
+CAPL原始代码：  
+```capl
+on signal CAN1::MS::SignalToObserve
+{
+  testStepPass("Signal changed to %d", this);
+}
+```  
+
+转换后的VBA代码：  
+```vba
+checkId = ChkStart_SignalValueChange(CAN1.MS.SignalToObserve)
+testAddCondition(checkId)
+testWaitForTimeout(1000)
+testRemoveCondition(checkId)
+```  
+
+关键转换说明：  
+1. CAPL的on signal事件转换为VBA的ChkStart_SignalValueChange  
+2. CAPL隐式的回调处理转换为VBA显式的检测ID管理  
+3. 添加了超时控制确保检测周期  
+4. 最终移除检测条件释放资源

@@ -1,0 +1,57 @@
+##功能##
+用于启动报文距离违规检查，监控CAN报文的发送间隔是否符合预期规则。主要应用于总线通信一致性测试场景，确保报文按预定时间间隔发送。
+
+##vba规范##
+函数名：chkStart_MsgDistViolation  
+参数：  
+- msgID：整型/字符串，待监控的报文ID  
+- expectedDist：数值，预期的报文发送间隔（单位：毫秒）  
+- tolerance：数值，允许的时间偏差范围  
+返回值：未明确说明，可能为布尔值或状态码，表示检查是否成功启动  
+
+##capl规范##
+函数名：checkMsgGap  
+参数：  
+- messageId：整型，待监控的报文ID  
+- expectedInterval：数值，预期的报文发送间隔（单位：毫秒）  
+- tolerance：数值，允许的时间偏差范围  
+返回值：整型，返回检查ID用于后续操作  
+
+示例1：  
+```capl
+int checkId;
+checkId = checkMsgGap(0x101, 100, 10);
+```  
+
+示例2：  
+```capl
+on message 0x101
+{
+  checkMsgGap(this.id, 100, 5);
+}
+```  
+
+##capl名##
+checkMsgGap  
+
+##转换须知##
+1. 参数类型和数量的差异：CAPL使用整型messageId，而VBA可能支持字符串类型  
+2. 返回值类型的差异：CAPL返回检查ID，VBA可能返回布尔值或状态码  
+3. 函数行为的差异：CAPL需要显式使用检查ID进行后续操作，VBA可能内置管理  
+4. 特殊情况的处理方法：CAPL需要手动处理检查超时，VBA可能有内置超时机制  
+
+##转换示例##
+CAPL原始代码：  
+```capl
+int checkId = checkMsgGap(0x101, 100, 10);
+```  
+
+转换后的VBA代码：  
+```vba
+chkStart_MsgDistViolation msgID:=0x101, expectedDist:=100, tolerance:=10
+```  
+
+关键转换步骤说明：  
+1. 将CAPL的checkMsgGap函数名改为VBA的chkStart_MsgDistViolation  
+2. 将CAPL的位置参数改为VBA的命名参数格式  
+3. 移除CAPL的返回值处理，因VBA可能不需要显式管理检查ID

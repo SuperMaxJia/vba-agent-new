@@ -1,0 +1,30 @@
+1. 函数名
+testWaitForSignalMatch
+
+2. 函数描述
+用于等待待检测信号、系统变量、标定和测量量是否等于输入的值。
+
+3. 函数体
+testWaitForSignalMatch(object, value, timeout)
+
+4. 返回值
+名称  类型   描述
+res   int    0代表超时，1代表事件发生，-1发生错误
+
+5. 参数
+名称     类型   描述
+object  object 信号或者变量对象,系统变量必须是数值类型
+value   int     定义的值，数值类型
+timeout int     超时的时间
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：等待待检测信号、系统变量、标定和测量量是否等于输入的值
+示例代码：
+testWaitForSignalMatch(CAN1.Message.signal, 3.0, 5000)
+代码注释：程序将阻塞5000ms，出现了信号值为3的信号将停止阻塞，继续运行。
+
+8. 其他和函数或变量强相关的内容
+无

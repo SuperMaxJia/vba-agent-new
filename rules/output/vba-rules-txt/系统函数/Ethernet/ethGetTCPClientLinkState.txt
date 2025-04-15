@@ -1,0 +1,39 @@
+1. 函数名  
+ethGetTCPClientLinkState  
+
+2. 函数描述  
+客户端获取TCP连接状态  
+
+3. 函数体  
+```vba  
+state = ethGetTCPClientLinkState(network, socketid)  
+```  
+
+4. 返回值  
+| 名称  | 类型  | 描述                                   |  
+|-------|-------|----------------------------------------|  
+| state | int   | 0代表未连接，1代表已连接，-1表示报错（可能socketid与network不匹配） |  
+
+5. 参数  
+| 名称      | 类型      | 描述                   |  
+|-----------|-----------|------------------------|  
+| network   | NetworkI  | 网段信息               |  
+| socketid  | int       | 连接对应的socketid     |  
+
+6. 内置函数  
+无  
+
+7. 示例  
+**功能**：客户端获取TCP连接状态  
+**代码**：  
+```vba  
+state = ethGetTCPClientLinkState(network, socketid)  
+```  
+**注释**：  
+- `network`：当前TCP连接所属的网段对象  
+- `socketid`：需查询的TCP连接标识符  
+- `state`返回值为0（未连接）、1（已连接）或-1（错误）  
+
+8. 其他说明  
+- 错误场景：当`network`与`socketid`不匹配时返回-1  
+- 适用场景：监控TCP客户端连接状态时调用

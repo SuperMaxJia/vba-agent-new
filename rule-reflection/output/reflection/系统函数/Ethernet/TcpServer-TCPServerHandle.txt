@@ -1,0 +1,85 @@
+##功能##
+创建一个TCP服务器句柄，用于处理TCP服务器接收的消息并实现回调逻辑，通常用于网络通信中服务端的消息接收和响应。
+
+##vba规范##
+函数名：TCPServerHandle  
+函数描述：通过继承类实现回调逻辑，处理TCP服务器接收的消息并回复客户端。  
+返回值类型：TCPServerHandle对象  
+参数：无直接参数，需通过继承类实现回调逻辑。  
+依赖函数：createTCPServerSocket（用于创建TCP服务器并绑定回调句柄）。
+
+##capl规范##
+函数名：TcpServer  
+函数描述：创建一个TCP服务器并设置回调函数，用于处理接收到的消息。  
+返回值类型：无直接返回值，通过回调函数处理消息。  
+参数：  
+- ipAddress：字符串类型，服务器IP地址  
+- port：整数类型，服务器端口  
+- callback：函数指针，用于处理接收到的消息  
+
+示例1：  
+```capl
+void onTcpMessage(byte data[]) {
+  write("Received: %s", data);
+  tcpSend("yes");
+}
+
+on start {
+  TcpServer("192.168.7.5", 8989, onTcpMessage);
+}
+```
+
+示例2：  
+```capl
+void myHandler(byte msg[]) {
+  if (msg[0] == 0x01) {
+    tcpSend("ACK");
+  }
+}
+
+on key 'a' {
+  TcpServer("localhost", 8080, myHandler);
+}
+```
+
+##capl名##
+TcpServer
+
+##转换须知##
+1. CAPL使用回调函数直接处理消息，而VBA需要通过继承类实现。  
+2. CAPL的TcpServer函数没有返回值，VBA返回TCPServerHandle对象。  
+3. CAPL中消息处理是同步的，VBA可能是异步的。  
+4. CAPL使用字节数组处理数据，VBA可能使用字符串或自定义对象。
+
+##转换示例##
+CAPL原始代码：  
+```capl
+void onMessage(byte data[]) {
+  tcpSend("yes");
+}
+
+on start {
+  TcpServer("192.168.7.5", 8989, onMessage);
+}
+```
+
+转换后的VBA代码：  
+```vba
+Class MyTCPServerHandle
+    Public Sub Handle()
+        Dim receivedData As String
+        receivedData = Me.request.recv(1024)
+        Me.request.send "yes"
+    End Sub
+End Class
+
+Sub Main()
+    createTCPServerSocket host:="192.168.7.5", port:=8989, handle:=MyTCPServerHandle
+End Sub
+```
+
+关键转换步骤说明：  
+1. 将CAPL回调函数转换为VBA类方法  
+2. CAPL的TcpServer调用转换为createTCPServerSocket  
+3. CAPL的tcpSend转换为request.send  
+4. 消息处理逻辑保持相同（接收后回复"yes"）

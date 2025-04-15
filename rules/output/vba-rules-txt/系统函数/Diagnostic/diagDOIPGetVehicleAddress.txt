@@ -1,0 +1,39 @@
+1. 函数名  
+diagDOIPGetVehicleAddress  
+
+2. 函数描述  
+返回当前连接保存的以太网节点信息，每次调用不会重新进行识别，格式为二维数组的形式。节点数表示为列的数量，每行元素分别为逻辑地址、IP地址、VID车辆识别号、GID通用识别号、EID实体识别号。若当前链接上次未保存以太网信息则返回空数组。  
+
+3. 函数体  
+diagDOIPGetVehicleAddress(connectHandle)  
+
+4. 返回值  
+名称：array  
+类型：[]  
+描述：返回当前连接保存的以太网节点信息，格式为二维数组。每行包含逻辑地址、IP地址、VID车辆识别号、GID通用识别号、EID实体识别号。若无保存信息则返回空数组。  
+
+5. 参数  
+| 名称          | 类型 | 描述            |  
+|---------------|------|-----------------|  
+| connectHandle | int  | DOIP连接句柄    |  
+
+6. 内置函数  
+无  
+
+7. 示例  
+功能：返回当前连接上次保存的以太网节点信息。  
+示例代码：  
+```vba  
+diagDOIPGetVehicleAddress(connectHandle)  
+[  
+    [node1.LogicalAddr, node1.IP, node1.VID, node1.GID, node1.EID],  
+    [node2.LogicalAddr, node2.IP, node2.VID, node2.GID, node2.EID],  
+    [node3.LogicalAddr, node3.IP, node3.VID, node3.GID, node3.EID]  
+]  
+```  
+代码注释：  
+- 返回一个二维数组，每行代表一个节点的信息。  
+- 若无保存信息，返回空数组。  
+
+8. 其他相关内容  
+无

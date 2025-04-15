@@ -1,0 +1,55 @@
+##功能##
+该函数用于在接收到指定LIN报文时触发事件处理，支持多种报文ID匹配方式（单个ID、ID范围、ID列表、报文对象或所有报文），并可指定网段。常用于LIN总线通信中的报文监控和处理。
+
+##vba规范##
+函数定义：@onLINMessage装饰器定义事件触发条件，def定义事件处理函数
+参数：支持1-2个参数，第一个参数可以是int/str/list/报文对象，第二个可选参数是NetWork对象
+返回值：无
+事件参数：linMsg对象包含id,dlc,datas等属性
+
+##capl规范##
+在CAPL中使用on linFrame事件处理LIN报文：
+on linFrame [ID|*] [NetWork]
+{
+    // 处理代码
+}
+
+示例1：处理ID为0x10的LIN报文
+on linFrame 0x10
+{
+    write("收到ID为0x10的报文");
+}
+
+示例2：处理所有LIN报文
+on linFrame *
+{
+    write("收到LIN报文，ID: %x",this.id);
+}
+
+##capl名##
+on linFrame
+
+##转换须知##
+1. CAPL使用on linFrame而非装饰器语法
+2. CAPL中this关键字代替linMsg参数
+3. CAPL直接访问报文属性(如this.id)而非get方法
+4. CAPL不支持ID范围字符串和列表的直接表示
+5. CAPL中网段参数是可选的
+
+##转换示例##
+CAPL原始代码：
+on linFrame 0x11
+{
+    write("收到报文数据: %x",this.byte(0));
+}
+
+转换后的VBA代码：
+@onLINMessage(0x11)
+def onLINMessageEvent(linMsg):
+    writeInfo(linMsg.getData())
+
+关键转换步骤：
+1. 将on linFrame转换为@onLINMessage装饰器
+2. 将this.byte(0)转换为linMsg.getData()
+3. 保持相同的ID过滤条件(0x11)
+4. 输出函数从write改为writeInfo

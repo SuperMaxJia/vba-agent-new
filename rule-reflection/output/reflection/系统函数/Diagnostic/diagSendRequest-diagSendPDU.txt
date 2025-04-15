@@ -1,0 +1,81 @@
+##功能##
+该函数用于向指定的通信通道发送诊断协议数据单元(PDU)，并接收响应PDU。主要用于车辆诊断系统中与ECU进行UDS(统一诊断服务)通信，包括读取故障码、写入配置等诊断操作。
+
+##vba规范##
+函数定义：diagSendPDU(udsConfig, pdu, network)
+参数：
+- udsConfig: UDSConfig类对象，包含诊断通信配置参数
+- pdu: 字节数组，表示要发送的诊断数据
+- network: 网络通道对象(如CAN1)
+返回值：
+- 成功时返回响应PDU的List
+- 失败时返回整数错误码：
+  -1: 诊断通道激活失败
+  1: 服务执行失败
+  2: 服务发送失败
+  3: 服务响应超时
+  4: 响应PDU解析失败
+
+##capl规范##
+在CAPL中对应功能主要通过Diagnostic对象实现：
+1. 使用diagSetParameter设置诊断参数
+2. 使用diagSendRequest发送请求
+3. 使用diagGetResponse获取响应
+
+示例1：
+// 设置诊断参数
+diagSetParameter("ReqId", 0x700);
+diagSetParameter("RespId", 0x600);
+// 发送诊断请求
+byte request[] = {0x28, 0x00, 0x00};
+diagSendRequest(request);
+// 获取响应
+byte response[64];
+long respLength = diagGetResponse(response);
+
+示例2：
+// 完整诊断流程
+on key 'd' {
+  diagSetParameter("ReqId", 0x7E0);
+  diagSetParameter("RespId", 0x7E8);
+  diagSetParameter("P2Timeout", 150);
+  byte req[] = {0x22, 0xF1, 0x90};
+  if(diagSendRequest(req) == 0) {
+    byte resp[64];
+    long len = diagGetResponse(resp);
+    write("Response received with length %d", len);
+  } else {
+    write("Request failed");
+  }
+}
+
+##capl名##
+diagSendRequest
+
+##转换须知##
+1. CAPL需要分步设置诊断参数和发送请求，而VBA使用配置对象一次性设置
+2. CAPL返回值是简单的成功/失败标志，而VBA返回完整响应或详细错误码
+3. CAPL需要单独调用获取响应，VBA自动返回响应
+4. CAPL错误处理需要通过系统变量或返回值判断，VBA有明确错误码
+5. CAPL中网络通道在测试模块配置中设置，VBA作为参数传入
+
+##转换示例##
+1. CAPL原始代码：
+diagSetParameter("ReqId", 0x700);
+diagSetParameter("RespId", 0x600);
+byte request[] = {0x10, 0x02};
+diagSendRequest(request);
+byte response[64];
+long respLength = diagGetResponse(response);
+
+2. 转换后的VBA代码：
+udsConfig = UDSConfig()
+udsConfig.setReqId(0x700)
+udsConfig.setRespId(0x600)
+response = diagSendPDU(udsConfig, [0x10, 0x02], CAN1)
+
+3. 关键转换说明：
+- CAPL的分步参数设置转换为VBA的UDSConfig对象配置
+- CAPL的diagSendRequest和diagGetResponse合并为VBA的diagSendPDU
+- CAPL的字节数组响应转换为VBA的List类型返回
+- 网络通道从CAPL的全局配置变为VBA的参数传入

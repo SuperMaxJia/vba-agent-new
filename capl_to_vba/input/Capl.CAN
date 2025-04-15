@@ -1,0 +1,39 @@
+variables
+{
+  //定义一个ID为0x123 名称为Test0x123Msg的CAN报文帧变量
+  message 0x123 Test0x123Msg;//由于没有DBC，只能使用以ID形式声明CAN报文
+  msTimer TaskTimer1;//定义一个毫秒级别的定时器
+}
+ 
+on start
+{
+  Test0x123Msg.dlc = 7;//使用报文变量名称+.dlc = x;的方式来动态设置dlc
+  Test0x123Msg.byte(0) = 3;//为Test0x123Msg这帧CAN报文的第0个字节（即我们口语中的第一个，计算机语言是从0开始）赋值为3
+  Test0x123Msg.byte(1) = 6;//第1个字节赋值为6
+  Test0x123Msg.byte(2) = 9;//第2个字节赋值为9
+  output(Test0x123Msg);
+}
+
+
+on key'A'
+{
+  setTimer(TaskTimer1,500);//开启定时器TaskTimer1，时间为500ms。
+}
+
+on timer TaskTimer1
+{
+  output(Test0x123Msg);
+}
+
+on message 0x123
+{
+ 
+  write("this.id = %x",this.id);//获取报文ID
+  write("this.name = %s",this.name);//获取报文名字
+  write("this.can = %d",this.can);//获取当前报文在哪路can上
+  write("this.dir = %d",this.dir);//获取当前报文是TX还是RX
+  write("this.dlc = %d",this.dlc);//获取当前报文的报文长度
+  write("this.dlc = %x",this.Byte(0));//获取当前报文的第一个字节
+  write("this.dlc = %x",this.QWord(0));//获取当前报文的第一个QWord（8个字节）
+}
+

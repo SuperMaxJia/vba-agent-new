@@ -1,0 +1,51 @@
+##功能##
+创建TCP服务器并启动监听，用于在指定网络和端口上接收TCP连接请求。常用于车载网络测试中建立TCP通信服务端。
+
+##vba规范##
+函数定义：socketid = ethCreateTCPServer(network, TCPIPStack, sourPort)
+参数：
+- network: NetworkI类型，表示网段信息
+- TCPIPStack: TCPIPStack类型，表示本机TCP配置信息
+- sourPort: int类型，表示本机端口号
+返回值：int类型，成功返回socket句柄，失败返回错误码（-1表示接口调用错误）
+
+##capl规范##
+函数定义：long tcpCreateServer(dword networkId, dword localPort)
+参数：
+- networkId: dword类型，表示网络标识符
+- localPort: dword类型，表示本地监听端口
+返回值：long类型，成功返回socket句柄，失败返回-1
+示例1：
+long socketHandle;
+socketHandle = tcpCreateServer(1, 8080); // 在网络1上创建8080端口的TCP服务器
+
+示例2：
+on key 't'
+{
+  long sock = tcpCreateServer(Eth1, 502);
+  write("Server created with handle: %d", sock);
+}
+
+##capl名##
+tcpCreateServer
+
+##转换须知##
+1. CAPL使用networkId代替VBA的network+TCPIPStack组合参数
+2. CAPL端口参数为dword类型而非int
+3. CAPL返回值类型为long而非int
+4. CAPL错误处理仅返回-1，不提供详细错误码
+5. 网络标识在CAPL中通常使用预定义常量（如Eth1）
+
+##转换示例##
+1. CAPL原始代码：
+long serverSocket;
+serverSocket = tcpCreateServer(Eth2, 8080);
+
+2. 转换后VBA代码：
+Dim socketid As Integer
+socketid = ethCreateTCPServer(network, TCPIPStack, 8080)
+
+3. 关键转换说明：
+- 将CAPL的Eth2常量转换为VBA的network+TCPIPStack组合参数
+- 保持相同端口号8080
+- 注意返回值类型从long变为int

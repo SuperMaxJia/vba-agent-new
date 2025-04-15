@@ -1,0 +1,44 @@
+##功能##
+该函数用于获取以太网SOMEIPMessage对象，可以通过命令名称或HeaderId以及网段对象或ETHDBCService服务来定位特定的SOMEIP消息。常用于汽车电子系统中以太网通信的SOME/IP协议栈开发。
+
+##vba规范##
+函数定义：getETHPDUMessage(nameOrMessageID, networkOrService)
+参数：
+- nameOrMessageID：可以是整数或字符串类型，表示命令名称或HeaderId
+- networkOrService：可以是NetworkI或ETHDBCService类型，表示网段对象或ETHDBC服务
+返回值：SOMEIPMessage对象
+
+##capl规范##
+函数定义：ethGetPDU(nameOrId, network)
+参数：
+- nameOrId：可以是整数或字符串类型
+- network：可以是网络名称字符串或网络对象
+返回值：以太网PDU对象
+
+示例1：
+message = ethGetPDU(0x1234, "CANoeSimulationNetwork");
+
+示例2：
+service = getService("DiagnosticService");
+pdu = ethGetPDU("EngineRPM", service);
+
+##capl名##
+ethGetPDU
+
+##转换须知##
+1. CAPL使用字符串或整数直接表示网络，而VBA需要特定对象类型
+2. CAPL返回的是PDU对象，VBA返回的是SOMEIPMessage对象
+3. CAPL函数名更简洁，VBA函数名更明确
+4. 在CAPL中网络参数可以是字符串，而VBA中必须是对象
+
+##转换示例##
+CAPL原始代码：
+pdu = ethGetPDU("EngineData", "Ethernet1");
+
+转换后的VBA代码：
+Set someipMsg = getETHPDUMessage("EngineData", getNetwork("Ethernet1"))
+
+关键转换步骤：
+1. 将CAPL的ethGetPDU改为VBA的getETHPDUMessage
+2. 将网络名称字符串转换为getNetwork函数调用
+3. 返回值从PDU对象变为SOMEIPMessage对象

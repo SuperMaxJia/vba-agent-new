@@ -1,0 +1,53 @@
+##功能##
+该函数用于获取当前DOIP连接保存的以太网节点信息，包括逻辑地址、IP地址、VID车辆识别号、GID通用识别号、EID实体识别号。适用于诊断测试中需要获取已连接车辆网络节点信息的场景。
+
+##vba规范##
+函数名：diagDOIPGetVehicleAddress  
+参数：connectHandle（int类型，表示DOIP连接句柄）  
+返回值：二维数组，每行包含[逻辑地址, IP地址, VID, GID, EID]，若无信息则返回空数组  
+功能：返回已保存的以太网节点信息，不进行重新识别  
+
+##capl规范##
+函数名：getVehicleInfo  
+参数：long handle（DOIP连接句柄）  
+返回值：二维数组，格式为[nodeCount][5]，包含逻辑地址、IP地址、VID、GID、EID  
+示例1：  
+```capl
+long handle = 1;
+dword info[][5];
+getVehicleInfo(handle, info);
+```  
+示例2：  
+```capl
+on key 'v' {
+  dword vehicleData[][5];
+  if(getVehicleInfo(diagHandle, vehicleData) > 0) {
+    write("Found %d nodes", elcount(vehicleData));
+  }
+}
+```
+
+##capl名##
+getVehicleInfo
+
+##转换须知##
+1. CAPL使用二维数组直接作为输出参数，VBA返回数组
+2. CAPL需要预先声明数组大小，VBA动态返回
+3. CAPL中空结果表现为数组元素为0，VBA返回空数组
+4. 在CAPL中需要检查返回值是否大于0来判断是否有数据
+
+##转换示例##
+CAPL原始代码：  
+```capl
+dword nodes[10][5];
+int count = getVehicleInfo(diagHandle, nodes);
+```  
+转换后的VBA代码：  
+```vba
+Dim nodes As Variant
+nodes = diagDOIPGetVehicleAddress(diagHandle)
+```  
+关键转换说明：  
+1. 将CAPL的预定义数组改为VBA的动态返回数组
+2. 移除显式的计数检查，改为直接判断数组是否为空
+3. 保持相同的参数传递方式（连接句柄）

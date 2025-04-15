@@ -1,0 +1,39 @@
+1. 函数名
+testWaitForStringInput
+
+2. 函数描述
+用于创建一个对话框等待测试人员输入字符串，并将输入的信息自动输出到测试报告中。
+
+3. 函数体
+testWaitForStringInput(title, content, timeout, default = '')
+
+4. 返回值
+名称: res
+类型: int
+描述: 0代表超时，1代表OK，2发生关闭，< 0 代表非测试序列中调用,第二个参数是输入的文本内容
+
+5. 参数
+名称      类型   描述
+title     str    对话框的标题
+content   str    对话框上的文本信息
+timeout   int    超时的时间，毫秒
+default   str    默认显示的字符串
+
+6. 内置函数
+无
+
+7. 示例
+示例功能: 创建一个对话框等待测试人员输入字符串，并将输入的信息自动输出到测试报告中。
+
+示例代码:
+result = testWaitForStringInput('title', "Please enter your name", 5000)
+if (1 == result[0]):
+    answer = result[1]
+    WriteInfo("name = %s", answer);
+
+代码注释:
+- 调用testWaitForStringInput函数，设置对话框标题为'title'，提示信息为"Please enter your name"，超时时间为5000毫秒。
+- 检查返回结果，如果返回值为1（OK），则获取输入的字符串并输出到测试报告中。
+
+8. 其他和函数或变量强相关的内容
+无

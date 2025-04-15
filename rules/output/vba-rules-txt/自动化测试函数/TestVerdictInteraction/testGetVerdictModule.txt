@@ -1,0 +1,43 @@
+1. 函数名
+testGetVerdictModule
+
+2. 函数描述
+用于返回测试模块的当前判定结果，即当前测试模块的状态信息。测试模块只有两种状态：0（fail）和1（pass）。
+
+3. 函数体
+res = testGetVerdictModule()
+
+4. 返回值
+名称 | 类型 | 描述
+---- | ---- | ----
+res  | int  | 0表示failed；1表示pass
+
+5. 参数
+无参数。
+
+6. 内置函数
+无内置函数说明。
+
+7. 示例
+示例功能：根据当前模块的状态结果，来决定下一步执行的操作。
+
+示例代码：
+```vba
+@MainTest
+def MainTestExecute()
+    MyTestCase();
+    if (TestGetVerdictModule() == 1)：
+        WriteInfo("State of Test Module: failed.");
+    else：
+        WriteInfo("State of Test Module: passed.");
+@testcase('TC1', 'caseTitle'， 'description')
+```
+
+代码注释：
+- `MainTestExecute` 是主测试函数。
+- `MyTestCase()` 是自定义的测试用例函数。
+- 使用 `TestGetVerdictModule()` 获取测试模块的状态。
+- 根据返回值输出不同的状态信息。
+
+8. 其他和函数或变量强相关的内容
+无其他相关内容。

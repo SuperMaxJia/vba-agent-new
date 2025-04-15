@@ -1,0 +1,56 @@
+1. 函数名
+DOIPConfig
+
+2. 函数描述
+创建一个自定义的DOIP诊断配置对象，然后通过修改其对象的属性值来设置相应的参数。
+
+3. 函数体
+DOIPConfig()
+
+4. 返回值
+名称       类型        描述
+doipConfig DOIPConfig 返回一个DOIP诊断配置对象，该对象包含以下属性，可分别给下面的属性进行赋值
+
+5. 参数
+名称              类型    描述
+destAddr          int     获取目的地址
+funcAddr          int     获取功能地址
+p6_timeout        int     P6超时时间
+p6_extend_timeout int     P6*时间
+s3_time           int     S3时间
+mode              int     寻址模式
+res_flag          boolean 禁止肯定相应标识
+
+6. 内置函数
+函数名称                    描述
+getDestAddr()              获取目的地址，整数类型
+getFuncAddr()              获取功能地址，整数类型
+getP6Timeout()             获取P6超时时间，整数类型
+getP6ExtendTimeout()       获取P6*时间，整数类型
+getS3Timeout()             获取S3时间，整数类型
+getMode()                  获取寻址模式，整数类型
+getResFlag()               获取禁止肯定相应标识，True 或 False
+setDestAddr(destAddr)      设置目标地址，整数类型
+setFuncAddr(funcAddr)      设置功能地址，整数类型
+setP6Timeout(p6_timeout)   设置P6超时时间，整数类型
+setP6ExtendTimeout(p6_extend_timeout) 设置P6*时间，整数类型
+setS3Timeout(s3_time)      获取S3时间，整数类型
+setMode(mode)              设置寻址模式，整数类型，0代表物理寻址，1代表功能寻址
+setResFlag(res_flag)       设置是否禁止肯定响应，True 或 False
+
+7. 示例
+示例功能：创建一套自定义的DOIP诊断配置对象，并基于此配置参数发送诊断PDU
+
+示例代码：
+doipConfig = DOIPConfig()
+doipConfig.setDestAddr(0x700)         #设置目标地址0-0xFFFF，默认两字节
+doipConfig.setFuncAddr(0x7DF)         #设置功能地址0-0xFFFF，默认两字节
+doipConfig.setP6Timeout(100)          #设置P6超时时间，0-1000000
+doipConfig.setP6ExtendTimeout(100)    #设置P6*，0-1000000
+doipConfig.setS3Timeout(4000)         #设置S3客户端时间，0-10000
+doipConfig.setMode(0)                 #0代表物理寻址，1代表功能寻址
+doipConfig.setResFlag(False)          #是否禁止肯定响应
+diagDOIPSendPDU(doipConfig, connectHandle, [0x3E, 0x80])
+
+8. 其他
+无其他与函数或变量强相关的内容。

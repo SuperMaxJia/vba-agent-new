@@ -1,0 +1,61 @@
+##功能##
+该函数用于获取刷写文件中包含的数据段数量，主要用于诊断和刷写过程中对文件内容的分析，确保正确解析和处理刷写文件。
+
+##vba规范##
+函数名：diagGetFlashFileSegmentCount
+参数：handle（文件句柄，类型为file）
+返回值：num（整型，表示数据段数量）
+描述：需要先使用diagLoadFlashFile加载文件获取句柄，属于诊断功能模块。
+
+##capl规范##
+函数名：getSegmentCount
+参数：fileHandle（长整型，文件句柄）
+返回值：segmentCount（整型，数据段数量）
+示例1：
+```
+fileHandle = loadFlashFile("C:\\flash.s19");
+count = getSegmentCount(fileHandle);
+write("Segment count: %d", count);
+```
+示例2：
+```
+on key 's'
+{
+  handle = loadFlashFile("D:\\data\\firmware.hex");
+  segments = getSegmentCount(handle);
+  if(segments > 0) {
+    write("Valid flash file with %d segments", segments);
+  }
+}
+```
+
+##capl名##
+getSegmentCount
+
+##转换须知##
+1. CAPL使用长整型文件句柄，VBA使用file类型
+2. CAPL函数名更简洁，VBA有diag前缀
+3. 都需要先加载文件获取句柄
+4. 返回值都是整型，表示段数量
+5. CAPL需要显式处理文件加载错误情况
+
+##转换示例##
+CAPL原始代码：
+```
+handle = loadFlashFile("C:\\firmware.bin");
+numSegments = getSegmentCount(handle);
+```
+
+转换后的VBA代码：
+```
+Dim handle As file
+Dim numSegments As Integer
+handle = diagLoadFlashFile("C:\firmware.bin")
+numSegments = diagGetFlashFileSegmentCount(handle)
+```
+
+关键转换步骤：
+1. 将loadFlashFile改为diagLoadFlashFile
+2. 将getSegmentCount改为diagGetFlashFileSegmentCount
+3. 添加VBA变量声明
+4. 保持参数和返回值逻辑一致

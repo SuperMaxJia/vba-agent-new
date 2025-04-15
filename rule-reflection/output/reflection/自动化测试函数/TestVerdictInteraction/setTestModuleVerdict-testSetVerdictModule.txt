@@ -1,0 +1,78 @@
+##功能##
+用于设定测试模块的状态信息，测试模块只有两种状态：0（fail）和1（pass）。通常用于根据上一个测试用例的结果来设置当前模块的状态，常用于自动化测试流程中。
+
+##vba规范##
+函数名：testSetVerdictModule  
+参数：  
+- verdict（int）：0表示failed，1表示pass  
+返回值：无明确返回值说明（可能返回操作结果）  
+内置函数：无直接关联的内置函数说明  
+其他说明：属于TestVerdictInteraction类别，需要与testGetVerdictLastTestCase配合使用，状态值严格限定为0或1。
+
+##capl规范##
+函数名：setTestModuleVerdict  
+参数：  
+- verdict（int）：0表示failed，1表示pass  
+返回值：无  
+内置函数：无  
+使用示例1：  
+```capl
+on start
+{
+    if (getLastTestCaseVerdict() == 1)
+    {
+        setTestModuleVerdict(1);
+    }
+    else
+    {
+        setTestModuleVerdict(0);
+    }
+}
+```
+使用示例2：  
+```capl
+on key 'a'
+{
+    setTestModuleVerdict(1);
+    write("Module set to PASS");
+}
+```
+
+##capl名##
+setTestModuleVerdict
+
+##转换须知##
+1. 参数类型和数量的差异：CAPL和VBA的参数类型和数量一致，均为一个int类型参数。  
+2. 返回值类型的差异：CAPL中无返回值，VBA中可能返回操作结果。  
+3. 函数行为的差异：CAPL和VBA的函数行为一致，均为设置模块状态。  
+4. 特殊情况的处理方法：在CAPL中，如果参数不是0或1，可能需要额外处理；VBA中未明确说明。
+
+##转换示例##
+CAPL原始代码：  
+```capl
+on start
+{
+    if (getLastTestCaseVerdict() == 1)
+    {
+        setTestModuleVerdict(1);
+    }
+    else
+    {
+        setTestModuleVerdict(0);
+    }
+}
+```
+转换后的VBA代码：  
+```vba
+@MainTest
+def MainTestExecute():
+    MyTestCase()
+    if (testGetVerdictLastTestCase() == 1):
+        testSetVerdictModule(1)
+    else:
+        testSetVerdictModule(0)
+```
+关键转换步骤的说明：  
+1. 将CAPL的`on start`事件转换为VBA的`@MainTest`和`def MainTestExecute()`。  
+2. 将CAPL的`getLastTestCaseVerdict()`转换为VBA的`testGetVerdictLastTestCase()`。  
+3. 将CAPL的`setTestModuleVerdict()`转换为VBA的`testSetVerdictModule()`。

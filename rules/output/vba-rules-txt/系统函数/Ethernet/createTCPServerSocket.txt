@@ -1,0 +1,39 @@
+1. 函数名
+createTCPServerSocket
+
+2. 函数描述
+创建可以回调的TCP服务端
+
+3. 函数体
+createTCPServerSocket(host='127.0.0.0', port=8899, handle=None)
+
+4. 返回值
+无
+
+5. 参数
+名称    类型    描述
+ip      String  本机ip地址
+port    int     本机端口
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：创建可以回调的TCP服务端，并将TCP服务器句柄传入，等待服务器收到的消息
+
+示例代码：
+class TCPServerHandleTest(TCPServerHandle):
+    def handle(self):
+        self.request.recv(1024)
+        self.request.send('yes'.encode('utf-8'))
+
+createTCPServerSocket(host='192.168.7.5', port=8989, handle=TCPServerHandleTest)
+
+代码注释：
+- 定义了一个TCPServerHandleTest类继承自TCPServerHandle
+- 实现handle方法用于处理接收到的TCP消息
+- 调用createTCPServerSocket函数创建TCP服务器，指定IP、端口和处理类
+
+8. 其他
+- 该函数属于Ethernet类别函数
+- 需要配合TCPServerHandle类使用

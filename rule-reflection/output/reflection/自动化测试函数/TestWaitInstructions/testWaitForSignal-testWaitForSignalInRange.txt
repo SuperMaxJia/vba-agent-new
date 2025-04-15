@@ -1,0 +1,61 @@
+##功能##
+该函数用于等待信号或系统变量的值进入指定数值范围，直到满足条件或超时。常用于测试自动化中监控CAN信号或系统变量的状态变化。
+
+##vba规范##
+函数定义：testWaitForSignalInRange(object, aLowLimit, aHighLimit, timeout)
+参数：
+- object：信号或变量对象（数值类型）
+- aLowLimit：范围下限（整数）
+- aHighLimit：范围上限（整数）
+- timeout：超时时间（毫秒，整数）
+返回值：整数（0=超时，1=条件满足，-1=错误）
+
+##capl规范##
+函数定义：testWaitForSignal(signal, min, max, timeout)
+参数：
+- signal：信号变量（数值类型）
+- min：最小值（整数）
+- max：最大值（整数）
+- timeout：超时时间（毫秒，整数）
+返回值：整数（0=超时，1=条件满足，-1=错误）
+
+示例1：
+```capl
+int result;
+result = testWaitForSignal(CAN1::EngineRPM, 1000, 3000, 5000);
+```
+
+示例2：
+```capl
+if(testWaitForSignal(MySignal, 5, 10, 2000) == 1)
+{
+  write("Signal in range!");
+}
+```
+
+##capl名##
+testWaitForSignal
+
+##转换须知##
+1. 参数顺序完全一致，但CAPL使用::作为命名空间分隔符
+2. 返回值定义完全相同
+3. CAPL中信号需要明确指定消息命名空间
+4. CAPL不支持VBA中的通用object参数类型
+5. 超时单位都是毫秒
+
+##转换示例##
+CAPL原始代码：
+```capl
+int res = testWaitForSignal(CAN1::VehicleSpeed, 30, 50, 3000);
+```
+
+转换后的VBA代码：
+```vba
+Dim res As Integer
+res = testWaitForSignalInRange(CAN1.Message.VehicleSpeed, 30, 50, 3000)
+```
+
+关键转换步骤：
+1. 将CAPL的::命名空间分隔符改为VBA的.分隔符
+2. 保持参数顺序和返回值处理一致
+3. 函数名从testWaitForSignal改为testWaitForSignalInRange

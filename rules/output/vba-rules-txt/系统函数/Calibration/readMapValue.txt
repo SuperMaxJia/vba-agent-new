@@ -1,0 +1,48 @@
+1. 函数名  
+readMapValue  
+
+2. 函数描述  
+读取Map变量值信息。  
+
+3. 函数体  
+```vba  
+readMapValue(calNode, variable)  
+```  
+
+4. 返回值  
+返回类型为 `MapValueInfo`，包含以下属性：  
+- `columnNumber`：Map变量列数（X轴轴点个数）  
+- `xAxisValue`：Map变量X轴区域数值列表（个数 = `columnNumber`）  
+- `rowNumber`：Map变量行数（Y轴轴点个数）  
+- `yAxisValue`：Map变量Y轴区域数值列表（个数 = `rowNumber`）  
+- `value`：Map变量数值列表，按行排列（总个数 = `columnNumber * rowNumber`）  
+- `info`：接口执行失败的原因  
+
+5. 参数  
+
+| 名称      | 类型               | 描述                          |  
+|-----------|--------------------|-----------------------------|  
+| calNode   | CalNode            | 标定节点对象                   |  
+| variable  | str 或 CalVariable | 读取的变量，可以是变量名称或变量对象 |  
+
+6. 内置函数  
+无  
+
+7. 示例  
+**示例功能**：读取CAN1网段下 `calNode1` 标定节点中名称为 `"NewMap"` 的Map变量值信息。  
+
+**示例代码**：  
+```vba  
+ans = readMapValue(CAN1.Calibrations.calNode1, "NewMap")  
+' 或者  
+' ans = readMapValue(CAN1.Calibrations.calNode1, CAN1.Calibrations.calNode1.characteristics.NewMap)  
+writeInfo(ans.value)  
+```  
+
+**代码注释**：  
+- `readMapValue` 读取Map变量的值信息，并存储在 `ans` 中。  
+- `writeInfo` 输出Map变量的数值列表。  
+
+8. 其他相关说明  
+- 该函数适用于标定节点的Map变量读取，支持变量名称或变量对象两种输入方式。  
+- 返回值 `MapValueInfo` 提供了详细的Map变量结构信息，便于进一步处理。

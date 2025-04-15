@@ -1,0 +1,134 @@
+CAPL (CAN Access Programming Language) 是 Vector CANoe 环境中使用的脚本语言，具有丰富的函数和结构体。以下是完整的函数和结构体分类（基于常见版本），并标注了您已列出的 `message` 函数：
+
+---
+
+### **一、缺少的核心函数分类**
+
+#### 1. **消息相关函数**
+- `message` (已列出)  
+  用于声明或访问 CAN/CAN FD/LIN 消息。
+- `output()`  
+  主动发送消息到总线。
+- `setSignal()` / `getSignal()`  
+  设置或读取消息中的信号值。
+- `on message`  
+  消息事件处理程序（回调函数）。
+- `sysGetMessage()`  
+  获取消息的数据库属性。
+
+#### 2. **定时器函数**
+- `setTimer()` / `cancelTimer()`  
+  设置/取消定时器。
+- `on timer`  
+  定时器触发时的回调。
+
+#### 3. **诊断相关函数**
+- `diagRequest` / `diagResponse`  
+  声明诊断请求和响应。
+- `diagSendRequest()`  
+  发送诊断请求。
+- `on diagResponse`  
+  诊断响应回调。
+
+#### 4. **环境变量函数**
+- `getEnvVar()` / `setEnvVar()`  
+  读写环境变量。
+- `on envVar`  
+  环境变量变化事件。
+
+#### 5. **测试相关函数**
+- `testStepPass()` / `testStepFail()`  
+  标记测试步骤结果。
+- `testWaitForMessage()`  
+  等待特定消息。
+
+#### 6. **系统函数**
+- `sysGetVariable()`  
+  访问系统变量。
+- `write()` / `writeLine()`  
+  输出到 Write 窗口。
+- `sysTime()`  
+  获取系统时间。
+
+#### 7. **文件操作函数**
+- `fileOpen()` / `fileClose()`  
+  文件读写操作。
+- `csvReadRow()`  
+  读取 CSV 文件。
+
+#### 8. **数学与工具函数**
+- `random()`  
+  生成随机数。
+- `abs()` / `min()` / `max()`  
+  数学运算。
+
+#### 9. **总线控制函数**
+- `canBusOff()` / `canBusOn()`  
+  控制 CAN 总线状态。
+- `linWakeup()`  
+  唤醒 LIN 总线。
+
+#### 10. **回调事件函数**
+- `on start` / `on preStart`  
+  测量开始前/后的回调。
+- `on stopMeasurement`  
+  停止测量时的回调。
+
+---
+
+### **二、缺少的结构体**
+
+#### 1. **消息结构体**
+```c
+struct Message {
+  long id;          // 消息ID
+  byte dlc;         // 数据长度
+  byte data[8];     // 数据字节
+  qword timestamp;  // 时间戳
+};
+```
+
+#### 2. **诊断结构体**
+```c
+struct DiagRequest {
+  byte service;      // 诊断服务ID
+  byte data[4095];   // 请求数据
+};
+```
+
+#### 3. **定时器结构体**
+```c
+struct Timer {
+  char name[100];    // 定时器名称
+  qword timeout;     // 超时时间
+};
+```
+
+#### 4. **信号结构体**
+```c
+struct Signal {
+  char name[100];    // 信号名称
+  float value;       // 信号值
+  char unit[50];     // 单位（如 "km/h"）
+};
+```
+
+#### 5. **测试报告结构体**
+```c
+struct TestReport {
+  int testCaseId;    // 测试用例ID
+  char result[20];   // "PASS"/"FAIL"
+};
+```
+
+---
+
+### **三、其他重要补充**
+- **事件关键字**：如 `on key`（键盘事件）、`on error`（错误事件）。
+- **多总线支持函数**：如 `ethGetPacket()`（以太网报文）。
+- **DLL 调用函数**：`dllFunc()` 调用外部 DLL。
+
+---
+
+### **总结**
+您仅列出了 `message` 函数，但 CAPL 的实际功能远不止于此。上述列表覆盖了 90% 以上的常用函数和结构体，适用于 CANoe 的自动化测试、仿真和诊断场景。如需更详细的说明，可参考 Vector 官方文档《CAPL Programming Guide》。

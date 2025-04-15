@@ -1,0 +1,48 @@
+##功能##
+在指定区间[x, y]内生成一个不包含边界值的随机浮点数，适用于需要随机数据的测试场景或模拟应用。
+
+##vba规范##
+函数名：mathUniform  
+参数：x(int, 最小值，不包含), y(int, 最大值，不包含)  
+返回值：float(随机浮点数)  
+行为：生成(x,y)区间内的随机数，边界值不包含  
+
+##capl规范##
+函数名：random  
+参数：min(double), max(double)  
+返回值：double(随机浮点数)  
+行为：生成[min,max)区间内的随机数  
+示例1：  
+```capl
+double randNum = random(5.0, 10.0); // 生成5.0到10.0之间的随机数
+```  
+示例2：  
+```capl
+on timer {
+  float x = random(0.0, 1.0); // 生成0.0到1.0之间的随机数
+}
+```
+
+##capl名##
+random
+
+##转换须知##
+1. CAPL的random函数参数和返回值都是double类型，而VBA使用float
+2. CAPL的区间是左闭右开[min,max)，VBA也是左开右开(x,y)
+3. 边界值处理逻辑相同，都不包含上限值
+4. 需要显式转换数值类型，VBA整数参数需转为浮点数
+
+##转换示例##
+CAPL原始代码：  
+```capl
+double result = random(3.0, 7.0);
+```  
+转换后的VBA代码：  
+```vba
+Dim result As Double
+result = mathUniform(3, 7)
+```  
+关键转换说明：  
+1. 将CAPL的random改为VBA的mathUniform  
+2. 保持相同的参数值范围  
+3. 注意VBA参数是整数但会自动转为浮点运算

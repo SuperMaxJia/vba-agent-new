@@ -1,0 +1,55 @@
+##功能##
+该函数用于获取指定ID的最新接收到的报文数据场内容，支持标准帧和扩展帧标识，并指定目标网络。主要用于CAN/LIN总线通信中实时获取特定报文的数据内容。
+
+##vba规范##
+函数定义：getMessageData(id, extend, network)
+参数：
+- id: Integer类型，表示目标报文ID
+- extend: Boolean类型，扩展帧标识(1=扩展帧，0=标准帧，LIN置0)
+- network: Object类型，表示目标网络对象
+返回值：
+- 成功：Byte数组形式的报文数据场
+- 失败：String类型的错误信息"Unresolved Message"
+
+##capl规范##
+函数定义：message.data
+参数：
+- message: 预定义的message对象变量
+返回值：
+- Byte数组形式的报文数据
+示例1：
+on message CAN1::0x12 {
+  byte data[];
+  data = this.data; // 获取标准帧数据
+}
+示例2：
+on message CAN1::0x123E {
+  byte extendedData[];
+  extendedData = this.data; // 获取扩展帧数据
+}
+
+##capl名##
+data
+
+##转换须知##
+1. CAPL通过message事件处理自动获取报文，而VBA需要主动调用
+2. CAPL的帧类型通过ID范围自动识别，VBA需要显式指定
+3. CAPL返回原始byte数组，VBA可能需要进行类型转换
+4. 错误处理机制不同，CAPL通过系统变量，VBA通过返回值
+
+##转换示例##
+CAPL原始代码：
+on message CAN1::0x12 {
+  byte msgData[];
+  msgData = this.data;
+}
+
+转换后的VBA代码：
+Dim msgData As Variant
+msgData = getMessageData(&H12, 0, CAN1)
+
+关键转换说明：
+1. CAPL的事件处理转换为VBA的直接函数调用
+2. this.data映射为getMessageData返回值
+3. 显式添加了标准帧标识参数0
+4. 保留了相同的网络对象CAN1

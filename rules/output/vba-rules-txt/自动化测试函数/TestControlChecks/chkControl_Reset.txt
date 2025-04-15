@@ -1,0 +1,46 @@
+1. 函数名
+chkControl_Reset
+
+2. 函数描述
+用于初始化检测事件状态
+
+3. 函数体
+result = chkControl_Reset(object)
+
+4. 返回值
+名称 | 类型 | 描述
+res | int | 0 成功 -1失败
+
+5. 参数
+名称 | 类型 | 描述
+object | object | 检测对象
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：用于初始化检测事件状态
+
+示例代码：
+#检测指定的报文出现此时是否超过2次
+checkId = chkStart_MsgOccurrenceCount(CAN, CAN.MSG, 2);
+#调用该方法后，统计信息将加入到自动化测试报告
+testAddCondition(checkId);
+#共统计1000ms
+testWaitForTimeout(1000);
+##假如此时报文出现了一次
+chkControl_Reset(checkId)
+#调用后报文出现次数变为0，然后继续统计。
+#共统计1000ms
+testWaitForTimeout(1000);
+#结束统计
+testRemoveCondition(checkId);
+
+代码注释：
+- 该示例展示了如何使用chkControl_Reset函数重置检测事件的统计状态
+- 首先创建一个检测报文出现次数的检查(checkId)
+- 在第一次统计后，使用chkControl_Reset重置统计状态
+- 最后移除该检查条件
+
+8. 其他信息
+该函数属于自动化测试函数中的TestControlChecks类别，用于在自动化测试过程中控制检查项的状态重置。

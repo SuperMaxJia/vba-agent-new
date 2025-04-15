@@ -1,0 +1,41 @@
+##功能##
+将给定的ASCII码值转换为对应的字符。常用于处理字符编码转换、数据通信协议中的字符生成等场景。
+
+##vba规范##
+函数名：chr
+参数：num (Integer类型)，表示ASCII码值
+返回值：String类型，返回对应的ASCII字符
+内置函数：是
+示例：chr(97) 返回 "a"
+
+##capl规范##
+函数名：char
+参数：int类型，表示ASCII码值
+返回值：char类型，返回对应的ASCII字符
+示例1：char c = char(97); // c = 'a'
+示例2：write("Character is: %c", char(65)); // 输出: Character is: A
+
+##capl名##
+char
+
+##转换须知##
+1. 参数类型：CAPL使用int类型，VBA使用Integer类型，但两者在数值范围上兼容
+2. 返回值：CAPL返回char类型，VBA返回String类型
+3. 函数行为：两者功能完全一致
+4. 特殊情况：超出ASCII范围的值(0-127)在不同平台可能有不同处理方式
+
+##转换示例##
+1. CAPL原始代码：
+char myChar = char(65);
+write("Result: %c", myChar);
+
+2. 转换后的VBA代码：
+Dim myChar As String
+myChar = Chr(65)
+Debug.Print "Result: " & myChar
+
+3. 关键转换说明：
+- 将CAPL的char()函数替换为VBA的Chr()
+- CAPL的char类型变量改为VBA的String类型
+- CAPL的write输出改为VBA的Debug.Print
+- 格式化字符串从%c改为字符串连接(&)

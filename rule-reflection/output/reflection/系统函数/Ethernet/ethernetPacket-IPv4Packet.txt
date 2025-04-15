@@ -1,0 +1,89 @@
+##功能##
+用于创建和配置IPv4数据报文，包括设置源/目的IP地址、MAC地址以及数据负载。常用于网络通信测试和协议开发中模拟IPv4报文。
+
+##vba规范##
+函数名：IPv4Packet
+返回值：IPv4Packet对象
+参数：
+- source_ip_address: str类型，格式为XXX.XXX.XXX.XXX
+- destination_ip_address: str类型，格式为XXX.XXX.XXX.XXX
+- destination_mac_address: str类型，格式为XX:XX:XX:XX:XX:XX
+- source_mac_address: list类型
+- payload: list类型
+- timestamp: float类型
+内置方法：
+- setSourceMacAddress()
+- setDestinationMacAddress()
+- setSourceIPAddress()
+- setDestinationIPAddress()
+- setPayload()
+
+##capl规范##
+CAPL中使用EthernetPacket和ipv4Header结构体组合实现：
+1. 创建以太网报文：
+   ethernetPacket msg;
+2. 设置MAC地址：
+   msg.sourceAddress = hexToBytes("20:00:00:00:00:01");
+   msg.destinationAddress = hexToBytes("FF:FF:FF:FF:FF:FF");
+3. 设置IPv4头部：
+   ipv4Header ipv4;
+   ipv4.sourceAddress = ipToDWord("192.168.2.1");
+   ipv4.destinationAddress = ipToDWord("192.168.2.2");
+4. 组合报文：
+   msg.ipv4 = ipv4;
+
+示例1：
+ethernetPacket msg;
+msg.sourceAddress = hexToBytes("20:00:00:00:00:01");
+msg.destinationAddress = hexToBytes("FF:FF:FF:FF:FF:FF");
+ipv4Header ipv4;
+ipv4.sourceAddress = ipToDWord("192.168.2.1");
+ipv4.destinationAddress = ipToDWord("192.168.2.2");
+msg.ipv4 = ipv4;
+
+示例2：
+ethernetPacket createIPv4Packet(byte sourceMac[], byte destMac[], dword sourceIP, dword destIP)
+{
+  ethernetPacket msg;
+  msg.sourceAddress = sourceMac;
+  msg.destinationAddress = destMac;
+  ipv4Header ipv4;
+  ipv4.sourceAddress = sourceIP;
+  ipv4.destinationAddress = destIP;
+  msg.ipv4 = ipv4;
+  return msg;
+}
+
+##capl名##
+ethernetPacket
+
+##转换须知##
+1. CAPL使用分开的结构体(ethernetPacket和ipv4Header)而VBA使用统一对象
+2. CAPL需要手动转换IP和MAC地址格式(ipToDWord/hexToBytes)
+3. CAPL中payload设置方式不同，需要单独处理
+4. CAPL没有直接的timestamp参数
+5. 函数调用方式不同，CAPL是过程式，VBA是面向对象
+
+##转换示例##
+CAPL原始代码：
+ethernetPacket msg;
+msg.sourceAddress = hexToBytes("20:00:00:00:00:01");
+msg.destinationAddress = hexToBytes("FF:FF:FF:FF:FF:FF");
+ipv4Header ipv4;
+ipv4.sourceAddress = ipToDWord("192.168.2.1");
+ipv4.destinationAddress = ipToDWord("192.168.2.2");
+msg.ipv4 = ipv4;
+
+转换后的VBA代码：
+Dim ipv4Packet As IPv4Packet
+Set ipv4Packet = New IPv4Packet
+ipv4Packet.setSourceMacAddress "20:00:00:00:00:01"
+ipv4Packet.setDestinationMacAddress "FF:FF:FF:FF:FF:FF"
+ipv4Packet.setSourceIPAddress "192.168.2.1"
+ipv4Packet.setDestinationIPAddress "192.168.2.2"
+
+关键转换步骤：
+1. 将CAPL的结构体声明转换为VBA的对象创建
+2. 将hexToBytes调用转换为直接的MAC字符串设置
+3. 将ipToDWord调用转换为直接的IP字符串设置
+4. 移除CAPL中的显式结构体组合操作

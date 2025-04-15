@@ -1,0 +1,67 @@
+##功能##
+将序列中的元素以指定的分隔符连接成一个字符串。常用于将数组或列表中的元素合并为单个字符串，适用于日志记录、数据拼接等场景。
+
+##vba规范##
+函数名：join  
+参数：  
+- seq：List或元组类型，包含要连接的字符串元素  
+- code：char类型，可选参数，默认为空字符串，用作分隔符  
+返回值：String类型，返回连接后的字符串  
+
+##capl规范##
+CAPL中没有直接对应的内置函数，但可以通过循环和字符串拼接实现类似功能。  
+示例1：  
+```capl
+char[100] result;
+char delimiter = 'k';
+char* elements[] = {"ds", "mo"};
+int i;
+strncpy(result, elements[0], elcount(result));
+for (i = 1; i < elcount(elements); i++) {
+  strncat(result, delimiter, elcount(result));
+  strncat(result, elements[i], elcount(result));
+}
+write(result); // 输出"dskmo"
+```
+
+示例2：  
+```capl
+char[100] joinStrings(char* elements[], int count, char delimiter) {
+  char[100] result;
+  int i;
+  strncpy(result, elements[0], elcount(result));
+  for (i = 1; i < count; i++) {
+    strncat(result, delimiter, elcount(result));
+    strncat(result, elements[i], elcount(result));
+  }
+  return result;
+}
+```
+
+##capl名##
+！！！
+
+##转换须知##
+1. CAPL需要手动实现字符串连接功能，而VBA有内置join函数  
+2. CAPL中数组长度需要显式传递，VBA中序列长度自动获取  
+3. CAPL需要预先分配结果缓冲区大小，VBA自动管理内存  
+4. CAPL字符串操作函数(strncpy/strncat)需要指定缓冲区大小  
+
+##转换示例##
+CAPL原始代码：  
+```capl
+char[100] result;
+char* arr[] = {"a", "b", "c"};
+result = joinStrings(arr, 3, '-');
+```
+
+转换后的VBA代码：  
+```vba
+Dim result As String
+result = join(Array("a", "b", "c"), "-")
+```
+
+关键转换步骤：  
+1. 将CAPL的字符串数组转换为VBA的Array  
+2. 直接使用VBA内置join函数替换自定义函数  
+3. 移除显式的缓冲区大小和长度参数

@@ -1,0 +1,67 @@
+##功能##
+用于修改当前测试用例的状态，将测试用例状态判别设为fail（0），但不能覆盖优先级更高的错误状态（如Error）。主要用于自动化测试中标记测试用例为失败状态。
+
+##vba规范##
+函数名：testCaseFail  
+函数描述：将测试用例状态设为fail（0），除非当前状态为Error（4）  
+参数：无  
+返回值：无  
+内置函数：无  
+
+##capl规范##
+函数名：testStepFail  
+函数描述：将当前测试步骤状态设为fail（0），除非当前状态为Error（4）  
+参数：无  
+返回值：无  
+
+示例1：
+```capl
+testCaseBegin("CheckSignalTest");
+if(signalValue != expectedValue) {
+    testStepFail();
+}
+testCaseEnd();
+```
+
+示例2：
+```capl
+on signal UpdateSignal
+{
+    if(this.rawValue > threshold) {
+        testStepFail();
+    }
+}
+```
+
+##capl名##
+testStepFail
+
+##转换须知##
+1. CAPL中使用testStepFail()而不是testCaseFail()
+2. CAPL中操作的是测试步骤(Test Step)而非测试用例(Test Case)
+3. 两者在Error状态的处理逻辑相同
+4. CAPL中需要显式调用testCaseBegin/testCaseEnd来定义测试用例
+
+##转换示例##
+CAPL原始代码：
+```capl
+testCaseBegin("VelocityCheck");
+if(getSignal(Node_SUT.Velocity) < 60 || getSignal(Node_SUT.Velocity) > 100) {
+    testStepFail();
+}
+testCaseEnd();
+```
+
+转换后的VBA代码：
+```vba
+@testcase
+def checkUndifinedMessage():
+    result = checkSignalInRange(Node_SUT.Velocity, 60, 100)
+    if (result != 1):
+        testCaseFail()
+```
+
+关键转换说明：
+1. 将CAPL的testStepFail()转换为VBA的testCaseFail()
+2. CAPL中的信号范围检查直接转换为VBA的checkSignalInRange函数
+3. 保持相同的失败条件判断逻辑

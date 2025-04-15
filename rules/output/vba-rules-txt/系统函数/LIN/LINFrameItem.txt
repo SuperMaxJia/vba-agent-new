@@ -1,0 +1,42 @@
+1. 函数名  
+LINFrameItem  
+
+2. 函数描述  
+创建LIN报头帧对象  
+
+3. 函数体  
+```vba
+LINFrameItem(id, dlc, delay)
+```  
+
+4. 返回值  
+| 名称         | 类型         | 描述                |  
+|--------------|--------------|---------------------|  
+| linFramItem  | LINFrameItem | 返回一个报头帧对象  |  
+
+5. 参数  
+| 名称   | 类型   | 描述             |  
+|--------|--------|------------------|  
+| id     | int    | LIN报文ID        |  
+| dlc    | int    | LIN报文数据长度  |  
+| delay  | Double | LIN报文延迟时间  |  
+
+6. 内置函数  
+无  
+
+7. 示例  
+**示例功能**：创建LIN报头帧对象并设置调度服务  
+**示例代码**：  
+```vba
+LINframe1 = LINFrameItem(0x10, 4, 10)  
+LINframe2 = LINFrameItem(0x11, 4, 10)  
+LINframe3 = LINFrameItem(0x12, 4, 10)  
+setLINSchedulerService([linframe1, linframe2, linframe3], LIN1)  
+```  
+**代码注释**：  
+- 创建3个LIN报头帧对象（ID分别为0x10、0x11、0x12，数据长度为4，延迟时间为10ms）。  
+- 调用`setLINSchedulerService`将这些帧对象添加到LIN1通道的调度服务中。  
+
+8. 其他说明  
+- 该函数需配合`setLINSchedulerService`使用以实现LIN报文调度。  
+- 参数`delay`单位为毫秒（ms）。

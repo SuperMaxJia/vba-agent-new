@@ -1,0 +1,52 @@
+##功能##
+断开与ECU的TCP连接，用于终止通过DOIP协议建立的通信会话。适用于测试结束后或需要重新建立连接时的场景。
+
+##vba规范##
+函数定义：diagDOIPTCPDisConnect(connectHandle As Integer, Ip As String)
+参数：connectHandle - DOIP连接句柄(整型)；Ip - ECU的IP地址(字符串)
+返回值：无
+调用方式：过程调用
+
+##capl规范##
+函数定义：tcpDisconnect(long handle, char ipAddress[])
+参数：handle - 连接句柄(长整型)；ipAddress - IP地址(字符数组)
+返回值：无
+示例1：
+```capl
+tcpDisconnect(connHandle, "192.168.0.10");
+```
+示例2：
+```capl
+long handle = 5;
+char targetIP[] = "10.10.10.1";
+tcpDisconnect(handle, targetIP);
+```
+
+##capl名##
+tcpDisconnect
+
+##转换须知##
+1. 参数类型差异：VBA使用Integer而CAPL使用long类型处理句柄
+2. IP参数在VBA中是String类型，在CAPL中是字符数组
+3. 两者都是无返回值的过程调用
+4. CAPL需要显式声明变量类型而VBA可以隐式转换
+
+##转换示例##
+1. CAPL原始代码：
+```capl
+long mainHandle = 3;
+tcpDisconnect(mainHandle, "172.16.1.100");
+```
+
+2. 转换后VBA代码：
+```vba
+Dim mainHandle As Integer
+mainHandle = 3
+diagDOIPTCPDisConnect mainHandle, "172.16.1.100"
+```
+
+3. 关键转换说明：
+- 将CAPL的long类型改为VBA的Integer
+- 移除CAPL的分号结尾
+- 保持IP地址的字符串格式不变
+- 调整函数名为VBA规范名称

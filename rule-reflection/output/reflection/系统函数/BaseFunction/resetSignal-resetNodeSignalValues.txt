@@ -1,0 +1,42 @@
+##功能##
+该函数用于将指定仿真节点的所有发送信号重置为初始值，主要用于仿真测试中需要恢复信号默认值的场景。
+
+##vba规范##
+函数名：resetNodeSignalValues
+参数：Node (ECUNode类型)，表示要重置的节点对象
+返回值：无
+类别：BaseFunction
+用途：仿真场景中的信号重置操作
+
+##capl规范##
+在CAPL中对应的功能可以通过resetSignal函数实现，该函数可以重置指定信号或节点的所有信号值。
+参数：nodeName (char数组)，表示节点名称
+返回值：无
+
+示例1：
+resetSignal("CAN1::EMS");  // 重置CAN1总线上EMS节点的所有信号
+
+示例2：
+char nodeName[] = "CAN2::TCU";
+resetSignal(nodeName);  // 重置CAN2总线上TCU节点的所有信号
+
+##capl名##
+resetSignal
+
+##转换须知##
+1. CAPL使用字符串指定节点，VBA使用节点对象
+2. CAPL节点名称需要包含总线名称(如CAN1::EMS)
+3. VBA中节点对象通常通过总线.节点方式访问
+4. CAPL没有返回值，VBA同样没有返回值
+
+##转换示例##
+CAPL原始代码：
+resetSignal("CAN1::EMS");
+
+转换后的VBA代码：
+resetNodeSignalValues(CAN1.EMS)
+
+关键转换步骤说明：
+1. 将CAPL的字符串参数"CAN1::EMS"转换为VBA的对象访问方式CAN1.EMS
+2. 函数名从resetSignal改为resetNodeSignalValues
+3. 保持无返回值的特性不变

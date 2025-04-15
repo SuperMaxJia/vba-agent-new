@@ -1,0 +1,69 @@
+##功能##
+从文件读取整行内容或指定字节数，包括换行字符。主要用于逐行或按字节读取文件内容，适用于日志解析、数据导入等场景。
+
+##vba规范##
+函数定义：fileReadLine(file, size = -1)
+参数：
+- file: 文件对象，通过openFile打开
+- size: int类型，指定读取字节数，默认-1表示读取整行
+返回值：int类型，返回实际读取的字节数
+
+##capl规范##
+函数定义：fileGetLine(file, maxLength)
+参数：
+- file: dword类型，文件句柄
+- maxLength: int类型，最大读取长度
+返回值：int类型，返回实际读取的字节数
+
+示例1：
+```capl
+dword file;
+int bytesRead;
+file = fileOpen("C:\\demo.txt", 0);
+bytesRead = fileGetLine(file, 5);
+fileClose(file);
+```
+
+示例2：
+```capl
+dword file;
+int bytesRead;
+file = fileOpen("C:\\log.txt", 0);
+while(fileGetLine(file, -1) > 0)
+{
+  // 处理每行数据
+}
+fileClose(file);
+```
+
+##capl名##
+fileGetLine
+
+##转换须知##
+1. CAPL使用文件句柄(dword)而不是文件对象
+2. CAPL的fileGetLine需要显式文件打开/关闭操作
+3. CAPL中-1表示读取整行，与VBA一致
+4. CAPL没有编码参数，默认使用系统编码
+
+##转换示例##
+CAPL原始代码：
+```capl
+dword file;
+int bytesRead;
+file = fileOpen("C:\\data.txt", 0);
+bytesRead = fileGetLine(file, 10);
+fileClose(file);
+```
+
+转换后的VBA代码：
+```vba
+file = openFile("C:\data.txt", mode="r", encoding="utf-8")
+bytesRead = fileReadLine(file, 10)
+closeFile(file)
+```
+
+关键转换步骤：
+1. 将fileOpen替换为openFile并添加编码参数
+2. 保持读取长度参数10不变
+3. 将fileGetLine替换为fileReadLine
+4. 保持文件关闭操作但改用closeFile

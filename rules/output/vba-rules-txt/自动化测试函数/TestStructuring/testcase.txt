@@ -1,0 +1,42 @@
+1. 函数名
+testcase
+
+2. 函数描述
+在函数上加入此注解，表明该函数是一条测试用例函数，拥有测试用例的功能。否则，只当作普通函数处理。
+
+3. 函数体
+@testcase
+def testcaseExecute():
+    pass
+
+4. 返回值
+无
+
+5. 参数
+无
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：创建一个普通函数，加上@testcase注解，表明test函数为一条测试用例函数
+
+示例代码：
+@testcase
+def test():
+    writeInfo(getNode('EBS', CAN1))
+    testStep("1", "测试步骤1")
+    writeInfo(getNode('EBS', CAN1))
+    testStepFail("1", "55")
+
+代码注释：
+- @testcase 注解用于标识该函数为测试用例函数
+- writeInfo() 用于输出信息
+- getNode() 用于获取节点信息
+- testStep() 用于记录测试步骤
+- testStepFail() 用于记录测试失败步骤
+
+8. 其他
+- 该函数主要用于自动化测试场景
+- 需要配合其他测试函数如testStep、testStepFail等使用
+- 使用该注解后，函数会被识别为测试用例并纳入测试报告

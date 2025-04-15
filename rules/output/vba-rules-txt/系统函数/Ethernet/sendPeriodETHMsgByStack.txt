@@ -1,0 +1,30 @@
+1. 函数名
+sendPeriodETHMsgByStack
+
+2. 函数描述
+利用TCP/IP协议栈周期发送一条传输层及以上协议的以太网报文，利用taskid进行管理。
+
+3. 函数体
+sendPeriodETHMsgByStack(network, tcpipstack, UDPMessage/TCPMessage/SOMEIPPacket/DOIPPacket/ETHDBCCommand/ETHDBCPDU, cycleTime)
+
+4. 返回值
+名称: taskid
+类型: int
+描述: 小于0代表发送失败，具体可以参考通讯协议的错误类型定义
+
+5. 参数
+名称           类型                             描述
+network        Network                         网段对象
+tcpipstack     TCPIPStack                      TCP/IP协议栈对象
+UDPMessage/TCPMessage/SOMEIPPacket/DOIPPacket/ETHDBCCommand/ETHDBCPDU  UDPMessage, TCPMessage, SOMEIPPacket, DOIPPacket, ETHDBCCommand, ETHDBCPDU  传输层及以上协议的以太网报文
+cycleTime      int                             周期的时间，0代表停发
+
+6. 内置函数
+无
+
+7. 示例
+示例功能: 利用TCP/IP协议栈周期发送一条传输层及以上协议的以太网报文，利用taskid进行管理。
+示例代码: sendPeriodETHMsgByStack(network, tcpipstack, UDPMessage/TCPMessage/SOMEIPPacket/DOIPPacket/ETHDBCCommand/ETHDBCPDU, cycleTime)
+
+8. 其他和函数或变量强相关的内容
+无

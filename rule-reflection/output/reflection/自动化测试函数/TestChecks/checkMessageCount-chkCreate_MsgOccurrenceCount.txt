@@ -1,0 +1,74 @@
+##功能##
+该函数用于检测CAN总线上指定报文出现的次数是否超过设定的最大值。如果超过，则触发一次事件。主要用于监控总线报文流量，确保关键报文不会过度发送或丢失。
+
+##vba规范##
+函数名：chkCreate_MsgOccurrenceCount  
+参数：  
+- netWork: Network对象，指定检测的网段  
+- messageOrId: object/int/str，可以是报文对象、标准帧ID(int)或扩展帧ID(str)  
+- maxCount: int，允许的最大出现次数  
+返回值：int，返回检测对象ID，-1表示创建失败  
+相关函数：  
+- chkControl_Start: 启动检测  
+- testAddCondition: 添加统计到测试报告  
+- testWaitForTimeout: 设置检测时长  
+- testRemoveCondition: 结束统计  
+
+##capl规范##
+CAPL中没有完全对应的单个函数，但可以通过以下组合实现：  
+1. 使用checkMessageCount创建检测  
+2. 使用testAddCondition添加统计  
+3. 使用testWaitForTimeout设置时长  
+4. 使用testRemoveCondition结束统计  
+
+示例1：  
+```capl
+long checkId;
+checkId = checkMessageCount(CAN::Message1, 2);
+testAddCondition(checkId);
+testWaitForTimeout(1000);
+testRemoveCondition(checkId);
+```
+
+示例2：  
+```capl
+long checkId;
+checkId = checkMessageCount(0x123, 5); // 标准帧ID
+testAddCondition(checkId);
+testWaitForTimeout(2000);
+testRemoveCondition(checkId);
+```
+
+##capl名##
+checkMessageCount
+
+##转换须知##
+1. CAPL使用::访问报文对象，VBA使用.访问  
+2. CAPL直接支持标准帧ID数字，VBA需要区分标准/扩展帧  
+3. CAPL检测函数立即生效，VBA需要额外调用chkControl_Start  
+4. CAPL和VBA的测试报告函数名称相同但实现可能有差异  
+
+##转换示例##
+CAPL原始代码：  
+```capl
+long checkId;
+checkId = checkMessageCount(CAN::MSG1, 3);
+testAddCondition(checkId);
+testWaitForTimeout(1500);
+testRemoveCondition(checkId);
+```
+
+转换后的VBA代码：  
+```vba
+Dim checkId As Integer
+checkId = chkStart_MsgOccurrenceCount(CAN, CAN.MSG1, 3)
+testAddCondition checkId
+testWaitForTimeout 1500
+testRemoveCondition checkId
+```
+
+关键转换说明：  
+1. CAN::MSG1 转换为 CAN.MSG1  
+2. 直接使用chkStart版本避免额外启动步骤  
+3. 函数调用从CAPL的()改为VBA的空格分隔  
+4. 保持相同的测试流程和参数值

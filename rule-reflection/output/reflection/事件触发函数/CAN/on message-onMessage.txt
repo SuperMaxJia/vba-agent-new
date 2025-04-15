@@ -1,0 +1,58 @@
+##功能##
+该函数用于在接收到指定CAN报文时触发自定义操作，支持多种报文ID匹配方式和网段限定，常用于CAN总线监控、数据采集和自动化测试场景。
+
+##vba规范##
+函数定义：@onMessage装饰器标记事件处理函数
+参数类型：
+- message_id: int/str/list
+- canmessage: CANMessage/CANDBCMessage
+- 网段: NetWork对象(可选)
+- 方向: int(可选)
+返回值：无
+入参：canMsg对象(CANMessage类型)，包含id/extend/canType/dlc/data/dir/brs属性
+
+##capl规范##
+函数定义：on message <CAN消息标识>
+参数类型：
+- 消息ID: dword/int/hex
+- 通配符: *
+- 范围: 0x12-0x16
+- 网段: @<总线名称>
+返回值：无
+内置变量：this包含id/dlc/data等属性
+
+示例1：
+on message 0x132 {
+  write("Data: %x", this.data);
+}
+
+示例2：
+on message * {
+  write("ID: %x", this.id);
+}
+
+##capl名##
+on message
+
+##转换须知##
+1. CAPL使用this对象访问报文属性，VBA使用canMsg参数
+2. CAPL不支持直接使用DBC报文对象作为触发器
+3. CAPL范围匹配需用多个on message或switch-case实现
+4. CAPL网段限定语法不同(@CAN vs CAN1)
+5. CAPL没有显式的方向参数，需在代码中判断this.dir
+
+##转换示例##
+CAPL原始代码：
+on message 0x100 {
+  write("DLC: %d", this.dlc);
+}
+
+转换后VBA代码：
+@onMessage(0x100)
+def onMessageEvent(canMsg):
+    writeInfo(canMsg.getDlc())
+
+关键转换说明：
+1. CAPL的on message转换为@onMessage装饰器
+2. this.dlc转换为canMsg.getDlc()
+3. CAPL的write函数转换为VBA的writeInfo方法

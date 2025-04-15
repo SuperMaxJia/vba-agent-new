@@ -1,0 +1,59 @@
+##功能##
+判断诊断PDU是否是否定响应。该函数用于诊断协议中，当ECU返回否定响应时进行判断，常用于诊断测试中的错误处理流程。
+
+##vba规范##
+函数名: diagIsNegativeResponse
+参数: 
+  pdu (List类型) - 诊断PDU数组列表
+返回值: 
+  ans (boolean类型) - True表示是否定响应，False表示不是否定响应
+函数体: diagIsNegativeResponse(pdu)
+
+##capl规范##
+函数定义: int isNegativeResponse(byte pdu[])
+参数: 
+  pdu (byte数组) - 诊断PDU数据
+返回值: 
+  int - 1表示是否定响应，0表示不是否定响应
+
+示例1:
+byte response[8];
+// 填充response数据
+if(isNegativeResponse(response)) {
+  write("收到否定响应");
+}
+
+示例2:
+on diagResponse EMS.*
+{
+  if(isNegativeResponse(this.rawData)) {
+    testStepFail("ECU返回否定响应");
+  }
+}
+
+##capl名##
+isNegativeResponse
+
+##转换须知##
+1. 参数类型差异：VBA使用List类型，CAPL使用byte数组
+2. 返回值差异：VBA返回boolean，CAPL返回int(1/0)
+3. 函数名差异：VBA使用diag前缀，CAPL直接使用is前缀
+4. 数组处理：VBA的List需要转换为CAPL的byte数组
+
+##转换示例##
+1. CAPL原始代码:
+byte resp[3] = {0x7F, 0x10, 0x12};
+if(isNegativeResponse(resp)) {
+  write("Negative response");
+}
+
+2. 转换后的VBA代码:
+resp = Array(&H7F, &H10, &H12)
+If diagIsNegativeResponse(resp) Then
+  Debug.Print "Negative response"
+End If
+
+3. 关键转换说明:
+- 将CAPL的byte数组转换为VBA的Array
+- 将CAPL的int返回值判断改为VBA的boolean判断
+- 保持核心逻辑不变

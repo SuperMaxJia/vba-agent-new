@@ -1,0 +1,76 @@
+##功能##
+该函数用于启动自动化测试中对未定义报文的监控功能。当总线上出现未在工程配置中定义的报文时，会触发事件记录并可能标记测试步骤为失败。主要用于验证总线通信的规范性和完整性。
+
+##vba规范##
+函数名：chkStart_UndefinedMessageReceived
+参数：无显式参数
+返回值：无直接返回值
+功能分类：测试检查控制函数
+依赖：需要工程配置中定义合法报文范围
+关联函数：testReportAddExternalRef, testStepFail
+
+##capl规范##
+函数名：checkStart
+参数：无
+返回值：void
+功能：启动未定义报文检查
+示例1：
+```capl
+on start
+{
+  checkStart();
+  testWaitForTimeout(5000);
+  if(checkEventCount() > 0){
+    testStepFail("Undefined message detected");
+  }
+}
+```
+示例2：
+```capl
+variables {
+  int msgCount;
+}
+on key 's' {
+  checkStart();
+  msgCount = checkEventCount();
+  write("Undefined messages: %d", msgCount);
+}
+```
+
+##capl名##
+checkStart
+
+##转换须知##
+1. CAPL使用checkStart()而VBA使用chkStart_UndefinedMessageReceived
+2. CAPL需要手动调用checkEventCount()查询事件数，VBA使用单独函数chkQuery_NumEvents
+3. CAPL中检查是立即生效的，VBA可能需要等待总线活动
+4. CAPL通常集成在事件处理函数中，VBA需要显式调用
+
+##转换示例##
+CAPL原始代码：
+```capl
+on start {
+  checkStart();
+  testWaitForTimeout(1000);
+  if(checkEventCount() > 0) {
+    testStepFail("Found undefined messages");
+  }
+}
+```
+
+转换后的VBA代码：
+```vba
+Sub TestCase_CheckUndefined()
+    chkStart_UndefinedMessageReceived
+    threadSleep(1000)
+    If chkQuery_NumEvents("UndefinedMessageReceived") > 0 Then
+        testStepFail "Found undefined messages"
+    End If
+End Sub
+```
+
+关键转换步骤说明：
+1. 将checkStart()替换为chkStart_UndefinedMessageReceived
+2. testWaitForTimeout改为threadSleep
+3. checkEventCount()替换为chkQuery_NumEvents并添加事件类型参数
+4. 保持相同的测试失败处理逻辑

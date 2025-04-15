@@ -1,0 +1,50 @@
+1. 函数名
+IPv4Packet
+
+2. 函数描述
+用于创建一条IPv4数据报文
+
+3. 函数体
+IPv4Packet()
+
+4. 返回值
+返回一个IPv4Packet对象
+
+5. 参数
+名称                    类型      描述
+source_ip_address       str       源IP地址，格式为XXX.XXX.XXX.XXX
+destination_ip_address  str       目的IP地址，格式为XXX.XXX.XXX.XXX
+destination_mac_address str       设置报文目的IP
+source_mac_address      list      源MAC地址，格式为XX:XX:XX:XX:XX:XX
+payload                 list      IPv4数据报文的数据 payload (list): 数据
+timestamp               float     获取报文的时间戳，返回值是浮点类型
+
+6. 内置函数
+函数名称                 函数描述
+setSourceMacAddress      设置源MAC地址
+setDestinationMacAddress 设置目的MAC地址
+setSourceIPAddress       设置源IP地址
+setDestinationIPAddress  设置目的IP地址
+setPayload               设置报文数据负载
+
+7. 示例
+示例功能：创建一条IPv4数据报文
+示例代码：
+ipv4Packet = IPv4Packet()
+ipv4Packet.setSourceMacAddress("20:00:00:00:00:01")
+ipv4Packet.setDestinationMacAddress("FF:FF:FF:FF:FF:FF")
+ipv4Packet.setSourceIPAddress("192.168.2.1")
+ipv4Packet.setDestinationIPAddress("192.168.2.2")
+ipv4Packet.setPayload([])
+
+代码注释：
+1. 创建IPv4Packet对象
+2. 设置源MAC地址为20:00:00:00:00:01
+3. 设置目的MAC地址为FF:FF:FF:FF:FF:FF
+4. 设置源IP地址为192.168.2.1
+5. 设置目的IP地址为192.168.2.2
+6. 设置空的数据负载
+
+8. 其他
+- 该函数属于Ethernet模块
+- 需要配合其他发送函数如sendETHMsg等使用才能实际发送报文

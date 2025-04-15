@@ -1,0 +1,38 @@
+1. 函数名  
+testWaitForMessage  
+
+2. 函数描述  
+用于等待一个指定的报文是否在指定的时间内出现。  
+
+3. 函数体  
+```vba  
+testWaitForMessage(network, message, timeout = 1000)  
+testWaitForMessage(network, id, timeout)  
+```  
+
+4. 返回值  
+| 名称 | 类型 | 描述 |  
+|------|------|------|  
+| res  | int  | 0代表超时，1代表事件发生，-1代表出现错误 |  
+
+5. 参数  
+| 名称     | 类型   | 描述 |  
+|----------|--------|------|  
+| network  | object | 网段对象 |  
+| message  | str    | CAN\LIN报文对象 |  
+| id       | int    | 报文的id，标准帧可以输入数字，扩展帧输入字符串 |  
+| timeout  | int    | 超时的时间，如果设置为0代表会一直阻塞 |  
+
+6. 内置函数  
+无  
+
+7. 示例  
+**示例功能**：等待一个指定的报文是否在指定的时间内出现。  
+**示例代码**：  
+```vba  
+testWaitForMessage(network, message, timeout = 1000)  
+testWaitForMessage(network, id, timeout)  
+```  
+
+8. 其他和函数或变量强相关的内容  
+无

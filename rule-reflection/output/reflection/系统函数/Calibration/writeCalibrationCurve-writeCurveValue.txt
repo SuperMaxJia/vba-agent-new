@@ -1,0 +1,66 @@
+##功能##
+该函数用于写入Curve变量的信息，包括轴点个数、轴点区域数值列表和Curve变量数值列表。主要用于标定过程中对曲线类型变量的配置和修改，常见于汽车ECU标定场景。
+
+##vba规范##
+函数定义：writeCurveValue(calNode, variable, curveValueInfo)
+参数：
+- calNode: CalNode类型，标定节点对象
+- variable: str或CalVariable类型，可以是变量名称字符串或变量对象
+- curveValueInfo: CurveValueInfo类型，包含Curve变量配置信息的对象
+返回值：CurveValueInfo类型，包含执行结果信息，其中：
+- ans.axisNumber: Curve变量轴点个数
+- ans.axisValue: Curve变量轴点区域数值列表
+- ans.value: Curve变量数值列表
+- ans.info: 接口执行失败的原因
+
+##capl规范##
+函数定义：writeCalibrationCurve(node, variable, axisCount, axisValues, curveValues)
+参数：
+- node: 标定节点名称字符串
+- variable: 变量名称字符串
+- axisCount: 轴点个数（整数）
+- axisValues: 轴点数值数组
+- curveValues: 曲线数值数组
+返回值：整数类型，0表示成功，非0表示失败
+
+示例1：
+// 写入单轴点曲线值
+int result;
+float axis[1] = {2.0};
+float values[1] = {3.0};
+result = writeCalibrationCurve("CAN1::Calibrations::calNode1", "ResistTemp_Y", 1, axis, values);
+
+示例2：
+// 写入多轴点曲线值
+int result;
+float axis[3] = {1.0, 2.0, 3.0};
+float values[3] = {10.0, 20.0, 30.0};
+result = writeCalibrationCurve("CAN2::ECU1::EngineCal", "FuelMap", 3, axis, values);
+
+##capl名##
+writeCalibrationCurve
+
+##转换须知##
+1. CAPL使用简单数组传递轴点和曲线值，而VBA使用专门的CurveValueInfo对象
+2. CAPL返回值是简单的状态码，VBA返回包含详细信息的对象
+3. CAPL需要显式指定轴点个数，VBA通过对象内部设置
+4. CAPL中节点和变量都使用字符串表示，VBA可以使用对象引用
+5. CAPL需要预先声明数组并填充数据，VBA通过对象方法设置
+
+##转换示例##
+1. CAPL原始代码：
+float axis[2] = {10.0, 20.0};
+float values[2] = {100.0, 200.0};
+int status = writeCalibrationCurve("CAN1::Engine::Cal1", "InjectionMap", 2, axis, values);
+
+2. 转换后的VBA代码：
+curveValueInfo = CurveValueInfo()
+curveValueInfo.setAxisNumber(2)
+curveValueInfo.setAxisValue([10.0, 20.0])
+curveValueInfo.setValue([100.0, 200.0])
+ans = writeCurveValue(CAN1.Engine.Cal1, "InjectionMap", curveValueInfo)
+
+3. 关键转换说明：
+- 将CAPL的数组初始化转换为VBA的列表设置
+- 将CAPL的直接参数传递转换为VBA的对象方法调用
+- 将CAPL的简单状态返回值转换为VBA的详细结果对象

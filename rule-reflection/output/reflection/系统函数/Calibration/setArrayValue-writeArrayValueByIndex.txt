@@ -1,0 +1,52 @@
+##功能##
+该函数用于向数组变量的指定索引位置写入标定值，主要用于标定过程中修改数组类型变量的特定元素值。典型应用场景包括ECU参数标定、测试数据注入等。
+
+##vba规范##
+函数定义：writeArrayValueByIndex(calNode, variable, columnIndex, rowIndex, value)
+参数：
+- calNode: CalNode类型，标定节点对象
+- variable: str或CalVariable类型，变量名称或变量对象
+- columnIndex: int类型，列索引(x方向)
+- rowIndex: int类型，行索引(y方向)
+- value: double类型，要写入的标定值
+返回值：ResultInfo类型，包含errorInfo(错误信息)和backPhyValue(回读值)
+
+##capl规范##
+函数定义：setArrayValue(node, variable, xIndex, yIndex, value)
+参数：
+- node: 标定节点名称字符串
+- variable: 变量名称字符串
+- xIndex: int类型，列索引
+- yIndex: int类型，行索引
+- value: double类型，要写入的值
+返回值：无(直接修改目标变量)
+
+示例1：
+setArrayValue("CAN1::Calibrations::calNode1", "NewArray", 0, 0, 69.0);
+
+示例2：
+char nodePath[100] = "CAN1::Calibrations::calNode1";
+setArrayValue(nodePath, "EngineRPM", 1, 2, 2500.5);
+
+##capl名##
+setArrayValue
+
+##转换须知##
+1. CAPL使用字符串路径表示节点，而VBA使用对象引用
+2. CAPL函数无返回值，VBA返回ResultInfo对象
+3. CAPL直接修改变量，VBA需要通过标定接口操作
+4. CAPL索引参数命名为xIndex/yIndex，VBA为columnIndex/rowIndex
+5. CAPL中错误处理需要通过其他函数实现
+
+##转换示例##
+1. CAPL原始代码：
+setArrayValue("CAN1::Calibrations::calNode1", "NewArray", 0, 0, 69.0);
+
+2. 转换后的VBA代码：
+ans = writeArrayValueByIndex(CAN1.Calibrations.calNode1, "NewArray", 0, 0, 69.0)
+
+3. 关键转换说明：
+- 将节点路径字符串转换为对象引用
+- 添加返回值接收变量
+- 保持相同的索引顺序和值参数
+- 注意VBA需要处理返回的错误信息

@@ -1,0 +1,39 @@
+1. 函数名  
+chkControl_Destroy  
+
+2. 函数描述  
+用于销毁检测事件对象。  
+
+3. 函数体  
+```vba  
+result = chkControl_Destroy(object)  
+```  
+
+4. 返回值  
+| 名称 | 类型 | 描述          |  
+|------|------|-------------|  
+| res  | int  | 0 成功，-1 失败 |  
+
+5. 参数  
+| 名称    | 类型   | 描述      |  
+|---------|--------|---------|  
+| object  | object | 检测对象    |  
+
+6. 内置函数  
+无  
+
+7. 示例  
+**示例功能**：销毁检测事件对象。  
+**示例代码**：  
+```vba  
+// start the Error Frame observation  
+checkId = chkStart_ErrorFramesOccured();  
+// 销毁检测对象，则该检测函数所有相关统计均失效。  
+chkControl_Destroy(checkId);  
+```  
+**代码注释**：  
+- `chkStart_ErrorFramesOccured` 启动错误帧检测。  
+- `chkControl_Destroy` 销毁检测对象，使相关统计失效。  
+
+8. 其他和函数或变量强相关的内容  
+无

@@ -1,0 +1,47 @@
+##功能##
+关闭刷写文件并释放内存资源，用于释放通过加载函数获取的文件句柄，通常在ECU刷写流程结束时调用。
+
+##vba规范##
+函数名：diagCloseFlashFile
+参数：handle(int类型，表示要关闭的文件句柄)
+返回值：无
+行为：关闭指定句柄对应的刷写文件并释放相关内存
+
+##capl规范##
+函数名：flashFileClose
+参数：long handle(要关闭的文件句柄)
+返回值：void
+示例1：
+long fileHandle = flashFileLoad("C:/flash.s19");
+flashFileClose(fileHandle);
+
+示例2：
+on key 'c'
+{
+  flashFileClose(gFlashHandle);
+}
+
+##capl名##
+flashFileClose
+
+##转换须知##
+1. CAPL使用long类型而非int类型处理文件句柄
+2. CAPL函数名采用flashFileClose而非diagCloseFlashFile
+3. 两者都不返回任何值
+4. 必须先通过加载函数获取有效句柄才能调用关闭函数
+
+##转换示例##
+CAPL原始代码：
+long handle = flashFileLoad("D:/data/program.bin");
+flashFileClose(handle);
+
+转换后的VBA代码：
+Dim handle As Integer
+handle = diagLoadFlashFile("D:\data\program.bin")
+diagCloseFlashFile(handle)
+
+关键转换步骤：
+1. 将long类型改为Integer类型声明
+2. 函数名从flashFileClose改为diagCloseFlashFile
+3. 文件路径分隔符从/改为\
+4. 保持相同的调用顺序和参数传递方式

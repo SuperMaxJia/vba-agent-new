@@ -1,0 +1,82 @@
+##功能##
+该函数用于启动对节点消息相对周期时间违规的检查，监控指定节点消息的周期时间是否符合预期，检测是否存在周期时间违规的情况。主要用于自动化测试场景，确保节点消息的周期时间在允许的误差范围内。
+
+##vba规范##
+函数定义：`chkStart_NodeMsgsRelCycleTimeViolation(nodeName As String, tolerance As Integer, callback As Function) As Boolean`  
+参数：  
+- `nodeName`：String类型，需要监控的节点名称。  
+- `tolerance`：Integer类型，允许的周期时间误差范围（毫秒）。  
+- `callback`：Function类型，违规事件触发时的回调函数。  
+返回值：Boolean类型，表示检查是否成功启动。
+
+##capl规范##
+函数定义：`checkStartNodeMsgCycleViolation(char nodeName[], int tolerance, void (*callback)(char[], long))`  
+参数：  
+- `nodeName`：char数组类型，需要监控的节点名称。  
+- `tolerance`：int类型，允许的周期时间误差范围（毫秒）。  
+- `callback`：函数指针类型，违规事件触发时的回调函数。  
+返回值：int类型，0表示失败，1表示成功。
+
+示例1：  
+```capl
+void onViolation(char nodeName[], long violationTime) {
+    write("节点 %s 消息周期违规，时间偏差: %d ms", nodeName, violationTime);
+}
+
+on start {
+    int result = checkStartNodeMsgCycleViolation("Engine", 10, onViolation);
+    if (result) {
+        write("节点消息周期检查已启动");
+    } else {
+        write("检查启动失败");
+    }
+}
+```
+
+示例2：  
+```capl
+void handleViolation(char nodeName[], long violationTime) {
+    writeEx(ERROR, "违规节点: %s, 偏差: %d ms", nodeName, violationTime);
+}
+
+on key 's' {
+    checkStartNodeMsgCycleViolation("Transmission", 5, handleViolation);
+}
+```
+
+##capl名##
+checkStartNodeMsgCycleViolation
+
+##转换须知##
+1. 参数类型差异：VBA使用String和Integer，CAPL使用char[]和int。  
+2. 回调函数定义：VBA使用AddressOf，CAPL使用函数指针。  
+3. 返回值差异：VBA返回Boolean，CAPL返回int（0/1）。  
+4. 字符串处理：CAPL中字符串为char数组，需注意长度限制。  
+
+##转换示例##
+CAPL原始代码：  
+```capl
+void onViolation(char nodeName[], long violationTime) {
+    write("节点 %s 消息周期违规，时间偏差: %d ms", nodeName, violationTime);
+}
+
+on start {
+    checkStartNodeMsgCycleViolation("Engine", 10, onViolation);
+}
+```
+
+转换后的VBA代码：  
+```vba
+Sub OnViolation(nodeName As String, violationTime As Long)
+    WriteErrorInfo "节点 " & nodeName & " 消息周期违规，时间偏差: " & violationTime & " ms"
+End Sub
+
+Sub Example()
+    chkStart_NodeMsgsRelCycleTimeViolation "Engine", 10, AddressOf OnViolation
+End Sub
+```
+
+关键转换步骤：  
+1. 回调函数从CAPL的`void onViolation(char[], long)`转换为VBA的`Sub OnViolation(String, Long)`。  
+2. CAPL的`write`替换为VBA的`WriteErrorInfo`。  
+3. CAPL的函数调用直接映射为VBA的等效函数调用。

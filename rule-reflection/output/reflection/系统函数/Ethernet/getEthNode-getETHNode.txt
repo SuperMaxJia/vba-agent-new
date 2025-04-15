@@ -1,0 +1,55 @@
+##功能##
+该函数用于获取指定以太网仿真节点对象，通过节点名称和所属网络来定位特定ECU节点。主要用于CANoe/CANalyzer环境中对以太网节点的访问和控制。
+
+##vba规范##
+Function getETHNode(name As String, network As Network) As ECUNode
+参数:
+- name: 字符串类型，指定ECU节点名称
+- network: Network对象类型，指定所属网段
+返回值: ECUNode对象类型，返回对应的节点对象
+
+##capl规范##
+ECU* getEthNode(char name[], Network network);
+参数:
+- name: 字符数组，节点名称
+- network: Network对象，所属网络
+返回值: ECU指针，指向节点对象
+
+示例1:
+Network canNetwork;
+ECU* targetNode;
+targetNode = getEthNode("EngineControl", canNetwork);
+
+示例2:
+on start
+{
+  Network ethNetwork = getNetwork("Ethernet1");
+  ECU* node = getEthNode("BodyECU", ethNetwork);
+  write("Node address: %x", node);
+}
+
+##capl名##
+getEthNode
+
+##转换须知##
+1. CAPL使用字符数组而非字符串对象
+2. CAPL返回的是ECU指针而非对象
+3. CAPL需要显式获取Network对象
+4. VBA中Network是对象类型，CAPL中是值类型
+5. CAPL中需要处理指针操作
+
+##转换示例##
+CAPL原始代码:
+Network eth = getNetwork("ETH");
+ECU* node = getEthNode("DoorModule", eth);
+
+转换后的VBA代码:
+Dim eth As Network
+Set eth = getNetwork("ETH")
+Dim node As ECUNode
+Set node = getETHNode("DoorModule", eth)
+
+关键转换步骤:
+1. 将CAPL指针类型ECU*转换为VBA对象类型ECUNode
+2. 将CAPL的getNetwork调用方式改为VBA对象赋值方式
+3. 保持参数顺序和逻辑一致

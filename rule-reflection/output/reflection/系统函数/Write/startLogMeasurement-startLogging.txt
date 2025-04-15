@@ -1,0 +1,45 @@
+##功能##
+启动指定的logger模块开始录制数据。可以基于预配置的logger节点或自定义配置进行录制，支持多种文件格式输出。
+
+##vba规范##
+函数定义：startLogging(logger_name, file_name='', loggerConfig=None)
+参数：
+- logger_name: String类型，指定Loggers模块下的节点名称
+- file_name: String类型（可选），指定录制文件名
+- loggerConfig: String类型（可选），指定文件格式（asc/blf/pacp）
+返回值：无
+
+##capl规范##
+函数定义：startLogMeasurement(loggerName, fileName, fileFormat)
+参数：
+- loggerName: char[]类型，指定logger名称
+- fileName: char[]类型（可选），指定输出文件名
+- fileFormat: int类型（可选），0=ASC,1=BLF,2=PCAP
+返回值：void
+
+示例1：
+startLogMeasurement("CAN_Logger", "logfile", 1); // 启动CAN_Logger录制BLF文件
+
+示例2：
+startLogMeasurement("LIN_Logger"); // 使用默认配置启动LIN_Logger
+
+##capl名##
+startLogMeasurement
+
+##转换须知##
+1. CAPL使用整数表示文件格式而非字符串
+2. CAPL不区分None配置，使用默认参数即可
+3. CAPL参数顺序与VBA不同
+4. 文件格式需要手动转换：asc→0, blf→1, pacp→2
+
+##转换示例##
+1. CAPL原始代码：
+startLogMeasurement("CAN_Logger", "diagnostic_log", 0);
+
+2. 转换后VBA代码：
+startLogging("CAN_Logger", "diagnostic_log", "asc")
+
+3. 关键转换说明：
+- 保持logger名称一致
+- 文件格式参数从整数0转换为字符串"asc"
+- 保持相同的文件名参数

@@ -1,0 +1,52 @@
+##功能##
+该函数用于开始或继续检测事件，通常用于CAN总线测试中启动或恢复特定的检测功能。需要配合chkControl_Stop使用，支持两种创建检测的方式：直接启动(Start)或创建后手动启动(Create)。
+
+##vba规范##
+函数名：chkControl_Start
+参数：object(检测对象)
+返回值：int(0成功，-1失败)
+功能：开始或继续指定的检测事件
+
+##capl规范##
+函数名：checkControlStart
+参数：long checkId(检测ID)
+返回值：int(0成功，-1失败)
+示例1：
+long checkId;
+checkId = checkCreate_ErrorFrames();
+checkControlStart(checkId);
+
+示例2：
+long checkId = checkStart_ErrorFrames();
+checkControlStop(checkId);
+testWaitForTimeout(1000);
+checkControlStart(checkId);
+
+##capl名##
+checkControlStart
+
+##转换须知##
+1. VBA使用对象参数而CAPL使用长整型checkId
+2. 返回值类型相同但CAPL中可能扩展更多错误码
+3. CAPL中需要先创建检测(checkCreate或checkStart)
+4. VBA中的object需要转换为CAPL中的checkId
+
+##转换示例##
+CAPL原始代码：
+long checkId = checkStart_ErrorFrames();
+checkControlStop(checkId);
+testWaitForTimeout(1000);
+checkControlStart(checkId);
+
+转换后的VBA代码：
+Set checkObj = chkStart_ErrorFramesOccured()
+chkControl_Stop checkObj
+'等待1000ms
+Sleep 1000
+chkControl_Start checkObj
+
+关键转换步骤：
+1. 将CAPL的long checkId改为VBA的Set对象
+2. 函数名从checkStart_ErrorFrames改为chkStart_ErrorFramesOccured
+3. 添加VBA的Sleep函数替代testWaitForTimeout
+4. 保持相同的控制流程

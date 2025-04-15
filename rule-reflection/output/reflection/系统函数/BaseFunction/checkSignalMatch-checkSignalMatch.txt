@@ -1,0 +1,58 @@
+##功能##
+该函数用于检测总线上信号或系统变量的值是否与预期值匹配，主要用于测试验证场景中检查信号或变量值是否符合预期。
+
+##vba规范##
+函数名：checkSignalMatch
+参数：
+1. aSignal: CANDBCSignal或LINDBCSignal类型，表示信号对象
+2. variable: VariableEntity类型，表示变量对象
+3. aCompareValue: int或float类型，表示比较值
+返回值：int类型，1表示匹配成功，0表示信号/变量不存在，-1表示校验失败
+
+##capl规范##
+函数定义：int checkSignalMatch(long signalId, float compareValue)
+参数：
+1. signalId: long类型，表示信号ID
+2. compareValue: float类型，表示比较值
+返回值：int类型，1表示匹配成功，0表示信号不存在，-1表示校验失败
+
+示例1：
+// 检查车速信号是否等于60
+result = checkSignalMatch(m_signalVelocity, 60.0);
+if(result != 1) {
+    testStepFail("Value of signal is not in the allowed range!");
+}
+
+示例2：
+// 检查发动机转速信号是否等于2000
+result = checkSignalMatch(m_signalEngineSpeed, 2000.0);
+if(result == -1) {
+    write("Signal value mismatch!");
+}
+
+##capl名##
+checkSignalMatch
+
+##转换须知##
+1. CAPL中使用信号ID而不是信号对象作为参数
+2. CAPL中比较值统一使用float类型
+3. CAPL中返回值含义与VBA一致
+4. 在CAPL中需要预先定义信号ID映射
+
+##转换示例##
+1. CAPL原始代码：
+result = checkSignalMatch(m_signalBrakePressure, 50.0);
+if(result != 1) {
+    testStepFail("Brake pressure not as expected");
+}
+
+2. 转换后的VBA代码：
+result = checkSignalMatch(Node_ECU.BrakePressure, 50)
+If result <> 1 Then
+    testStepFail "Brake pressure not as expected"
+End If
+
+3. 关键转换说明：
+- 将CAPL中的信号ID(m_signalBrakePressure)转换为VBA中的信号对象(Node_ECU.BrakePressure)
+- 将CAPL中的浮点数比较值(50.0)转换为VBA中的数值(50)
+- 保持返回值判断逻辑不变

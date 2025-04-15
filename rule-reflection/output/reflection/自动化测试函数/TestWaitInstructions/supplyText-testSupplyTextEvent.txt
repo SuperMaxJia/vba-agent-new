@@ -1,0 +1,41 @@
+##功能##
+该函数用于在测试模块中提供一个事件文本，主要用于为其他函数（如testWaitForTextEvent）提供测试用的文本内容。常用于自动化测试场景中模拟事件触发。
+
+##vba规范##
+函数定义：Sub testSupplyTextEvent(text As String)
+参数：text - 字符串类型，表示要提供的测试事件文本
+返回值：无
+功能：向测试系统提供一个文本事件
+
+##capl规范##
+函数定义：void supplyText(char text[])
+参数：text - 字符数组，表示要提供的测试事件文本
+返回值：无
+示例1：
+supplyText("Test event 1");  // 提供简单测试文本
+示例2：
+char eventMsg[50] = "Complex test event";
+supplyText(eventMsg);  // 通过变量提供测试文本
+
+##capl名##
+supplyText
+
+##转换须知##
+1. 参数类型差异：VBA使用String类型，CAPL使用字符数组
+2. 函数声明差异：VBA使用Sub声明无返回值函数，CAPL使用void
+3. 字符串处理：VBA字符串可以直接赋值，CAPL需要使用字符数组
+4. 函数命名：CAPL版本通常更简洁，省略"test"前缀
+
+##转换示例##
+1. CAPL原始代码：
+char testMsg[] = "Diagnostic message";
+supplyText(testMsg);
+
+2. 转换后的VBA代码：
+testSupplyTextEvent "Diagnostic message"
+
+3. 关键转换说明：
+- 将CAPL的字符数组改为VBA的String类型
+- 移除分号
+- 根据VBA语法调整函数调用格式
+- 保持相同的功能语义

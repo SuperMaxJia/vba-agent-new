@@ -1,0 +1,68 @@
+##功能##
+该函数用于读取标定节点中Curve类型变量的值信息，包括轴点个数、轴点区域数值列表和变量数值列表。主要用于汽车电子标定过程中对曲线数据的获取和分析。
+
+##vba规范##
+函数名：readCurveValue
+参数：
+- calNode: CalNode类型，标定节点对象
+- variable: str或CalVariable类型，要读取的变量名或变量对象
+返回值：CurveValueInfo对象，包含：
+  - axisNumber: 轴点个数
+  - axisValue: 轴点区域数值列表
+  - value: 变量数值列表
+  - info: 执行失败原因
+
+##capl规范##
+在CAPL中，对应功能可通过getCurveValue函数实现：
+- 函数定义：getCurveValue(long nodeHandle, char variableName[], CurveValueInfo &result)
+- 参数：
+  - nodeHandle: 标定节点句柄
+  - variableName: 变量名称字符串
+  - result: 用于存储结果的引用参数
+- 返回值：long类型，0表示成功，非0表示错误码
+
+示例1：
+CurveValueInfo result;
+long ret = getCurveValue(can1::calNode1, "ResistTemp_Y", result);
+if(ret == 0) {
+  write("Axis count: %d", result.axisNumber);
+}
+
+示例2：
+CurveValueInfo tempCurve;
+if(getCurveValue(calNodeHandle, "EngineTempMap", tempCurve) == 0) {
+  for(int i=0; i<tempCurve.axisNumber; i++) {
+    write("Axis %d: %f Value: %f", i, tempCurve.axisValue[i], tempCurve.value[i]);
+  }
+}
+
+##capl名##
+getCurveValue
+
+##转换须知##
+1. CAPL使用节点句柄而非对象引用
+2. CAPL通过引用参数返回结果而非直接返回值
+3. CAPL返回错误码而非包含错误信息的对象
+4. CAPL需要显式检查返回值判断操作是否成功
+5. CAPL中数组访问从0开始
+
+##转换示例##
+CAPL原始代码：
+CurveValueInfo curveData;
+long status = getCurveValue(can1::calNode1, "TorqueMap", curveData);
+if(status == 0) {
+  write("Value count: %d", curveData.axisNumber);
+}
+
+转换后的VBA代码：
+Dim curveData As CurveValueInfo
+Set curveData = readCurveValue(CAN1.Calibrations.calNode1, "TorqueMap")
+If Not curveData Is Nothing Then
+    Debug.Print "Value count: " & curveData.axisNumber
+End If
+
+关键转换说明：
+1. CAPL的节点引用转换为VBA的对象路径
+2. CAPL的引用参数转换为VBA的直接返回值
+3. CAPL的错误码检查转换为VBA的对象存在性检查
+4. 保留了核心功能逻辑不变

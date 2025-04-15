@@ -1,0 +1,60 @@
+##功能##
+该函数用于获取CAN数据库中的报文对象列表，支持两种获取方式：1)获取指定网段下的所有报文；2)获取指定ECU节点下的特定类型报文(发送/接收/所有)。常用于CAN总线数据分析、报文监控和诊断等场景。
+
+##vba规范##
+函数名：getMsgs
+参数：
+1. network: Network类型，指定网段对象
+2. node: ECUNode类型，指定ECU节点对象
+3. type: int类型，指定报文类型(0:Tx,1:Rx,2:All)
+返回值：list[CANDBCMessage]类型，返回报文对象列表
+函数重载：
+1. getMsgs(network)
+2. getMsgs(node, type)
+
+##capl规范##
+CAPL中没有直接对应的函数，但可以通过以下方式实现：
+1. 获取网段报文：使用dbGetMessages(db)
+2. 获取节点报文：结合dbGetNodeMessages(node)和消息类型过滤
+返回值：message*[]类型，返回消息指针数组
+示例1：
+```capl
+message* msgs[];
+msgs = dbGetMessages(CAN1::db);
+```
+示例2：
+```capl
+message* msgs[];
+msgs = dbGetNodeMessages(CAN1::ESP);
+// 过滤Tx报文
+for(int i=0; i<elCount(msgs); i++) {
+  if(msgs[i].dir != dirTx) {
+    msgs[i] = 0;
+  }
+}
+```
+
+##capl名##
+dbGetMessages
+
+##转换须知##
+1. CAPL需要明确指定数据库对象(如CAN1::db)，而VBA使用网段对象
+2. CAPL中节点报文需要手动过滤类型，VBA直接通过参数指定
+3. CAPL返回消息指针数组，VBA返回报文对象列表
+4. CAPL需要处理数组中的空指针(过滤后)
+
+##转换示例##
+1. CAPL原始代码：
+```capl
+message* msgs[];
+msgs = dbGetMessages(CAN1::db);
+```
+2. 转换后的VBA代码：
+```vba
+Dim msgs As List(Of CANDBCMessage)
+msgs = getMsgs(CAN1)
+```
+3. 关键转换说明：
+- CAPL的dbGetMessages转换为VBA的getMsgs
+- CAPL的数据库引用(CAN1::db)简化为VBA的网段对象(CAN1)
+- CAPL的消息指针数组转换为VBA的报文对象列表

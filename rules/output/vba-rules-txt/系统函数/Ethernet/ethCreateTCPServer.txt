@@ -1,0 +1,29 @@
+1. 函数名
+ethCreateTCPServer
+
+2. 函数描述
+创建TCP服务器并启动监听
+
+3. 函数体
+socketid = ethCreateTCPServer(network, TCPIPStack, sourPort)
+
+4. 返回值
+名称       类型   描述
+socketid   int    如果建立错误返回错误码，-1代表该接口调用时出现错误
+
+5. 参数
+名称        类型          描述
+network     NetworkI      网段信息
+TCPIPStack  TCPIPStack    本机TCP配置信息
+sourPort    int           本机端口号
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：创建TCP服务器并启动监听
+示例代码：
+socketid = ethCreateTCPServer(network, TCPIPStack, sourPort)
+
+8. 其他和函数或变量强相关的内容
+无

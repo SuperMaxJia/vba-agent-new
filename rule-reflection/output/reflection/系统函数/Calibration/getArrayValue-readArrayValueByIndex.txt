@@ -1,0 +1,79 @@
+##功能##
+该函数用于从数组变量中读取指定x、y索引位置的值，支持区分测量量和标定量。主要用于汽车ECU标定和测量过程中访问二维数组数据。
+
+##vba规范##
+函数定义：readArrayValueByIndex(calNode, variable, columnIndex, rowIndex, isMeasurement)
+参数：
+- calNode: CalNode类型，标定节点对象
+- variable: str或CalVariable类型，变量名或变量对象
+- columnIndex: int类型，列索引(x方向)
+- rowIndex: int类型，行索引(y方向)
+- isMeasurement: bool类型，True表示测量量，False表示标定量
+返回值：ResultInfo类型，包含errorInfo(错误信息)和backPhyValue(测量值)
+
+##capl规范##
+函数定义：getArrayValue(node, variable, xIndex, yIndex, isMeas)
+参数：
+- node: 标定节点句柄
+- variable: 变量名或变量句柄
+- xIndex: 列索引
+- yIndex: 行索引
+- isMeas: 1表示测量量，0表示标定量
+返回值：结构体包含error和value字段
+
+示例1：
+variables {
+  dword node;
+  char varName[50];
+  long x, y;
+  int isMeas;
+}
+
+on start {
+  node = getCalibrationNode("Engine");
+  strncpy(varName, "RPM_Map", 50);
+  x = 2; y = 3;
+  isMeas = 1;
+  result = getArrayValue(node, varName, x, y, isMeas);
+  write("Value: %f", result.value);
+}
+
+示例2：
+on key 'a' {
+  nodeHandle = getCalibrationNode("Transmission");
+  res = getArrayValue(nodeHandle, "Gear_Ratio", 1, 1, 0);
+  if(res.error == 0) {
+    write("Gear ratio: %f", res.value);
+  }
+}
+
+##capl名##
+getArrayValue
+
+##转换须知##
+1. 参数差异：VBA使用CalNode对象，CAPL使用节点句柄；VBA的bool类型在CAPL中用int(1/0)表示
+2. 返回值：VBA返回ResultInfo对象，CAPL返回结构体
+3. 变量类型：VBA支持变量名或对象，CAPL通常使用变量名
+4. 错误处理：CAPL需要显式检查error字段，而VBA可能抛出异常
+
+##转换示例##
+1. CAPL原始代码：
+node = getCalibrationNode("ECU1");
+result = getArrayValue(node, "Injection_Map", 3, 2, 1);
+if(result.error == 0) {
+  write("Value: %f", result.value);
+}
+
+2. 转换后VBA代码：
+Set calNode = GetCalibrationNode("ECU1")
+ans = readArrayValueByIndex(calNode, "Injection_Map", 3, 2, True)
+If ans.errorInfo = "" Then
+    WriteInfo ans.backPhyValue
+End If
+
+3. 关键转换说明：
+- getCalibrationNode → GetCalibrationNode
+- getArrayValue → readArrayValueByIndex
+- 1 → True (测量量标志转换)
+- result.error检查 → errorInfo检查
+- 输出方式从write改为WriteInfo

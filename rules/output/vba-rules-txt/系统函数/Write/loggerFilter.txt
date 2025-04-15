@@ -1,0 +1,32 @@
+1. 函数名
+loggerFilter
+
+2. 函数描述
+logger的过滤，LoggerFilter对象包含方法setFilterNetworks(networkList=[])和setFilterMsgIDs(ids，falg)。
+
+3. 函数体
+loggerFilter
+
+4. 返回值
+名称           类型           描述
+loggerFilter   loggerFilter   loggerFilter的对象
+
+5. 参数
+无直接参数（通过内置函数设置过滤条件）
+
+6. 内置函数
+函数名称            描述
+setFilterNetworks() 设置想要过滤的网段信息，networkList存放网段的字符串列表，默认设置为[]，空代表不过滤此项
+setFilterMsgIDs()   设置想要过滤的报文ID的字符串或整型列表，参数flag，过滤条件置反操作，值为1时不置反，为0时置为反
+
+7. 示例
+示例功能：录制CAN1网段下ID为416的报文
+示例代码：
+loggerFilter = LoggerFilter()
+loggerFilter.setFilterNetWorks(['CAN1'])
+loggerFilter.setFilterMsgIDs([416], 1)
+
+8. 其他说明
+- 使用时需要先创建LoggerFilter对象
+- 通过内置函数设置具体的过滤条件
+- 主要用于数据记录时的过滤操作

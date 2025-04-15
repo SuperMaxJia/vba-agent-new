@@ -1,0 +1,54 @@
+##功能##
+该函数用于断开TCP服务器连接，通常在网络通信结束时调用，以释放资源并终止连接。适用于需要关闭多个TCP服务器链接的场景。
+
+##vba规范##
+函数名：ethCloseTCPServerLink
+参数：
+- network：Network类型，表示网段信息
+- [Link1, Link2 ...]：list类型，包含ethGetTCPServerLinkStates函数的返回值
+返回值：无
+函数体：ethCloseTCPServerLink(network, [Link1, Link2 ......])
+
+##capl规范##
+在CAPL中，可以使用tcpClose函数来关闭TCP连接。该函数接受一个socket描述符作为参数。
+示例1：
+```
+dword socket1;
+// ... socket1通过tcpOpen或tcpConnect创建 ...
+tcpClose(socket1);
+```
+示例2：
+```
+dword sockets[2] = {socket1, socket2};
+for(int i=0; i<elcount(sockets); i++) {
+    tcpClose(sockets[i]);
+}
+```
+
+##capl名##
+tcpClose
+
+##转换须知##
+1. CAPL使用socket描述符而非网络和链接列表作为参数
+2. CAPL需要显式关闭每个socket连接，而VBA可以批量关闭
+3. CAPL没有直接的网络参数，需要预先建立连接
+4. 在CAPL中需要手动管理所有socket连接
+
+##转换示例##
+CAPL原始代码：
+```
+dword socket1 = 1;
+dword socket2 = 2;
+tcpClose(socket1);
+tcpClose(socket2);
+```
+
+转换后的VBA代码：
+```
+ethCloseTCPServerLink network, Array(Link1, Link2)
+```
+
+关键转换步骤说明：
+1. 将CAPL中的多个tcpClose调用合并为VBA的单个ethCloseTCPServerLink调用
+2. 将CAPL的socket描述符转换为VBA的Link参数
+3. 在VBA中使用数组参数来批量关闭连接

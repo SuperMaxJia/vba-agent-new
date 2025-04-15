@@ -1,0 +1,74 @@
+##功能##
+用于创建和配置TCP/IP协议栈，包括设置源MAC地址、源IP地址、网络掩码、网关地址、VLAN ID和ARP表。适用于网络通信测试和协议栈仿真场景。
+
+##vba规范##
+函数名：TCPIPStack
+参数：
+- source_mac_address: String类型，源MAC地址
+- source_ip_address: String类型，源IP地址
+- network_mask: String类型，网络掩码
+- gateway: String类型，网关地址
+- vlan: Integer类型，VLAN ID
+- arp_table: Variant类型，二维数组表示的ARP表
+返回值：TCPIPStack对象实例
+内置方法：
+- setSourceMacAddress(mac)
+- setSourceIPAddress(ip)
+- setNetworkMask(mask)
+- setGatway(gw)
+- setVLAN(vid)
+- setARPTable(table)
+
+##capl规范##
+CAPL中没有直接对应的TCP/IP协议栈创建函数，但可以通过以下方式模拟：
+1. 使用EthernetPacket和Ipv4Packet结构体组合实现
+2. 通过sysSetVariable设置网络参数
+示例1：
+```
+EthernetPacket eth;
+Ipv4Packet ip;
+eth.sourceMac = "20:00:00:00:00:01";
+ip.sourceIp = "192.168.1.0";
+ip.netmask = "255.255.255.0";
+ip.gateway = "0.0.0.0";
+sysSetVariable("VLAN_ID", -1);
+```
+
+示例2：
+```
+byte arpTable[2][2] = {{0x20,0x00,0x00,0x00,0x00,0x01,"192.168.2.1"},
+                       {0x20,0x00,0x00,0x00,0x00,0x02,"192.168.2.12"}};
+```
+
+##capl名##
+EthernetPacket
+
+##转换须知##
+1. CAPL使用结构体而非对象，需要分开处理以太网和IP层
+2. VLAN设置需通过系统变量实现
+3. ARP表在CAPL中需要手动转换为字节数组
+4. CAPL没有直接的协议栈对象概念
+5. 网络参数需要分别设置，没有链式调用
+
+##转换示例##
+CAPL原始代码：
+```
+EthernetPacket eth;
+eth.sourceMac = "20:00:00:00:00:01";
+sysSetVariable("IP_ADDR", "192.168.1.0");
+sysSetVariable("NETMASK", "255.255.255.0");
+```
+
+转换后的VBA代码：
+```
+Dim tcpipStack As Object
+Set tcpipStack = TCPIPStack()
+tcpipStack.setSourceMacAddress "20:00:00:00:00:01"
+tcpipStack.setSourceIPAddress "192.168.1.0"
+tcpipStack.setNetworkMask "255.255.255.0"
+```
+
+关键转换步骤：
+1. 将CAPL结构体转换为VBA对象
+2. 将sysSetVariable调用转换为对象方法调用
+3. 保持参数顺序和值一致

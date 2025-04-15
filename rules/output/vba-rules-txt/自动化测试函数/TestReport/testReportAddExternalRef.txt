@@ -1,0 +1,40 @@
+以下是提取的VBA函数 `testReportAddExternalRef` 的详细信息：
+
+1. 函数名  
+   `testReportAddExternalRef`
+
+2. 函数描述  
+   用于在测试报告中添加外部应用（如URL）。该链接的 `type` 和 `ref` 不是强相关的，可以不对应，以用户输入为准。
+
+3. 函数体  
+   ```vba
+   testReportAddExternalRef(type = 'url', 'title', 'ref')
+   ```
+
+4. 返回值  
+   无返回值。
+
+5. 参数  
+
+   | 名称  | 类型 | 描述 |
+   |-------|------|------|
+   | type  | str  | URL的类型，可以是 "url"、"doors" 和 "easee" 链接等，根据用户需要输入。 |
+   | title | str  | URL的用法描述，字符串。 |
+   | ref   | str  | URL的路径。 |
+
+6. 内置函数  
+   无内置函数说明。
+
+7. 示例  
+   **功能**：在测试报告中添加外部链接应用。  
+   **示例代码**：  
+   ```vba
+   testReportAddExternalRef("url", "Requirement", "doors://doorssrv:36677/?version=1,prodID=0,dbid=42d2481361dc551c,container=00004600,object=19")
+   ```  
+   **代码注释**：  
+   - `"url"` 表示链接类型为 URL。  
+   - `"Requirement"` 是链接的描述信息。  
+   - `"doors://doorssrv..."` 是具体的 URL 路径。
+
+8. 其他相关说明  
+   无其他相关说明。

@@ -1,0 +1,41 @@
+1. 函数名  
+sendETHBasicMsg  
+
+2. 函数描述  
+用于原始以太网报文的发送。  
+
+3. 函数体  
+```vba
+sendETHBasicMsg(network, EthernetPacket/IPv4Packet/ARPPacket/UDPPacket/TCPPacket/SOMEIPPacket/DOIPPacket/ETHDBCCommand/ETHDBCPDU, VLAN=['0x88A8:0x0003', '0x8100:0x0002'])
+```  
+
+4. 返回值  
+| 名称 | 类型 | 描述 |  
+|------|------|------|  
+| res  | int  | 返回值：1代表发送成功，0代表发送失败（具体错误类型参考通讯协议定义） |  
+
+5. 参数  
+| 名称 | 类型 | 描述 |  
+|------|------|------|  
+| network | Network | 网段对象 |  
+| EthernetPacket/IPv4Packet/ARPPacket/UDPPacket/TCPPacket/SOMEIPPacket/DOIPPacket/ETHDBCCommand/ETHDBCPDU | EthernetPacket, IPv4Packet, UDPPacket, TCPPacket, SOMEIPPacket, DOIPPacket, ICMPv4Packet, DHCPPacket, ETHDBCCommand, ETHDBCPDU | 原始以太网报文 |  
+| VLAN | list | VLAN的配置，如果是双VLAN，从左到右输入 |  
+
+6. 内置函数  
+无直接关联的内置函数说明。  
+
+7. 示例  
+**示例功能**：发送原始以太网报文。  
+**示例代码**：  
+```vba
+sendETHBasicMsg(network, EthernetPacket/IPv4Packet/ARPPacket/UDPPacket/TCPPacket/SOMEIPPacket/DOIPPacket/ETHDBCCommand/ETHDBCPDU, VLAN=['0x88A8:0x0003', '0x8100:0x0002'])
+```  
+**代码注释**：  
+- `network`：指定目标网段。  
+- 第二参数为支持的报文类型（如`EthernetPacket`等）。  
+- `VLAN`：可选参数，配置单/双VLAN标签（示例为双VLAN）。  
+
+8. 其他说明  
+- 函数支持多种以太网协议报文（如IPv4、UDP、TCP等）。  
+- VLAN参数为列表格式，按优先级从左到右填写标签值（如`['0x88A8:0x0003', '0x8100:0x0002']`）。  
+- 返回值需结合通讯协议错误码进一步分析失败原因。

@@ -1,0 +1,71 @@
+##功能##
+诊断节点快速安全认证功能用于在诊断通信中快速通过指定的安全访问级别认证。该功能主要用于车辆ECU诊断过程中，当需要访问受保护的数据或执行受保护的操作时，必须先通过相应的安全认证级别。
+
+##vba规范##
+函数定义：diagSecurityAccess(diagNode, level)
+参数：
+- diagNode: DiagNode类型，表示诊断节点对象
+- level: int类型，表示安全模式级别（如1对应27 01服务）
+返回值：
+- 成功时返回List类型的PDU响应
+- 失败时返回int类型错误码：
+  -1：诊断通道激活失败
+  1：服务执行失败
+  2：服务发送失败
+  3：服务响应超时
+  4：响应PDU解析失败
+
+##capl规范##
+函数定义：DiagSecurityAccess(nodeName, level)
+参数：
+- nodeName: char[]类型，表示诊断节点名称（如"EMS"）
+- level: int类型，表示安全访问级别
+返回值：
+- 成功时返回1
+- 失败时返回0
+使用示例：
+1. 对EMS节点进行安全级别1认证：
+```capl
+DiagSecurityAccess("EMS", 1);
+```
+2. 检查安全认证结果：
+```capl
+if(DiagSecurityAccess("TCU", 2) == 1) {
+  write("Security access granted");
+}
+```
+
+##capl名##
+DiagSecurityAccess
+
+##转换须知##
+1. 参数差异：VBA使用DiagNode对象，而CAPL使用节点名称字符串
+2. 返回值差异：VBA返回详细错误码或响应列表，CAPL只返回成功/失败状态
+3. 行为差异：VBA版本可能包含更详细的错误处理机制
+4. 特殊情况：CAPL中需要确保节点名称正确且已配置
+
+##转换示例##
+1. CAPL原始代码：
+```capl
+int result = DiagSecurityAccess("EMS", 1);
+if(result == 1) {
+  write("Security access successful");
+}
+```
+2. 转换后的VBA代码：
+```vba
+Dim result
+result = diagSecurityAccess(CAN1.DiagNodes.EMS, 1)
+If IsNumeric(result) Then
+    If result = -1 Then
+        MsgBox "Diagnostic channel activation failed"
+    '...其他错误处理
+    End If
+Else
+    '处理成功响应
+End If
+```
+3. 关键转换说明：
+- 将CAPL的节点名称字符串转换为VBA的DiagNode对象引用
+- 将CAPL的简单返回值转换为VBA的复杂错误处理逻辑
+- 添加了对返回类型的检查（数值错误码或响应列表）

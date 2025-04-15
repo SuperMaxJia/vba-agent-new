@@ -1,0 +1,82 @@
+##功能##
+用于检测超时并产生事件，通常用于自动化测试场景。该函数创建超时检测对象但不立即开始检测，需要手动调用启动函数。超时时间单位为毫秒(ms)。
+
+##vba规范##
+函数名：chkCreate_Timeout
+返回值：int类型，代表创建的对象ID，-1表示创建失败
+参数：timeout(Number类型)，指定超时时间(毫秒)
+相关函数：
+- chkControl_Start：手动启动检测对象
+- testAddCondition：将统计信息加入测试报告
+- testWaitForTimeout：等待指定时间
+- testRemoveCondition：结束统计
+
+##capl规范##
+函数名：timeoutCreate
+返回值：long类型，代表创建的超时对象ID，-1表示失败
+参数：timeout(long类型)，超时时间(毫秒)
+相关函数：
+- timeoutControl：控制超时对象(启动/停止)
+- testAddCondition：添加测试条件
+- testWait：等待指定时间
+- testRemoveCondition：移除测试条件
+
+示例1：
+```capl
+long timeoutId;
+timeoutId = timeoutCreate(2000);
+timeoutControl(timeoutId, 1); // 1表示启动
+testAddCondition(timeoutId);
+testWait(1000);
+testRemoveCondition(timeoutId);
+```
+
+示例2：
+```capl
+long timeoutId = timeoutCreate(3000);
+if(timeoutId != -1) {
+  timeoutControl(timeoutId, 1);
+  testAddCondition(timeoutId);
+  // 其他测试逻辑
+  testRemoveCondition(timeoutId);
+}
+```
+
+##capl名##
+timeoutCreate
+
+##转换须知##
+1. CAPL使用long类型而非int类型作为返回值
+2. CAPL中启动检测使用timeoutControl函数，需要额外参数指定操作类型
+3. CAPL中等待函数名为testWait而非testWaitForTimeout
+4. 超时时间在两种语言中都使用毫秒单位
+5. CAPL中需要显式检查返回值是否为-1表示失败
+
+##转换示例##
+CAPL原始代码：
+```capl
+long checkId = timeoutCreate(1500);
+if(checkId != -1) {
+  timeoutControl(checkId, 1);
+  testAddCondition(checkId);
+  testWait(800);
+  testRemoveCondition(checkId);
+}
+```
+
+转换后的VBA代码：
+```vba
+checkId = chkCreate_Timeout(1500)
+If checkId <> -1 Then
+  chkControl_Start
+  testAddCondition(checkId)
+  testWaitForTimeout(800)
+  testRemoveCondition(checkId)
+End If
+```
+
+关键转换步骤：
+1. 将timeoutCreate改为chkCreate_Timeout
+2. 将timeoutControl(checkId,1)改为chkControl_Start
+3. 将testWait改为testWaitForTimeout
+4. 保持相同的参数值和逻辑流程

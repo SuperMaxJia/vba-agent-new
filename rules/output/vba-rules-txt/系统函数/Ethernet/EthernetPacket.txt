@@ -1,0 +1,41 @@
+1. 函数名
+EthernetPacket
+
+2. 函数描述
+用于创建一条以太网报文
+
+3. 函数体
+EthernetPacket()
+
+4. 返回值
+无明确返回值说明（创建的是对象实例）
+
+5. 参数
+名称                 类型        描述
+source_mac_address    str         源MAC地址，格式为XX:XX:XX:XX:XX:XX
+destination_mac_address str       目的MAC地址，格式为XX:XX:XX:XX:XX:XX
+ethertype             int         EtherType值，16位无符号整数(0x0000-0xFFFF)
+payload               list        以太网报文的数据payload（列表形式）
+packet_id            str         使用uuid.uuid4()生成的唯一标识符
+timestamp            float       获取报文的时间戳（浮点类型）
+
+6. 内置函数
+函数名称               描述
+setSourceMacAddress    设置源MAC地址
+setDestinationMacAddress 设置目的MAC地址
+setType               设置EtherType值
+setPayload            设置报文payload数据
+
+7. 示例
+示例功能：创建一条以太网报文
+示例代码：
+ethernetPacket = EthernetPacket()
+ethernetPacket.setSourceMacAddress("20:00:00:00:00:01")
+ethernetPacket.setDestinationMacAddress("FF:FF:FF:FF:FF:FF")
+ethernetPacket.setType(0xF123)
+ethernetPacket.setPayload([])
+
+8. 其他信息
+- MAC地址格式要求：XX:XX:XX:XX:XX:XX
+- EtherType取值范围：0x0000-0xFFFF
+- 对象包含唯一标识符(packet_id)和时间戳(timestamp)属性

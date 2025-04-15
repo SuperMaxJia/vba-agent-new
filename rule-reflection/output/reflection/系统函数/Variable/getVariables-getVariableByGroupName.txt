@@ -1,0 +1,51 @@
+##功能##
+该函数用于根据变量组名称获取该组下的所有变量对象列表，主要用于批量操作或管理同一组内的多个变量，常见于自动化测试或数据监控场景。
+
+##vba规范##
+函数定义：Function getVariableByGroupName(groupName As String) As List
+参数：groupName (String类型) - 指定要查询的变量组名称
+返回值：variables (List类型) - 返回包含变量对象的列表
+调用方式：直接调用函数并传入组名字符串
+
+##capl规范##
+函数定义：Variables getVariables(char groupName[])
+参数：groupName (char数组) - 变量组名称字符串
+返回值：Variables类型 - 返回变量集合对象
+示例1：
+```capl
+variables = getVariables("Vehicle");
+```
+示例2：
+```capl
+char group[20] = "Engine";
+vars = getVariables(group);
+```
+
+##capl名##
+getVariables
+
+##转换须知##
+1. 参数类型：VBA使用String而CAPL使用char数组
+2. 返回值：VBA返回List对象而CAPL返回Variables集合
+3. 函数命名：CAPL版本采用单数形式"Variables"而非复数
+4. 字符串处理：CAPL需要显式声明字符数组大小
+5. 对象操作：CAPL的Variables对象需要特殊方法访问成员
+
+##转换示例##
+CAPL原始代码：
+```capl
+char targetGroup[10] = "ECU";
+variables = getVariables(targetGroup);
+```
+
+转换后的VBA代码：
+```vba
+Dim variables As List
+variables = getVariableByGroupName("ECU")
+```
+
+关键转换步骤：
+1. 将char数组声明改为直接字符串传递
+2. 变量类型从Variables改为List
+3. 函数名改为VBA规范形式
+4. 移除不必要的中间变量声明

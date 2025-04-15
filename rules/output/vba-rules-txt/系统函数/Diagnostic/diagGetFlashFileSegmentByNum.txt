@@ -1,0 +1,43 @@
+以下是提取的VBA函数`diagGetFlashFileSegmentByNum`的详细信息：
+
+1. 函数名  
+   `diagGetFlashFileSegmentByNum`
+
+2. 函数描述  
+   根据段的序号获取段的信息。
+
+3. 函数体  
+   ```vba
+   diagGetFlashFileSegmentByNum(handle, num)
+   ```
+
+4. 返回值  
+   返回一个含有三个元素的列表：  
+   - 第一个元素：段数据的起始地址  
+   - 第二个元素：段数据的大小  
+   - 第三个元素：段数据  
+
+5. 参数  
+   | 名称   | 类型  | 描述         |
+   |--------|-------|--------------|
+   | handle | file  | 文件句柄     |
+   | num    | int   | 段的索引     |
+
+6. 内置函数  
+   无相关内置函数说明。
+
+7. 示例  
+   **示例功能**：加载刷写s19数据文件，并获取文件的段信息，将段中的数据发送下去。  
+   **示例代码**：  
+   ```vba
+   handler = diagLoadFlashFile(r'D://falsh.s19')
+   result = diagGetFlashFileSegmentByNum(handle, 0)
+   diagSendPDU(udsConfig, result[2], CAN1)
+   ```
+   **代码注释**：  
+   - `diagLoadFlashFile`：加载指定的s19文件。  
+   - `diagGetFlashFileSegmentByNum`：获取索引为0的段信息。  
+   - `diagSendPDU`：将段数据通过CAN1发送。  
+
+8. 其他相关说明  
+   无其他相关说明。

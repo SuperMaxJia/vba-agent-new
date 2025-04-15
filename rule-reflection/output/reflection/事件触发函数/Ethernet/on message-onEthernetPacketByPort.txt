@@ -1,0 +1,58 @@
+##功能##
+该函数用于在接收到指定端口的以太网数据包时触发事件处理函数。主要应用于网络通信监控、数据包分析和协议测试等场景，允许用户针对特定端口范围或VLAN标签的数据包进行定制处理。
+
+##vba规范##
+函数名：onEthernetPacketByPort
+参数：
+- port: list类型，指定端口号或端口范围，如['7000-7788', 8000]
+- network: NetworkI类型（可选），指定网段对象
+- VLAN: str或list类型（可选），指定VLAN对象集合，默认值为['0x88A8:0x0003', '0x8100:0x0002']
+返回值：无（事件触发函数）
+特殊语法：使用装饰器声明事件处理函数
+
+##capl规范##
+在CAPL中对应的是以太网消息事件处理函数，主要通过on message或on ethernetFrame实现。示例：
+1. 基本端口过滤：
+on message 0x100-0x200, 0x300
+{
+    write("Received frame on port %d", this.can);
+    write("Timestamp: %f", timeNow());
+}
+
+2. 带VLAN过滤：
+on ethernetFrame VLAN(0x88A8,0x0003), VLAN(0x8100,0x0002)
+{
+    if(this.port == 8000 || (this.port >= 7000 && this.port <= 7788)) {
+        write("Matched frame on port %d", this.port);
+    }
+}
+
+##capl名##
+on message
+
+##转换须知##
+1. CAPL使用离散的on message/on ethernetFrame事件，而非装饰器语法
+2. VLAN过滤在CAPL中通过VLAN()语法直接实现
+3. 端口范围检查需要在CAPL事件处理函数内手动实现
+4. CAPL通过this关键字访问消息/帧属性，而非通过参数传递
+5. 时间戳获取方式不同（CAPL使用timeNow()）
+
+##转换示例##
+1. CAPL原始代码：
+on message 0x100-0x200, 0x300
+{
+    write("Received frame ID %x", this.id);
+    write("Timestamp: %f", timeNow());
+}
+
+2. 转换后的VBA代码：
+@onEthernetPacketByPort([0x100-0x200, 0x300])
+def onEthernetPacketEvent(ethFrame):
+    print(f"Received frame ID {hex(ethFrame.id)}")
+    print(f"Timestamp: {ethFrame.gettimestamp()}")
+
+3. 关键转换说明：
+- CAPL的on message转换为VBA的装饰器语法
+- this关键字访问转换为参数传递
+- write()函数转换为print()
+- 时间戳获取从timeNow()改为gettimestamp()方法

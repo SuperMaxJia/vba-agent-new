@@ -1,0 +1,67 @@
+##功能##
+该函数用于在测试过程中创建一个对话框，等待用户输入字符串，并将输入结果自动记录到测试报告中。主要用于需要人工交互的测试场景，如输入测试参数、确认信息等。
+
+##vba规范##
+函数名: testWaitForStringInput
+参数:
+- title: str类型，对话框标题
+- content: str类型，对话框提示信息
+- timeout: int类型，超时时间(毫秒)
+- default: str类型(可选)，默认显示字符串
+返回值: tuple类型，第一个元素是int类型的状态码(0=超时，1=OK，2=关闭，<0=非法调用)，第二个元素是str类型的输入内容
+
+##capl规范##
+函数名: TestWaitForString
+参数:
+- char[] title: 对话框标题
+- char[] content: 对话框提示信息
+- dword timeout: 超时时间(毫秒)
+- char[] default: 默认显示字符串(可选)
+返回值: int类型的状态码(0=超时，1=OK，2=关闭，<0=非法调用)，输入内容通过全局变量获取
+
+示例1:
+int result;
+char input[100];
+result = TestWaitForString("Title", "Enter value:", 5000);
+if(result == 1){
+    write("Input: %s", input);
+}
+
+示例2:
+int result;
+char input[100];
+result = TestWaitForString("Config", "Set threshold:", 3000, "10");
+if(result == 1){
+    write("Threshold set to: %s", input);
+}
+
+##capl名##
+TestWaitForString
+
+##转换须知##
+1. CAPL使用全局变量存储输入内容，而VBA通过返回值返回
+2. CAPL的超时参数单位是毫秒，与VBA一致
+3. CAPL的状态码含义与VBA完全一致
+4. CAPL需要预定义足够大的字符数组来存储输入
+5. CAPL不支持默认参数的多重定义，需要显式传递空字符串
+
+##转换示例##
+CAPL原始代码:
+int result;
+char answer[256];
+result = TestWaitForString("Login", "Enter username:", 10000);
+if(result == 1){
+    write("User: %s", answer);
+}
+
+转换后的VBA代码:
+Dim result As Variant
+result = testWaitForStringInput("Login", "Enter username:", 10000)
+If result(0) = 1 Then
+    WriteInfo "User: %s", result(1)
+End If
+
+关键转换说明:
+1. 将CAPL的全局变量answer改为VBA返回值的第二个元素
+2. CAPL的write函数改为VBA的WriteInfo
+3. 状态检查逻辑保持一致，但VBA使用元组访问方式

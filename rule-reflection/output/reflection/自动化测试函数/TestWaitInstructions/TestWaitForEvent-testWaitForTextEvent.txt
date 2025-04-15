@@ -1,0 +1,77 @@
+##功能##
+该函数用于在测试环境中等待特定文本事件的发生，只能触发一次。常用于测试脚本中验证特定事件或错误消息的出现，如检测错误帧等场景。
+
+##vba规范##
+函数名：testWaitForTextEvent
+参数：
+- text: 字符串类型，要匹配的文本内容
+- timeout: 整型，超时时间（毫秒），0表示无限等待
+返回值：整型
+- 0: 超时
+- 1: 事件发生（相当于yes）
+- 2: 用户取消（相当于no）
+- -1: 未知错误
+
+##capl规范##
+函数名：TestWaitForEvent
+参数：
+- eventText: char数组，要匹配的文本内容
+- timeout: long，超时时间（毫秒），0表示无限等待
+返回值：long
+- 0: 超时
+- 1: 事件发生
+- 2: 用户取消
+- -1: 未知错误
+
+示例1：
+long result;
+result = TestWaitForEvent("ErrorFrame occurred!", 3000);
+if(result == 1)
+{
+    write("Event occurred");
+}
+
+示例2：
+on errorFrame
+{
+    TestSupplyTextEvent("ErrorFrame occurred!");
+}
+
+##capl名##
+TestWaitForEvent
+
+##转换须知##
+1. 参数类型差异：VBA使用str类型，CAPL使用char数组
+2. 函数名差异：VBA为testWaitForTextEvent，CAPL为TestWaitForEvent
+3. 事件触发机制：CAPL需要显式调用TestSupplyTextEvent触发事件
+4. 返回值含义完全一致
+5. CAPL中字符串需要用双引号，VBA中可用单/双引号
+
+##转换示例##
+1. CAPL原始代码：
+on errorFrame
+{
+    TestSupplyTextEvent("ErrorFrame occurred!");
+}
+
+long result;
+result = TestWaitForEvent("ErrorFrame occurred!", 3000);
+if(result == 1)
+{
+    write("Event occurred");
+}
+
+2. 转换后的VBA代码：
+' 在其他地方触发事件
+' testSupplyTextEvent "ErrorFrame occurred!"
+
+result = testWaitForTextEvent("ErrorFrame occurred!", 3000)
+If result = 1 Then
+    Debug.Print "Event occurred"
+End If
+
+3. 关键转换说明：
+- 将CAPL的TestWaitForEvent改为VBA的testWaitForTextEvent
+- CAPL的write改为VBA的Debug.Print
+- CAPL的显式事件触发机制在VBA中可能由其他方式实现
+- 条件判断语法从CAPL的if()改为VBA的If Then

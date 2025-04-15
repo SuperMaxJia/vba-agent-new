@@ -1,0 +1,51 @@
+##功能##
+清除LIN调度表的功能用于重置指定LIN网络上的调度表，通常在需要重新配置LIN通信或清除现有调度时使用。适用于LIN网络配置变更或调试场景。
+
+##vba规范##
+函数定义：clearLINSchedulerService(lin_network)
+参数：
+- lin_network: Network类型，表示要清除调度表的LIN网络对象
+返回值：无
+内置函数：无
+
+##capl规范##
+函数定义：linClearSchedule(linChannel)
+参数：
+- linChannel: 整数类型，表示LIN通道号
+返回值：无
+示例1：
+```capl
+linClearSchedule(1);  // 清除LIN1通道的调度表
+```
+示例2：
+```capl
+on key 'c'
+{
+    linClearSchedule(2);  // 按键清除LIN2通道的调度表
+}
+```
+
+##capl名##
+linClearSchedule
+
+##转换须知##
+1. 参数类型差异：VBA使用Network对象，CAPL使用整数通道号
+2. 返回值相同：都无返回值
+3. 函数行为相同：都会清除指定LIN网络的调度表
+4. 特殊处理：需要将VBA的Network对象映射为CAPL的通道号
+
+##转换示例##
+1. CAPL原始代码：
+```capl
+linClearSchedule(1);
+```
+
+2. 转换后的VBA代码：
+```vba
+clearLINSchedulerService(LIN1)
+```
+
+3. 关键转换说明：
+- 将CAPL的通道号1对应到VBA的LIN1网络对象
+- 保持函数功能一致，都是清除调度表
+- 注意VBA需要预先定义LIN1网络对象

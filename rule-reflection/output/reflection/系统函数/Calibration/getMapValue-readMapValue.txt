@@ -1,0 +1,66 @@
+##功能##
+读取Map变量值信息，包括行列数、轴点数值和变量数值列表，用于标定节点的Map变量处理和分析。
+
+##vba规范##
+函数定义：readMapValue(calNode, variable)
+参数：
+- calNode: CalNode类型，标定节点对象
+- variable: str或CalVariable类型，变量名称或变量对象
+返回值：MapValueInfo类型，包含columnNumber、xAxisValue、rowNumber、yAxisValue、value、info属性
+
+##capl规范##
+函数定义：getMapValue(node, variable)
+参数：
+- node: 标定节点对象
+- variable: char[]或变量对象
+返回值：struct类型，包含：
+- columns: int
+- xValues: float[]
+- rows: int  
+- yValues: float[]
+- values: float[]
+- error: char[]
+
+示例1：
+```capl
+struct mapInfo info;
+info = getMapValue(CAN1::Calibrations::calNode1, "NewMap");
+write(info.values);
+```
+
+示例2：
+```capl
+struct mapInfo info;
+info = getMapValue(CAN1::Calibrations::calNode1, CAN1::Calibrations::calNode1::characteristics::NewMap);
+write(info.xValues);
+```
+
+##capl名##
+getMapValue
+
+##转换须知##
+1. 参数顺序一致但类型不同：CAPL使用char[]代替str
+2. 返回值结构名称不同但内容对应
+3. CAPL使用::作为命名空间分隔符，VBA使用.
+4. CAPL需要显式声明返回结构体类型
+
+##转换示例##
+CAPL原始代码：
+```capl
+struct mapInfo result;
+result = getMapValue(CAN1::Calibrations::node1, "EngineMap");
+write(result.yValues);
+```
+
+转换后的VBA代码：
+```vba
+Dim result As MapValueInfo
+Set result = readMapValue(CAN1.Calibrations.node1, "EngineMap")
+writeInfo result.yAxisValue
+```
+
+关键转换步骤：
+1. 结构体声明改为VBA的Dim...As
+2. 命名空间分隔符::改为.
+3. 返回值属性名yValues改为yAxisValue
+4. write函数改为writeInfo

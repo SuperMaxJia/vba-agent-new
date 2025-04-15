@@ -1,0 +1,69 @@
+##功能##
+该函数用于加载刷写数据文件（支持HEX/S19/MOT格式），返回文件句柄用于后续操作。主要用于汽车ECU刷写过程中的文件加载阶段。
+
+##vba规范##
+函数名：diagLoadFlashFile
+参数：
+- path: String类型，表示文件路径
+返回值：
+- 成功时返回文件句柄(file类型)
+- 失败时返回整型错误码(1-6分别表示不同错误情况)
+
+##capl规范##
+在CAPL中，对应的功能通常通过诊断服务实现，没有完全等效的单个函数。最接近的是使用Diagnostic Flash Programming相关的API：
+- diagSetPreprogrammingMode()：设置预编程模式
+- diagDownloadFile()：下载文件到ECU
+返回值：
+- 0表示成功
+- 非0表示错误码
+
+示例1：
+```
+dword result;
+result = diagSetPreprogrammingMode(1);  // 进入预编程模式
+if(result == 0) {
+    result = diagDownloadFile("C:\\flash.s19", 0);
+}
+```
+
+示例2：
+```
+dword handle;
+handle = diagCreateObject("FlashFile");
+if(diagLoadFile(handle, "D:\\data.hex") != 0) {
+    write("文件加载失败");
+}
+```
+
+##capl名##
+diagLoadFile
+
+##转换须知##
+1. CAPL需要分步操作(设置模式+加载文件)，而VBA是单函数调用
+2. CAPL返回错误码为dword类型，VBA返回多种类型
+3. CAPL需要显式创建对象，VBA自动管理
+4. 文件格式支持可能不同，需要验证
+
+##转换示例##
+CAPL原始代码：
+```
+dword result;
+result = diagLoadFile(flashHandle, "C:\\update.s19");
+if(result != 0) {
+    write("Error loading file: %d", result);
+}
+```
+
+转换后的VBA代码：
+```
+Dim fileHandle As file
+fileHandle = diagLoadFlashFile("C:\update.s19")
+If VarType(fileHandle) = vbInteger Then
+    MsgBox "Error loading file: " & fileHandle
+End If
+```
+
+关键转换步骤：
+1. 将CAPL的分步操作合并为VBA的单个函数调用
+2. CAPL的错误码检查转换为VBA的类型检查
+3. 文件路径格式从双反斜杠改为单反斜杠

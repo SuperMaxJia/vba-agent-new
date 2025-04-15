@@ -1,0 +1,41 @@
+##功能##
+testStep函数用于在测试用例中记录测试步骤的详细信息，包括步骤的重要性和描述信息。它不会影响测试结果，仅用于在测试报告中输出用户自定义内容，帮助理解测试过程。
+
+##vba规范##
+函数名：testStep
+参数：
+- levelOfDetail: String类型，表示测试步骤的重要性级别（0表示最重要，数字越大越不重要）
+- description: String类型，测试步骤的描述信息（可选，默认为空字符串）
+返回值：无
+内置函数：无
+
+##capl规范##
+在CAPL中，最接近的对应函数是write函数，它可以向测试报告写入信息。虽然不能直接设置重要性级别，但可以通过不同的日志级别间接实现类似功能。
+
+示例1：
+write("INFO", "Communication prepared");  // 使用INFO级别记录测试步骤
+
+示例2：
+write("EXCLUSIVE", "Critical step: ECU initialization");  // 使用EXCLUSIVE级别记录重要步骤
+
+##capl名##
+write
+
+##转换须知##
+1. CAPL的write函数使用日志级别而非数字来表示重要性
+2. CAPL需要单独指定日志级别和消息两个参数
+3. VBA中的数字重要性级别需要映射到CAPL的日志级别（如0→EXCLUSIVE，1→INFO等）
+4. CAPL的write函数可以返回写入的字节数，而VBA无返回值
+
+##转换示例##
+CAPL原始代码：
+write("INFO", "Communication prepared");
+
+转换后的VBA代码：
+testStep "1.0", "Communication prepared"
+
+关键转换步骤说明：
+1. 将CAPL的日志级别"INFO"转换为VBA的重要性数字"1.0"
+2. 保持描述信息不变
+3. 移除CAPL中的分号（VBA不需要）
+4. 将write函数名改为testStep

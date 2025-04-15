@@ -1,0 +1,36 @@
+1. 函数名
+fileSeek
+
+2. 函数描述
+设置文件当前位置，用于移动文件读取指针到指定位置。
+
+3. 函数体
+fileSeek(file, offset, whence=0)
+
+4. 返回值
+情况1：正确读值
+名称      类型  描述
+position  int  如果操作成功，返回新的文件位置
+
+情况2：异常情况
+名称    类型  描述
+errorno int  操作失败返回-1
+
+5. 参数
+名称   类型  描述
+file   file 文件对象
+offset int  代表需要移动偏移的字节数
+whence int  可选输入，代表从哪个位置开始，0代表从文件开始算起，1代表从当前位置算起，2代表从文件末尾算起
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：设置文件指针的位置是从文件处开始偏移10个字节
+示例代码：
+file = openFile(r'D:\demo.txt', mode='r', encoding='utf-8')
+fileSeek(file, 10, 0)
+closeFile(file)
+
+8. 其他
+无其他相关信息

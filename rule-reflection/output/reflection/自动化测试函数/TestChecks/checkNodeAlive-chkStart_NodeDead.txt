@@ -1,0 +1,70 @@
+##功能##
+用于启动节点死亡（Node Dead）检查功能，检测指定节点是否停止发送报文。该函数主要用于监控总线上的节点活动状态，当节点未按预期发送报文时触发相关事件记录，通常用于自动化测试中的节点健康检查。
+
+##vba规范##
+函数名：chkStart_NodeDead  
+函数描述：启动节点死亡检查功能  
+参数：无显式参数（依赖全局配置或上下文环境中的节点信息）  
+返回值：无明确返回值（通过事件或日志输出检查结果）  
+内置依赖：可能依赖底层总线监控功能如getNode、getMsgs  
+
+##capl规范##
+函数名：checkNodeAlive  
+参数：无显式参数（依赖CAPL测试模块的全局配置）  
+返回值：void  
+内置依赖：依赖CAPL的节点监控功能如on message、@sysvar  
+
+示例1：
+```capl
+on start
+{
+  // 启动节点存活检查
+  checkNodeAlive();
+}
+```
+
+示例2：
+```capl
+variables
+{
+  message 0x123 msg1;
+}
+
+on msg1
+{
+  // 当收到特定消息时启动检查
+  checkNodeAlive();
+}
+```
+
+##capl名##
+checkNodeAlive
+
+##转换须知##
+1. 参数差异：VBA版本依赖隐式全局配置，CAPL版本也依赖测试模块配置但语法更显式
+2. 返回值差异：两者都无直接返回值，但CAPL通常通过事件处理程序输出结果
+3. 行为差异：CAPL版本通常需要显式的事件处理程序来响应检查结果
+4. 特殊情况：CAPL中需要确保总线监控功能已正确配置
+
+##转换示例##
+CAPL原始代码：
+```capl
+on key 'a'
+{
+  // 按键启动节点检查
+  checkNodeAlive();
+}
+```
+
+转换后的VBA代码：
+```vba
+Sub StartCheck_NodeDead()
+    ' 启动节点死亡检查
+    chkStart_NodeDead
+End Sub
+```
+
+关键转换说明：
+1. 将CAPL的事件触发机制（on key）转换为VBA的直接调用
+2. 保持核心功能的一致性（节点状态检查）
+3. 注意VBA版本需要依赖工程配置而非CAPL的显式事件处理

@@ -1,0 +1,93 @@
+##功能##
+该函数用于启动信号值范围违规检查，持续监控指定信号是否超出预设的有效范围。当信号值超出配置的最小值/最大值时，会触发违规事件并通过回调函数或测试报告记录违规信息。典型应用场景包括车辆ECU信号监控、总线信号验证等。
+
+##vba规范##
+函数名：chkStart_MsgSignalValueRangeViolation  
+参数：  
+1. signalName (String)：待监控的信号名称  
+2. minValue (Number)：信号有效范围的最小值  
+3. maxValue (Number)：信号有效范围的最大值  
+4. callbackFunction (Function, 可选)：违规事件触发时的回调函数  
+返回值：无显式返回值  
+内置依赖：  
+- getSignalVal(signalName)：获取信号当前值  
+- writeWarningInfo(message)：记录警告日志  
+
+##capl规范##
+函数名：checkSignalRange  
+参数：  
+1. char signalName[]：信号名称字符串  
+2. double minValue：最小值阈值  
+3. double maxValue：最大值阈值  
+4. void (*callback)(char[], double)：函数指针类型的回调  
+返回值：void  
+内置依赖：  
+- @sysvar::signal::value(signalName)：获取信号值  
+- write("WARNING: %s", message)：输出警告信息  
+
+示例1：  
+```capl
+on start
+{
+  checkSignalRange("EngineSpeed", 500, 6000, onViolation);
+}
+
+void onViolation(char sigName[], double val)
+{
+  write("WARNING: %s out of range! Value=%.2f", sigName, val);
+}
+```
+
+示例2：  
+```capl
+variables {
+  int throttleMin = 0;
+  int throttleMax = 100;
+}
+
+on sysvar_update ThrottlePosition
+{
+  checkSignalRange("Throttle", throttleMin, throttleMax);
+}
+```
+
+##capl名##
+checkSignalRange
+
+##转换须知##
+1. CAPL使用函数指针而非字符串指定回调函数  
+2. VBA的Number类型对应CAPL的double/float  
+3. CAPL通过@sysvar访问信号值，VBA使用独立函数  
+4. CAPL需要显式的事件处理块（如on start）启动监控  
+5. 日志输出语法不同（CAPL用write，VBA用writeWarningInfo）
+
+##转换示例##
+CAPL原始代码：  
+```capl
+on key 's'
+{
+  checkSignalRange("BrakePressure", 0.5, 10.8, brakeAlert);
+}
+
+void brakeAlert(char name[], double pressure)
+{
+  write("CRITICAL: %s pressure=%.1f bar", name, pressure);
+}
+```
+
+转换后的VBA代码：  
+```vba
+Sub StartCheck()
+    chkStart_MsgSignalValueRangeViolation "BrakePressure", 0.5, 10.8, "brakeAlert"
+End Sub
+
+Sub brakeAlert(signalName As String, value As Double)
+    writeWarningInfo "CRITICAL: " & signalName & " pressure=" & Format(value,"0.0") & " bar"
+End Sub
+```
+
+关键转换说明：  
+1. 将CAPL事件触发器(on key)改为VBA过程调用(Sub)  
+2. 回调函数从CAPL指针转为VBA字符串声明  
+3. 数值格式化使用VBA的Format函数替代%.1f  
+4. 日志输出函数适配为writeWarningInfo

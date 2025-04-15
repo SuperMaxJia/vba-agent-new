@@ -1,0 +1,32 @@
+1. 函数名
+testSetEcuOffline
+
+2. 函数描述
+用于将指定的ECU上所有的报文从总线上关闭，目前只支持CAN报文。
+
+3. 函数体
+testSetEcuOffline(Node)
+
+4. 返回值
+无明确返回值说明（根据上下文推断为无返回值或返回操作状态）
+
+5. 参数
+| 名称 | 类型           | 描述           |
+|------|----------------|----------------|
+| Node | 报文对象类型   | 仿真节点对象   |
+
+6. 内置函数
+无直接关联的内置函数（此函数属于TestControlling类函数）
+
+7. 示例
+功能：将CAN1.SUT节点从总线上断开5秒后重新上线
+代码：
+testSetEcuOffline(CAN1.SUT);  // 断开CAN1网段的SUT节点
+testWaitForTimeout(5000);     // 等待5000毫秒
+testSetEcuOnline(CAN1.SUT);   // 重新上线该节点
+
+8. 其他说明
+- 该函数需与testSetEcuOnline配对使用
+- 仅支持CAN总线报文控制
+- 典型应用场景：ECU故障模拟测试
+- 依赖testWaitForTimeout实现延时控制

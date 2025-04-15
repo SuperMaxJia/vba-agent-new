@@ -1,0 +1,81 @@
+##功能##
+配置DOIP连接设置并返回连接句柄，用于建立基于DOIP协议的诊断通信连接。在实际应用中，常用于车辆诊断系统中与ECU建立网络连接。
+
+##vba规范##
+函数名：diagDOIPConnect  
+参数：  
+- doipConnectLinkConfig (DOIPConnectLinkConfig对象)：包含DOIP连接配置信息  
+返回值：  
+- connectHandle (int)：连接句柄，0表示连接失败  
+
+##capl规范##
+函数名：doipConnect  
+参数：  
+- config (DOIP_CONFIG)：DOIP配置结构体  
+返回值：  
+- handle (long)：连接句柄，0表示连接失败  
+
+示例1：
+```capl
+DOIP_CONFIG config;
+long handle;
+
+config.ipAddress = "192.168.0.1";
+config.port = 13400;
+handle = doipConnect(config);
+```
+
+示例2：
+```capl
+on start
+{
+  DOIP_CONFIG myConfig;
+  long connection;
+  
+  myConfig.ipAddress = "10.10.10.100";
+  myConfig.port = 13400;
+  connection = doipConnect(myConfig);
+  
+  if(connection == 0)
+  {
+    write("Connection failed!");
+  }
+}
+```
+
+##capl名##
+doipConnect
+
+##转换须知##
+1. 参数类型差异：VBA使用对象，CAPL使用结构体
+2. 参数命名不同：VBA为doipConnectLinkConfig，CAPL为config
+3. 返回值类型相同但变量名不同
+4. 错误处理方式相同（返回0表示失败）
+5. CAPL需要显式定义结构体变量
+
+##转换示例##
+CAPL原始代码：
+```capl
+DOIP_CONFIG config;
+long handle;
+
+config.ipAddress = "192.168.1.50";
+config.port = 13400;
+handle = doipConnect(config);
+```
+
+转换后的VBA代码：
+```vba
+Dim doipConnectLinkConfig As DOIPConnectLinkConfig
+Dim connectHandle As Integer
+
+doipConnectLinkConfig.ipAddress = "192.168.1.50"
+doipConnectLinkConfig.port = 13400
+connectHandle = diagDOIPConnect(doipConnectLinkConfig)
+```
+
+关键转换步骤：
+1. 将DOIP_CONFIG结构体改为DOIPConnectLinkConfig对象
+2. 变量名从config改为doipConnectLinkConfig
+3. 函数名从doipConnect改为diagDOIPConnect
+4. 返回值变量名从handle改为connectHandle

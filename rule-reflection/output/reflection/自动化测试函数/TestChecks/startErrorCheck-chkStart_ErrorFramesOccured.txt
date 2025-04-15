@@ -1,0 +1,70 @@
+##功能##
+该函数用于启动错误帧检测功能，在自动化测试中监控总线上的错误帧发生情况。主要用于总线通信可靠性验证场景，配合其他检测函数记录和分析错误帧事件。
+
+##vba规范##
+函数名：chkStart_ErrorFramesOccured
+参数：无
+返回值：无明确返回值（可能隐含操作状态）
+功能：启动错误帧监控，需与chkCreate_ErrorFramesOccured配合使用
+所属：TestChecks自动化测试函数集
+
+##capl规范##
+函数名：startErrorCheck
+参数：无
+返回值：void
+功能：启动总线错误检测功能
+相关函数：createErrorCheck(), getErrorCount()
+
+示例1：
+```c
+on start {
+  createErrorCheck();
+  startErrorCheck();
+  // 测试逻辑...
+  if(getErrorCount() > 0) {
+    testStepFail("Error frames detected");
+  }
+}
+```
+
+示例2：
+```c
+variables {
+  int errorFlag;
+}
+on busOff {
+  startErrorCheck();
+  errorFlag = 1;
+}
+```
+
+##capl名##
+startErrorCheck
+
+##转换须知##
+1. CAPL中错误检测通常需要先调用create函数初始化
+2. CAPL的错误计数函数是分开的(getErrorCount)
+3. CAPL的错误检测可能绑定到特定事件(如busOff)
+4. VBA的测试结果记录函数需要单独实现
+
+##转换示例##
+CAPL原始代码：
+```c
+on key 's' {
+  startErrorCheck();
+  write("Error check started");
+}
+```
+
+转换后的VBA代码：
+```vba
+Sub StartErrorCheck()
+    chkStart_ErrorFramesOccured
+    Debug.Print "Error check started"
+End Sub
+```
+
+关键转换说明：
+1. CAPL的事件触发(on key)转换为VBA的显式调用
+2. CAPL的write函数对应VBA的Debug.Print
+3. 核心功能函数名从startErrorCheck变为chkStart_ErrorFramesOccured

@@ -1,0 +1,37 @@
+1. 函数名
+sendPeriodTCPMessage
+
+2. 函数描述
+周期报文发送函数，用于通过TCP连接周期性发送报文。
+
+3. 函数体
+taskid = sendPeriodTCPMessage(network, socketid, payload, cycletime)
+
+4. 返回值
+名称      类型   描述
+taskid    int    -1代表调用错误
+
+5. 参数
+名称      类型      描述
+network   Network   网段信息
+socketid  int       连接对应的socketid
+payload   list      报文载荷
+cycletime ms        发送周期
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：演示如何使用sendPeriodTCPMessage函数发送周期性TCP报文
+示例代码：
+taskid = sendPeriodTCPMessage(network, socketid, payload, cycletime)
+代码注释：
+- network: 指定网络配置信息
+- socketid: 指定TCP连接的socket ID
+- payload: 包含要发送的报文数据的列表
+- cycletime: 指定报文发送周期(毫秒)
+
+8. 其他说明
+- 调用成功时返回taskid，可用于后续操作
+- 返回-1表示函数调用失败
+- 报文发送周期以毫秒为单位

@@ -1,0 +1,57 @@
+##功能##
+该函数用于创建测试触发器，当特定条件（周期时间、信号变化或系统变量变化）满足时，会调用指定的回调函数。主要用于自动化测试中监控和响应各种触发条件。
+
+##vba规范##
+函数名：testAddTriggerTesterAction
+参数：
+1. action: testCreateTesterAction对象，表示要关联的测试动作
+2. callbackTrigger: 字符串或整数，表示触发条件（信号名或周期时间）
+返回值：整数，表示触发器的ID
+
+##capl规范##
+在CAPL中，可以使用on关键字结合定时器或信号事件来实现类似功能：
+1. 定时器触发：on timer
+2. 信号触发：on signal
+3. 系统变量触发：on sysvar
+
+示例1（周期触发）：
+on timer cyclicTrigger 1000
+{
+  testStep("", "Triggered by cycle time");
+}
+
+示例2（信号触发）：
+on signal CAN.MW.SigSigned16
+{
+  testStep("", "Triggered by signal");
+}
+
+##capl名##
+on
+
+##转换须知##
+1. CAPL使用事件处理机制(on)而非函数调用
+2. CAPL没有直接的返回值概念，触发器ID通过事件名称体现
+3. CAPL中不同触发类型需要不同的事件处理块
+4. 系统变量触发在CAPL中需要单独处理
+
+##转换示例##
+CAPL原始代码：
+on timer cyclicTrigger 1000
+{
+  write("Cycle trigger activated");
+}
+
+on signal CAN.MW.SigSigned16
+{
+  write("Signal trigger activated");
+}
+
+转换后的VBA代码：
+gTriggerCycle = testAddTriggerTesterAction(handle, 1000)
+gTriggerSig = testAddTriggerTesterAction(handle, "CAN.MW.SigSigned16")
+
+关键转换说明：
+1. CAPL的on timer转换为周期触发调用
+2. CAPL的on signal转换为信号触发调用
+3. 事件处理块内容转换为回调函数中的条件判断

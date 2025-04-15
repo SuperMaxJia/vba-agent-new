@@ -1,0 +1,69 @@
+##功能##
+该函数用于标识一个函数为测试用例函数，使其在自动化测试中被识别并纳入测试报告。通常用于汽车电子测试场景，配合其他测试函数记录测试步骤和结果。
+
+##vba规范##
+函数定义：使用@testcase装饰器标记测试用例函数
+参数：无
+返回值：无
+内置函数：writeInfo(), getNode(), testStep(), testStepFail()
+用途：标记测试用例，记录测试步骤和结果
+
+##capl规范##
+在CAPL中，测试用例通常使用testcase关键字定义：
+testcase myTestCase()
+{
+    write("EBS CAN1 Info");
+    testStep(1, "测试步骤1");
+    write("EBS CAN1 Info");
+    testStepFail(1, "55");
+}
+
+示例1：
+testcase checkBrakeSystem()
+{
+    testStep(1, "检查制动信号");
+    if(brakeSignal == 1)
+        testStepPass(1);
+    else
+        testStepFail(1, "制动信号异常");
+}
+
+示例2：
+testcase verifyEngineSpeed()
+{
+    write("Engine Speed Test Start");
+    testStep(1, "验证发动机转速");
+    // 测试逻辑...
+}
+
+##capl名##
+testcase
+
+##转换须知##
+1. CAPL使用testcase关键字而非装饰器语法
+2. CAPL中的write对应VBA的writeInfo
+3. CAPL直接使用节点名称而非getNode函数
+4. 测试步骤函数在CAPL中通常有相似的名称但参数顺序可能不同
+5. CAPL测试用例需要显式定义在测试模块中
+
+##转换示例##
+1. CAPL原始代码：
+testcase canCommunicationTest()
+{
+    write("CAN Communication Test");
+    testStep(1, "Check CAN1 connection");
+    // 测试逻辑...
+}
+
+2. 转换后的VBA代码：
+@testcase
+def canCommunicationTest():
+    writeInfo('CAN Communication Test')
+    testStep("1", "Check CAN1 connection")
+    # 测试逻辑...
+
+3. 关键转换说明：
+- CAPL的testcase关键字转换为VBA的@testcase装饰器
+- CAPL的write()转换为VBA的writeInfo()
+- 测试步骤编号在CAPL中是数字，在VBA中是字符串
+- 函数定义语法从CAPL的{}块转换为VBA的def和缩进

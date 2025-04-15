@@ -1,0 +1,99 @@
+1. 函数名
+UDSConfig
+
+2. 函数描述
+创建一个自定义的诊断配置对象，然后通过修改其对象的属性值来设置相应的诊断参数
+
+3. 函数体
+UDSConfig()
+
+4. 返回值
+名称      类型      描述
+udsConfig UDSConfig 返回一个诊断配置对象，该对象包含以下属性，可分别给下面的属性进行赋值
+
+5. 参数
+名称        类型     描述
+id          int     诊断请求ID
+extend      int     扩展帧标识
+time        int     最小传输时间
+size        int     连续帧个数
+stuffByte   int     字节
+mode        int     诊断发送的模式
+res_flag    boolean 是否响应
+dlc         int     报文数据场长度
+type        int     报文的类型
+s3_time     int     S3客户端时间参数
+p2_time     int     p2超时时间
+bs_time     int     接收流控帧超时时间
+cr_time     int     接收流控帧超时时间
+cs_time     int     发送间隔时间
+flag        boolean 是否禁止肯定响应标识
+canType     int     诊断报文的类型
+
+6. 内置函数
+函数名称                 描述
+getReqId()              获取诊断请求ID，整数类型
+getReqIdExtend()        获取诊断请求ID的扩展帧标识，0代表标准帧；1代表扩展帧
+getRespId()             获取诊断响应ID，整数类型
+getRespIdExtend()       获取诊断响应ID的扩展帧标识，0代表标准帧；1代表扩展帧
+getFunctionId()         获取诊断响应功能寻址ID，整数类型
+getFunctionIdExtend()   获取诊断响应功能寻址ID的扩展帧标识，0代表标准帧；1代表扩展帧
+getSTmin()              获取最小传输时间参数，整数类型
+getBlockSize()          获取连续帧个数参数，整数类型
+getS3ClientTime()       获取S3客户端时间，整数类型
+getP2Timeout()          获取p2超时时间参数，整数类型
+getP2ExtendTimeout()    获取p2*时间参数，整数类型
+getBsTimeout()          获取接收流控帧超时时间参数，整数类型
+getCrTimeout()          获取接收连续帧超时时间参数，整数类型
+getCsTimeout()          获取发送连续帧间隔时间参数，整数类型，单位微秒
+getStuffByte()          获取设置的填充字节，整数类型
+getMode()               获取诊断发送的模式，0代表物理寻址，1代表功能寻址
+isRes_flag()            是否禁止肯定响应
+getDlc()                获取设置的CANFD诊断报文数据场长度
+getCanType()            获取诊断报文的类型，返回值0代表普通CAN报文，1代表CANFD报文
+setReqId(id)            设置诊断请求ID，整数类型
+setReqIdExtend(extend)  设置诊断请求ID的扩展帧标识，0代表标准帧；1代表扩展帧
+setRespId(id)           设置诊断响应ID，整数类型
+setRespIdExtend(extend) 设置诊断响应ID的扩展帧标识，0代表标准帧；1代表扩展帧
+setFunctionId(id)       设置诊断请求功能寻址ID，整数类型
+setFunctionIdExtend(extend) 设置诊断响应功能寻址ID的扩展帧标识，0代表标准帧；1代表扩展帧
+setSTmin(stmin)         设置最小传输时间，整数类型
+setBlockSize(size)      设置连续帧个数参数，整数类型
+setS3ClientTime(s3_time) 设置S3客户端时间参数，整数类型
+setP2Timeout(p2_time)   设置p2超时时间参数，整数类型
+setP2ExtendTimeout(p2_extendtime) 设置p2*时间参数，整数类型
+setBsTimeout(bs_time)   设置接收流控帧超时时间参数，整数类型
+setCrTimeout(cr_time)   设置接收连续帧超时时间参数，整数类型
+setCsTimeout(cs_time)   设置连续帧发送间隔时间，整数类型，单位微秒
+setStuffByte(stuffByte) 设置填充字节，整数类型
+setMode(mode)           设置诊断发送的模式，0代表物理寻址，1代表功能寻址
+setRes_flag(flag)       设置是否禁止肯定响应标识，True 或 False
+setDlc(dlc)             设置CANFD诊断报文最大数据场长度，整数类型
+setCanType(canType)     设置诊断报文的类型，canType是0代表普通CAN报文，1代表CANFD报文
+
+7. 示例
+示例功能：创建一套自定义的诊断配置对象，并基于此配置参数发送诊断PDU
+示例代码：
+udsConfig = UDSConfig()
+udsConfig.setReqIdExtend(0)  #设置诊断请求id的扩展帧标识,0代表标准帧，1代表扩展帧
+udsConfig.setReqId(0x700)   #设置诊断请求id
+udsConfig.setRespIdExtend(0) #设置诊断响应id的扩展帧标识,0代表标准帧，1代表扩展帧
+udsConfig.setRespId(0x600)  #设置诊断响应id
+udsConfig.setFunctionIdExtend(0) #设置诊断功能寻址id扩展帧标识,0代表标准帧，1代表扩展帧
+udsConfig.setFunctionId(0x7DF)  #设置诊断功能寻址id
+udsConfig.setSTmin(20)       #设置连续帧最小间隔时间
+udsConfig.setBlockSize(0)    #设置一次发送连续帧的帧数
+udsConfig.setS3ClientTime(4000) #设置S3客户端时间
+udsConfig.setP2Timeout(150)  #设置p2超时时间
+udsConfig.setP2ExtendTimeout(2000) #设置p2*
+udsConfig.setBsTimeout(1000) #设置接收流控帧超时时间
+udsConfig.setCrTimeout(1000) #设置接收连续帧超时时间
+udsConfig.setCsTimeout(500)  #设置连续帧发送间隔时间，整数类型，单位微秒
+udsConfig.setStuffByte(0x00) #设置填充字节
+udsConfig.setMode(0)         #设置0代表物理寻址，1代表功能寻址
+udsConfig.setRes_flag(False) = False #设置是否禁止肯定响应
+udsConfig.setDlc(8)          #设置CANFD诊断报文最大数据场长度
+diagSendPDU(udsConfig, [0x28, 0x00, 0x00], CAN1)
+
+8. 其他和函数或变量强相关的内容
+无

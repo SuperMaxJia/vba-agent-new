@@ -1,0 +1,56 @@
+##功能##
+关闭已打开的文件，释放文件资源。在所有文件操作完成后必须调用此函数，以确保文件被正确关闭并释放系统资源。
+
+##vba规范##
+函数名：closeFile
+参数：file（文件对象）
+返回值：无
+功能：关闭指定的文件对象，之后不能再对该文件进行读写操作
+
+##capl规范##
+函数：fileClose
+参数：fileHandle（长整型，文件句柄）
+返回值：无
+功能：关闭由fileOpen打开的文件
+
+示例1：
+// 打开并关闭文件
+long fileHandle;
+fileHandle = fileOpen("C:\\data\\test.txt", 0);
+// 文件操作...
+fileClose(fileHandle);
+
+示例2：
+// 错误处理示例
+long fh = fileOpen("C:\\temp\\log.txt", 1);
+if(fh != -1) {
+    writeFile(fh, "test message");
+    fileClose(fh);
+}
+
+##capl名##
+fileClose
+
+##转换须知##
+1. CAPL使用文件句柄(long)而不是文件对象作为参数
+2. CAPL中需要先通过fileOpen获取文件句柄
+3. CAPL没有自动资源回收机制，必须显式调用fileClose
+4. 错误处理方式不同：CAPL通过检查返回值，VBA可能使用On Error
+
+##转换示例##
+1. CAPL原始代码：
+long fh = fileOpen("data.txt", 0);
+// 文件操作...
+fileClose(fh);
+
+2. 转换后的VBA代码：
+Dim file As Integer
+file = FreeFile()
+Open "data.txt" For Input As #file
+' 文件操作...
+Close #file
+
+3. 关键转换说明：
+- CAPL的fileOpen/Close对应VBA的Open/Close
+- CAPL使用文件句柄，VBA使用文件号(FreeFile获取)
+- 两者都需要显式关闭文件

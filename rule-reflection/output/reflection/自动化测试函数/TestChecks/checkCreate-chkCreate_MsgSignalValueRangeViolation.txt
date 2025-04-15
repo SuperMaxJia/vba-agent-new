@@ -1,0 +1,74 @@
+##功能##
+检测信号或变量的值是否在指定范围内，创建检测对象但不自动启动检测。适用于需要手动控制检测启动时间的场景，如复杂测试流程中需要条件触发检测。
+
+##vba规范##
+函数声明：chkCreate_MsgSignalValueRangeViolation(object, aMinValue, aMaxValue)
+参数：
+- object: VariableEntity/CANDBCSignal/LINDBCSignal类型，表示要检测的信号或变量
+- aMinValue: Number类型，检测范围最小值（闭区间）
+- aMaxValue: Number类型，检测范围最大值（闭区间）
+返回值：int类型，返回创建的检测对象ID，-1表示创建失败
+
+##capl规范##
+函数声明：checkCreate(object, minValue, maxValue)
+参数：
+- object: message/signal类型，要检测的报文或信号
+- minValue: float类型，检测范围最小值
+- maxValue: float类型，检测范围最大值
+返回值：int类型，检测对象句柄，-1表示失败
+
+示例1：
+```capl
+on key 'a'
+{
+  handle = checkCreate(EngineRPM, 800, 6000);
+  checkStart(handle);
+  testWait(1000);
+  checkRemove(handle);
+}
+```
+
+示例2：
+```capl
+variables {
+  int tempCheck;
+}
+on start {
+  tempCheck = checkCreate(CAN1.TempSensor, -40, 125);
+  if(tempCheck == -1) write("创建检测失败");
+}
+```
+
+##capl名##
+checkCreate
+
+##转换须知##
+1. CAPL使用checkStart()单独启动检测，而VBA版本需要chkControl_Start
+2. CAPL的检测对象可以是message或signal，VBA支持更多类型
+3. CAPL的testWait对应VBA的testWaitForTimeout
+4. CAPL的checkRemove对应VBA的testRemoveCondition
+5. 边界值处理方式相同（闭区间）
+
+##转换示例##
+CAPL原始代码：
+```capl
+handle = checkCreate(SpeedSignal, 0, 120);
+checkStart(handle);
+testWait(5000);
+checkRemove(handle);
+```
+
+转换后的VBA代码：
+```vba
+checkId = chkCreate_MsgSignalValueRangeViolation(CAN1.MS.SpeedSignal, 0, 120)
+chkControl_Start(checkId)
+testWaitForTimeout(5000)
+testRemoveCondition(checkId)
+```
+
+关键转换说明：
+1. checkCreate → chkCreate_MsgSignalValueRangeViolation
+2. checkStart → chkControl_Start
+3. testWait → testWaitForTimeout
+4. checkRemove → testRemoveCondition
+5. 参数顺序和含义保持不变

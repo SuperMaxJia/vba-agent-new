@@ -1,0 +1,73 @@
+##功能##
+该函数用于通过TCP协议发送报文，适用于需要通过网络传输数据的场景，如汽车ECU间的通信、远程诊断等。
+
+##vba规范##
+函数定义：res = sendTCPMessage(network, socketid, payload)
+参数：
+- network: Network类型，指定网段信息
+- socketid: int类型，指定连接的socketid
+- payload: list类型，指定要发送的报文载荷
+返回值：int类型，0表示成功，-1表示失败
+
+##capl规范##
+函数定义：result = tcpSend(socket, data)
+参数：
+- socket: dword类型，指定TCP连接句柄
+- data: byte数组，指定要发送的数据
+返回值：int类型，0表示成功，-1表示失败
+
+示例1：
+```capl
+dword socket;
+byte data[4] = {0x01, 0x02, 0x03, 0x04};
+int result;
+result = tcpSend(socket, data);
+```
+
+示例2：
+```capl
+on key 's'
+{
+  dword conn = 1;
+  byte msg[8] = {0x10, 0x20, 0x30, 0x40};
+  if(tcpSend(conn, msg) == 0)
+  {
+    write("Send success");
+  }
+}
+```
+
+##capl名##
+tcpSend
+
+##转换须知##
+1. 参数差异：CAPL使用dword类型socket句柄，而VBA使用int类型的socketid
+2. 数据格式：CAPL使用byte数组，VBA使用list
+3. 网络参数：VBA需要显式指定network参数，CAPL不需要
+4. 返回值：两者都使用0/-1表示成功/失败
+
+##转换示例##
+1. CAPL原始代码：
+```capl
+dword socket = 1;
+byte data[3] = {0xAA, 0xBB, 0xCC};
+int res = tcpSend(socket, data);
+```
+
+2. 转换后的VBA代码：
+```vba
+Dim network As Network
+Dim socketid As Integer
+Dim payload As Variant
+Dim res As Integer
+
+socketid = 1
+payload = Array(&HAA, &HBB, &HCC)
+res = sendTCPMessage(network, socketid, payload)
+```
+
+3. 关键转换说明：
+- 将CAPL的dword类型转换为VBA的Integer
+- 将byte数组转换为VBA的Array
+- 移除CAPL中不需要的network参数
+- 保持相同的返回值处理逻辑

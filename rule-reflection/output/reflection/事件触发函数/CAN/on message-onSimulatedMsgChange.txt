@@ -1,0 +1,48 @@
+##功能##
+该函数用于在仿真ECU上报文的信号值发生修改时触发相应的事件处理逻辑。主要用于监控和响应仿真环境中特定CAN报文的变化，常用于测试和调试CAN通信系统。
+
+##vba规范##
+函数定义：@onSimulatedMsgChange(onmsg) def onSimulatedMsgChangeEvent(canNodeMsg)
+参数：
+- 情况1：单个参数，可以是message_id(int)、canmessage(CANMessage/CANDBCMessage)、ID范围字符串(str)或ID列表(list[str])
+- 情况2：两个参数，第一个是NetWork对象，第二个同情况1的参数
+返回值：无
+接受参数：canNodeMsg(CANMessage/CANDBCMessage)，包含msgId、extend、canType、dlc、data、channel等属性
+
+##capl规范##
+在CAPL中，可以使用on message或on signal事件处理程序来监控报文变化。对于仿真ECU报文修改的监控，通常使用on message配合sysvar或环境变量。
+
+示例1：
+on message 0x132 {
+    write("Message data: %x", this.byte(0));
+}
+
+示例2：
+on message VehicleSpeed {
+    write("DLC: %d", this.dlc);
+}
+
+##capl名##
+on message
+
+##转换须知##
+1. CAPL的on message处理的是物理报文，而VBA处理的是仿真报文
+2. CAPL需要明确指定消息ID或名称，VBA支持范围匹配
+3. CAPL没有直接的网络参数，需要通过总线通道(channel)区分
+4. VBA的扩展帧处理需要特殊注意，CAPL中通过属性直接判断
+
+##转换示例##
+CAPL原始代码：
+on message 0x100 {
+    write("Data: %x", this.byte(0));
+}
+
+转换后的VBA代码：
+@onSimulatedMsgChange(0x100)
+def onSimulatedMsgChangeEvent(canNodeMsg):
+    writeInfo(canNodeMsg.getData())
+
+关键转换步骤：
+1. 将CAPL的on message转换为VBA的@onSimulatedMsgChange装饰器
+2. CAPL的this.byte(0)对应VBA的getData()方法
+3. CAPL的write函数对应VBA的writeInfo函数

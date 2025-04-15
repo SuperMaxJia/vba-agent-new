@@ -1,0 +1,85 @@
+##功能##
+该函数用于写入数组变量的值信息，包括数组的维度和具体数值。主要用于标定和配置CAN网络中的数组类型变量，常见于汽车电子控制单元(ECU)的标定过程。
+
+##vba规范##
+函数定义：writeArrayValue(calNode, variable, arrayValueInfo)
+参数：
+- calNode: CalNode类型，标定节点对象
+- variable: str或CalVariable类型，变量名或变量对象
+- arrayValueInfo: ArrayValueInfo类型，包含数组维度信息和数值
+返回值：ArrayValueInfo类型，包含操作结果和失败原因
+
+##capl规范##
+在CAPL中，可以使用writeCalibrationData函数来写入标定数据，但需要手动处理数组维度。
+函数定义：writeCalibrationData(node, variableName, data)
+参数：
+- node: 标定节点名称
+- variableName: 变量名称字符串
+- data: 数组数据
+返回值：long类型，0表示成功，非0表示错误码
+
+示例1：
+```capl
+variables {
+  float data[2][2] = {{11.2, 12.0}, {14.0, 15.0}};
+}
+
+on key 'a' {
+  long result;
+  result = writeCalibrationData("CAN1::calNode1", "NewArray", data);
+  write("Write result: %d", result);
+}
+```
+
+示例2：
+```capl
+on message CAN1::CalibrationMsg {
+  float newValues[4] = {1.1, 2.2, 3.3, 4.4};
+  if (writeCalibrationData(this.CAN, "DynamicArray", newValues) == 0) {
+    write("Write successful");
+  }
+}
+```
+
+##capl名##
+writeCalibrationData
+
+##转换须知##
+1. CAPL需要预先定义数组变量，而VBA可以动态设置维度
+2. CAPL返回值是简单的错误码，VBA返回详细的对象信息
+3. CAPL中数组维度是静态定义的，VBA可以动态设置
+4. 在CAPL中处理失败需要检查返回值，VBA可以通过对象属性获取失败原因
+
+##转换示例##
+1. CAPL原始代码：
+```capl
+variables {
+  float arrayData[2][2] = {{1.0, 2.0}, {3.0, 4.0}};
+}
+
+on start {
+  long res;
+  res = writeCalibrationData("CAN1::NodeA", "TestArray", arrayData);
+  if (res != 0) {
+    write("Error writing array: %d", res);
+  }
+}
+```
+
+2. 转换后的VBA代码：
+```vba
+arrayValueInfo = ArrayValueInfo()
+arrayValueInfo.setColumnNumber(2)
+arrayValueInfo.setRowNumber(2)
+arrayValueInfo.setValue([1.0, 2.0, 3.0, 4.0])
+
+ans = writeArrayValue(CAN1.NodeA, "TestArray", arrayValueInfo)
+If ans.info <> "" Then
+    MsgBox "Error writing array: " & ans.info
+End If
+```
+
+3. 关键转换说明：
+- CAPL的静态数组定义转换为VBA的动态维度设置
+- CAPL的错误码检查转换为VBA的对象属性检查
+- CAPL的直接数组赋值转换为VBA的setValue方法调用

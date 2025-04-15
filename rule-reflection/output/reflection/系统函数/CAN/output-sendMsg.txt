@@ -1,0 +1,61 @@
+##功能##
+该函数用于向指定的CAN/CANFD网络通道发送一条报文。在实际应用中常用于模拟节点发送CAN报文、测试CAN网络通信、自动化测试脚本等场景。
+
+##vba规范##
+函数定义：sendMsg(msg, network)
+参数：
+- msg: CANMessage类型，可通过三种方式获取：1) CANMessage类创建 2) DBC报文对象CANDBCMessage 3) createCANMsg/createCANFDMs方法创建
+- network: Network类型，指定目标网段对象
+返回值：无明确返回值
+所属类别：CAN系统函数
+
+##capl规范##
+函数定义：output(msg)
+参数：
+- msg: message类型，可直接定义或通过dbMessage获取
+返回值：无
+使用示例：
+示例1：直接定义并发送标准CAN报文
+```capl
+message 0x10 msg;
+msg.dlc = 2;
+msg.byte(0) = 0x10;
+msg.byte(1) = 0x12;
+output(msg);
+```
+
+示例2：通过dbMessage获取并发送DBC定义的报文
+```capl
+message EngineData msg;
+output(msg);
+```
+
+##capl名##
+output
+
+##转换须知##
+1. CAPL使用简单的output()函数，而VBA需要明确指定网络参数
+2. CAPL中message对象直接定义，VBA需要通过类或创建函数构造
+3. CAPL自动关联到当前测试节点配置的总线，VBA需要显式指定network参数
+4. CAPL支持直接使用DBC定义的报文名称，VBA需要通过网段对象访问
+
+##转换示例##
+1. CAPL原始代码：
+```capl
+message 0x123 msg;
+msg.dlc = 8;
+msg.byte(0) = 0xAA;
+output(msg);
+```
+
+2. 转换后的VBA代码：
+```vba
+msg = createCANMsg(0x123, 0, 8, [0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+sendMsg(msg, CAN1)
+```
+
+3. 关键转换说明：
+- CAPL的message声明转换为VBA的createCANMsg调用
+- CAPL的直接赋值转换为VBA的数组参数
+- CAPL的output()自动发送转换为VBA需要指定目标网络的sendMsg()
+- 需要补充未赋值的字节为0x00以满足DLC长度

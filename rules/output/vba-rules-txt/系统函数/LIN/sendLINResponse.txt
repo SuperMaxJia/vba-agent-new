@@ -1,0 +1,30 @@
+1. 函数名
+sendLINResponse
+
+2. 函数描述
+设置LIN响应报文
+
+3. 函数体
+sendLINResponse(lin_responses, lin_network)
+
+4. 返回值
+无
+
+5. 参数
+名称           类型                    描述
+lin_responses  List,LINMsg,LINDBCMessage  LIN响应报文或者LIN的响应报文列表
+lin_network    NetworkI                  LIN网段对象
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：将LDF中定义的报文设置到成LIN仿真响应
+示例代码：
+linframer1 = LIN1.BLIN_BCM
+linframer2 = LIN1.BLIN_CLS
+linframer3 = LIN1.BLIN_RLS
+sendLINResponse([linframer1, linframer2, linframer3], LIN1)
+
+8. 其他说明
+该函数用于配置LIN网络的响应报文，可以传入单个LIN报文或LIN报文列表。

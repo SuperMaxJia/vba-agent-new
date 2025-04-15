@@ -1,0 +1,46 @@
+##功能##
+控制replay模块的启动、停止和暂停操作。用于在测试过程中动态控制replay回放行为，适用于需要精确控制回放时序的测试场景。
+
+##vba规范##
+Sub controlReplay(network As Network, replayName As String, controlType As Integer)
+参数：
+- network: Network类型，指定操作的网段对象
+- replayName: String类型，指定要控制的replay名称
+- controlType: Integer类型，控制类型(0=停止，1=启动，2=暂停)
+无返回值
+
+##capl规范##
+void replayControl(char replayName[], int controlType)
+参数：
+- replayName: 字符串，指定要控制的replay名称
+- controlType: 整型，控制类型(0=停止，1=启动，2=暂停)
+无返回值
+
+示例1：
+// 启动名为"EngineRPM"的replay
+replayControl("EngineRPM", 1);
+
+示例2：
+// 暂停名为"BrakeSignal"的replay
+replayControl("BrakeSignal", 2);
+
+##capl名##
+replayControl
+
+##转换须知##
+1. CAPL版本不需要network参数，操作默认在当前网段
+2. CAPL使用字符串数组表示replay名称，VBA使用String类型
+3. 控制类型定义在两种语言中保持一致
+4. 两者都是无返回值函数
+
+##转换示例##
+1. CAPL原始代码：
+replayControl("FuelInjection", 0);
+
+2. 转换后的VBA代码：
+controlReplay currentNetwork, "FuelInjection", 0
+
+3. 关键转换说明：
+- 移除network参数(VBA需要显式指定，CAPL隐式使用当前网段)
+- 保持相同的控制类型值(0表示停止)
+- 保持相同的replay名称字符串格式

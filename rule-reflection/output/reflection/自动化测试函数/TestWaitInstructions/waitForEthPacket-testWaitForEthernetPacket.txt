@@ -1,0 +1,61 @@
+##功能##
+该函数用于在指定时间内等待符合特定条件的以太网数据包出现。如果超时仍未等到符合条件的报文，则停止等待。适用于需要同步处理特定网络报文的场景，如测试网络设备响应、验证通信协议实现等。
+
+##vba规范##
+函数名：testWaitForEthernetPacket
+参数：
+- conditions: 字典或报文对象，指定匹配条件
+- VLAN: 列表，指定VLAN标签（可选，默认为空列表）
+- timeout: 整数，等待超时时间（ms，默认10000）
+返回值：
+- 整数0（超时）或报文对象（成功捕获）
+
+##capl规范##
+函数定义：long waitForEthPacket(dword timeout, byte conditions[], word vlanID = 0)
+参数：
+- timeout: 等待超时时间（ms）
+- conditions: 字节数组，指定报文匹配条件
+- vlanID: VLAN标识（可选，默认为0）
+返回值：
+- 0表示超时，1表示成功捕获
+
+示例1：
+// 等待普通以太网报文
+byte conditions[64];
+// 设置MAC地址条件
+conditions = {0x20,0x00,0x00,0x00,0x00,0x01};
+long result = waitForEthPacket(10000, conditions);
+
+示例2：
+// 等待带VLAN标签的TCP报文
+byte conditions[64];
+// 设置IP和端口条件
+conditions = {0xC0,0xA8,0x01,0x01, 0x1B,0x58};
+word vlan = 0x8100;
+long result = waitForEthPacket(5000, conditions, vlan);
+
+##capl名##
+waitForEthPacket
+
+##转换须知##
+1. CAPL使用字节数组表示匹配条件，而VBA支持字典和对象两种形式
+2. CAPL的VLAN参数是单个word值，VBA使用列表
+3. CAPL返回简单状态码，VBA返回报文对象
+4. CAPL的超时参数是必选参数，VBA有默认值
+5. 复杂条件（如IP范围）在CAPL中需要预处理
+
+##转换示例##
+CAPL原始代码：
+byte cond[6] = {0x20,0x00,0x00,0x00,0x00,0x01};
+long res = waitForEthPacket(5000, cond);
+
+转换后的VBA代码：
+Set conditions = CreateObject("Scripting.Dictionary")
+conditions.Add "MAC", Array("20:00:00:00:00:01")
+res = testWaitForEthernetPacket(conditions, timeout:=5000)
+
+关键转换说明：
+1. 将CAPL字节数组转换为VBA字典格式
+2. 显式指定timeout参数
+3. 省略VLAN参数（使用默认值）
+4. 注意返回值类型转换（long→object）

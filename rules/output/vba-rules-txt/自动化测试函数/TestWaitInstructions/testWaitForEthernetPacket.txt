@@ -1,0 +1,45 @@
+1. 函数名
+testWaitForEthernetPacket
+
+2. 函数描述
+等待指定以太网数据包，超时未等到则停止等待
+
+3. 函数体
+testWaitForEthernetPacket(conditions, VLAN=[], timeout=10000)
+
+4. 返回值
+名称  类型     描述
+res   int或object  0代表超时，object代表等到的报文对象
+
+5. 参数
+名称        类型         描述
+conditions  dict/object  指定条件的以太网报文对象，可以是字典或具体报文对象
+VLAN        list         报文对象的VLAN，空列表表示无VLAN
+timeout     int          等待时间(ms)，默认10s
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：等待一个指定以太网数据包
+示例代码：
+# 等待时长为10000ms，程序将被阻塞
+# 如果总线上出现该以太网报文则继续运行
+# 或超过10000ms程序将继续运行
+testWaitForEthernetPacket(ethernetPacket, VLAN=['0x8100:0x0000'], timeout=10000)
+
+8. 其他说明
+conditions参数可以是以下类对象：
+- EthernetPacket
+- IPv4Packet 
+- UDPPacket
+- TCPPacket
+- SOMEIPPacket
+- ETHDBCCommand
+
+字典格式说明：
+'MAC':["20:00:00:00:00:01","FF:FF:FF:FF:FF:FF"]
+'VLAN':['']
+'IP':['192.168.1.*','192.168.1.2']
+'PORT':['7000-7788',8000]
+'PROTOCOL':['TCP','UDP','SOMEIP','DOIP']

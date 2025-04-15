@@ -1,0 +1,43 @@
+1. 函数名  
+chkQuery_NumEvents  
+
+2. 函数描述  
+用于返回初始化后指定检测函数产生的事件次数。  
+
+3. 函数体  
+```vba  
+result = chkQuery_NumEvents(object)  
+```  
+
+4. 返回值  
+| 名称 | 类型 | 描述 |  
+|------|------|------|  
+| res  | str  | 字符串信息 |  
+
+5. 参数  
+| 名称   | 类型   | 描述       |  
+|--------|--------|------------|  
+| object | object | 检测对象   |  
+
+6. 内置函数  
+无  
+
+7. 示例  
+**示例功能**：用于返回初始化后指定检测函数产生的事件次数。  
+**示例代码**：  
+```vba  
+# 设置检测信号值范围  
+checkId = checkSignalInRange(Node_SUT.Velocity, 60, 100);  
+time.sleep(10)  
+# 一段时间后查询触发次数  
+result = chkQuery_NumEvents(checkId)  
+if (result > 0):  
+    TestStepFail("Value of signal is not in the allowed range!");  
+```  
+**代码注释**：  
+- 首先使用 `checkSignalInRange` 函数检测信号 `Node_SUT.Velocity` 是否在 60 到 100 的范围内，并返回检测对象 `checkId`。  
+- 等待 10 秒后，使用 `chkQuery_NumEvents` 查询该检测对象触发的事件次数。  
+- 如果事件次数大于 0，则调用 `TestStepFail` 函数输出错误信息。  
+
+8. 其他和函数或变量强相关的内容  
+无

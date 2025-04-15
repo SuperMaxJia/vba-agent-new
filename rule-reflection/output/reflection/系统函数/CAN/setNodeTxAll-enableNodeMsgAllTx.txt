@@ -1,0 +1,68 @@
+##功能##
+该函数用于使能指定节点的所有发送报文功能，使其能够正常发送所有配置的报文。适用于测试环境中需要动态控制节点报文发送状态的场景。
+
+##vba规范##
+函数定义：enableNodeMsgAllTx(Node)
+参数：
+- Node：ECUNode类型，表示需要操作的节点对象
+返回值：
+- int类型，0表示成功，-1表示失败
+
+##capl规范##
+函数定义：setNodeTxAll(node)
+参数：
+- node：ECU类型，表示需要操作的节点
+返回值：
+- int类型，0表示成功，-1表示失败
+
+示例1：
+```
+variables {
+  ECU node1;
+}
+on start {
+  int result = setNodeTxAll(node1);
+  write("Operation result: %d", result);
+}
+```
+
+示例2：
+```
+on key 'a' {
+  if(setNodeTxAll(Can1::ECU1) == 0) {
+    write("All messages enabled");
+  }
+}
+```
+
+##capl名##
+setNodeTxAll
+
+##转换须知##
+1. 参数类型差异：VBA使用ECUNode对象，CAPL使用ECU类型变量
+2. 函数名差异：VBA为enableNodeMsgAllTx，CAPL为setNodeTxAll
+3. 返回值含义相同，都是0成功/-1失败
+4. CAPL中需要先声明ECU变量并关联到具体节点
+
+##转换示例##
+CAPL原始代码：
+```
+on start {
+  ECU testNode;
+  testNode = Can1::ECU2;
+  setNodeTxAll(testNode);
+}
+```
+
+转换后的VBA代码：
+```vba
+Dim testNode As ECUNode
+Set testNode = Can1.ECU2
+enableNodeMsgAllTx(testNode)
+```
+
+关键转换步骤：
+1. ECU类型变量声明改为ECUNode对象声明
+2. 节点赋值语法从::改为.
+3. 函数名从setNodeTxAll改为enableNodeMsgAllTx
+4. VBA需要显式使用Set关键字进行对象赋值

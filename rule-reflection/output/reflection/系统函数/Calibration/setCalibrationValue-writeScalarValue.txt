@@ -1,0 +1,62 @@
+##功能##
+该函数用于单值标定量标定，即将指定的标定量设置为给定值。主要用于ECU标定过程中修改参数值，并返回标定结果信息，包括错误信息或回读的物理值。
+
+##vba规范##
+函数名：writeScalarValue
+参数：
+- calNode: CalNode类型，标定节点对象
+- variable: str或CalVariable类型，可以是变量名称字符串或变量对象
+- value: double类型，要设置的标定值
+返回值：ResultInfo类型，包含errorInfo(错误信息)和backPhyValue(回读值)
+
+##capl规范##
+函数名：setCalibrationValue
+参数：
+- node: long类型，节点ID或句柄
+- varName: char[]类型，变量名称字符串
+- value: double类型，要设置的标定值
+返回值：long类型，返回0表示成功，非0表示错误码
+
+示例1：
+long result;
+result = setCalibrationValue(CAN1::Calibrations::calNode1, "KeEOL_Ctrl", 1.0);
+if(result == 0) {
+    write("标定成功");
+}
+
+示例2：
+double readback;
+long result;
+result = setCalibrationValue(CalibrationNode1, "EngineSpeed", 1500.0);
+if(result == 0) {
+    readback = getCalibrationValue(CalibrationNode1, "EngineSpeed");
+    write("回读值：%f", readback);
+}
+
+##capl名##
+setCalibrationValue
+
+##转换须知##
+1. 参数差异：CAPL使用节点ID和变量名字符串，而VBA可以使用节点对象和变量对象
+2. 返回值差异：CAPL返回简单错误码，VBA返回包含详细信息的对象
+3. 行为差异：CAPL需要单独调用函数获取回读值，VBA直接返回回读值
+4. 异常处理：CAPL需要手动检查错误码，VBA可通过对象属性获取错误信息
+
+##转换示例##
+CAPL原始代码：
+long result;
+result = setCalibrationValue(EngineCalNode, "InjectionTime", 2.5);
+if(result != 0) {
+    write("标定失败，错误码：%d", result);
+}
+
+转换后的VBA代码：
+ans = writeScalarValue(Engine.Calibrations.EngineCalNode, "InjectionTime", 2.5)
+If ans.errorInfo <> "" Then
+    MsgBox "标定失败：" & ans.errorInfo
+End If
+
+关键转换说明：
+1. 将CAPL的setCalibrationValue转换为VBA的writeScalarValue
+2. CAPL的错误码检查转换为VBA的错误信息检查
+3. 节点和变量名的表示方式从CAPL的::分隔转换为VBA的.分隔

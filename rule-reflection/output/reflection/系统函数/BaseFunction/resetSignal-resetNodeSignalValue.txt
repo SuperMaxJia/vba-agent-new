@@ -1,0 +1,51 @@
+##功能##
+该函数用于将CAN仿真节点中指定的发送信号重置为其初始值，常用于测试过程中需要恢复信号默认值的场景。
+
+##vba规范##
+函数定义：resetNodeSignalValue(signal)
+参数类型：signal参数为CANDBCSignal类型的信号对象
+返回值类型：无返回值(void)
+函数类别：系统函数中的BaseFunction
+使用限制：仅对仿真节点的发送信号有效，需配合CAN数据库信号对象使用
+
+##capl规范##
+函数定义：resetSignal(signal)
+参数类型：signal参数为message.signal格式的信号引用
+返回值类型：void
+示例1：
+on key 'r'
+{
+  resetSignal(EngineRPM);
+}
+示例2：
+on timer msTimer
+{
+  resetSignal(GearBox.CurrentGear);
+}
+
+##capl名##
+resetSignal
+
+##转换须知##
+1. 参数类型差异：VBA使用CANDBCSignal对象，CAPL使用message.signal引用
+2. 函数名差异：VBA为resetNodeSignalValue，CAPL为resetSignal
+3. 使用范围相同：都仅对发送信号有效
+4. 都需要预定义信号数据库
+
+##转换示例##
+CAPL原始代码：
+on key 'r'
+{
+  resetSignal(EngineStatus.Temperature);
+}
+
+转换后的VBA代码：
+Sub ResetTemp()
+    resetNodeSignalValue CAN1.EngineStatus.Temperature
+End Sub
+
+关键转换步骤：
+1. 将CAPL的事件触发器(on key)转换为VBA的Sub过程
+2. 将resetSignal改为resetNodeSignalValue
+3. 保持相同的信号引用格式(CAN1.前缀在VBA中可能需要显式声明)
+4. 移除CAPL的大括号，改用VBA的End Sub结束

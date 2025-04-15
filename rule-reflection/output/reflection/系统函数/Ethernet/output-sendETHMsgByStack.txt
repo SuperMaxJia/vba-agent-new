@@ -1,0 +1,57 @@
+##功能##
+该函数用于通过TCP/IP协议栈发送传输层及以上协议的以太网报文，支持多种协议类型包括UDP、TCP、SOMEIP、DOIP、DBC命令和DBC PDU。适用于车载网络测试中模拟和发送各种以太网协议消息。
+
+##vba规范##
+函数定义：sendETHMsgByStack(network, tcpipstack, message)
+参数：
+- network: Network类型，表示目标网段
+- tcpipstack: TCPIPStack类型，表示使用的协议栈
+- message: 多种消息类型(UDPMessage/TCPMessage/SOMEIPPacket/DOIPPacket/ETHDBCCommand/ETHDBCPDU)
+返回值：int类型，1表示成功，0表示失败
+
+##capl规范##
+函数定义：output(message)
+参数：
+- message: 以太网帧或特定协议消息对象
+返回值：无(发送成功与否通常通过事件处理或错误回调判断)
+
+示例1：
+// 发送UDP消息
+byte udpMessage[100] = {...};
+output(udpMessage);
+
+示例2：
+// 发送DBC命令
+message DBC_Command msg;
+msg.id = 0x123;
+msg.dlc = 8;
+msg.byte(0) = 0xFF;
+output(msg);
+
+##capl名##
+output
+
+##转换须知##
+1. CAPL的output函数更底层，不区分协议栈，需要手动构建完整消息
+2. CAPL没有直接的返回值指示发送状态，需通过事件处理判断
+3. VBA中的协议栈和网络对象在CAPL中不需要显式指定
+4. CAPL中需要手动处理消息的协议头和校验等
+
+##转换示例##
+1. CAPL原始代码：
+message CAN1::DBC_Command msg;
+msg.id = 0x100;
+msg.dlc = 8;
+msg.byte(0) = 0xAA;
+output(msg);
+
+2. 转换后的VBA代码：
+Set dbcCmd = CreateObject("ETHDBCCommand")
+dbcCmd.ID = &H100
+dbcCmd.Data(0) = &HAA
+res = sendETHMsgByStack(network1, tcpipStack1, dbcCmd)
+
+3. 关键转换说明：
+- CAPL的直接消息输出转换为VBA的对象创建和属性设置
+- CAPL的隐式网络选择转换为VBA显式指定network和tcpipstack参数
+- 添加了返回值处理机制

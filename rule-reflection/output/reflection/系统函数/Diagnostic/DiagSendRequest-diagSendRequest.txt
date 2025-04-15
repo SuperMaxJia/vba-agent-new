@@ -1,0 +1,52 @@
+##功能##
+该函数用于发送诊断服务请求，支持配置是否禁止肯定响应和发送模式。常用于车辆诊断系统中向特定ECU节点发送诊断指令，如控制ECU状态、读取参数等。
+
+##vba规范##
+函数定义：diagSendRequest(service, res_flag=False, mode=0)
+参数：
+- service: DiagService类型，诊断服务对象
+- res_flag: boolean类型，默认False，是否禁止肯定响应
+- mode: int类型，默认0，发送模式（0=物理寻址，1=功能寻址）
+返回值：
+- 成功：返回List类型的响应PDU
+- 失败：返回int类型错误码（-1=通道激活失败，1=执行失败，2=发送失败，3=响应超时，4=解析失败）
+
+##capl规范##
+函数定义：DiagSendRequest(diagService, suppressPosResponse, addressingMode)
+参数：
+- diagService: 诊断服务对象
+- suppressPosResponse: byte类型，0=允许响应，1=禁止响应
+- addressingMode: byte类型，0=物理寻址，1=功能寻址
+返回值：
+- 成功：返回响应报文对象
+- 失败：返回-1（超时/失败）
+
+示例1：
+// 发送物理寻址的诊断请求
+response = DiagSendRequest(ACU.EnableRxAndEnableTx_Control, 0, 0);
+
+示例2：
+// 发送功能寻址且禁止响应的诊断请求
+result = DiagSendRequest(ECU.ResetService, 1, 1);
+
+##capl名##
+DiagSendRequest
+
+##转换须知##
+1. 参数差异：VBA的res_flag是布尔型，CAPL需要转换为byte类型（0/1）
+2. 返回值差异：VBA返回List或错误码，CAPL返回报文对象或-1
+3. 错误处理：CAPL没有细分错误类型，统一返回-1
+4. 寻址模式：两者模式定义相同（0=物理，1=功能）
+5. 对象访问：VBA使用点语法层级访问，CAPL直接使用对象名
+
+##转换示例##
+1. CAPL原始代码：
+response = DiagSendRequest(Engine.DiagServices.ReadDataByIdentifier, 0, 0);
+
+2. 转换后VBA代码：
+Set result = diagSendRequest(Can1.DiagNodes.Engine.ReadDataByIdentifier, False, 0)
+
+3. 关键说明：
+- CAPL的0/1标志直接转换为VBA的False/True
+- CAPL的直接对象访问转换为VBA的层级访问语法
+- CAPL的返回值需要根据实际内容判断是否等同于VBA的List

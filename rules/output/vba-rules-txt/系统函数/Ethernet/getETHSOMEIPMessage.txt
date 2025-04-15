@@ -1,0 +1,28 @@
+1. 函数名  
+getETHSOMEIPMessage  
+
+2. 函数描述  
+获取以太网SOMEIPMessage对象。  
+
+3. 函数体  
+getETHSOMEIPMessage(nameOrMessageID, networkOrService)  
+
+4. 返回值  
+名称              类型                描述  
+ETHSOMEIPMessage  ETHSOMEIPMessage    ETHSOMEIPMessage对象  
+
+5. 参数  
+名称              类型                描述  
+nameOrMessageID  int, str            报文名称或者报文的MessageID  
+networkOrService Network, ETHDBCService 网段对象或者ETHDBCService对象  
+
+6. 内置函数  
+无  
+
+7. 示例  
+示例功能：获取以太网SOMEIPMessage对象。  
+示例代码：  
+getETHSOMEIPMessage(nameOrMessageID, networkOrService)  
+
+8. 其他和函数或变量强相关的内容  
+无

@@ -1,0 +1,31 @@
+1. 函数名
+enableNodeMsg
+
+2. 函数描述
+用于使能一个节点发送某个指定的发送报文。
+
+3. 函数体
+enableNodeMsg(node, message)
+enableNodeMsg(node, id)
+
+4. 返回值
+名称 | 类型 | 描述
+res | int | 0代表没有错误。-1出现错误
+
+5. 参数
+名称 | 类型 | 描述
+node | ECUNode | 节点对象
+message | CANDBCMessage | 报文对象
+id | int或str | 报文的id，标准帧可以输入数字，扩展帧输入字符串
+
+6. 内置函数
+无
+
+7. 示例
+示例功能：使一个节点发送所有的发送报文
+示例代码：
+enableNodeMsg(node, message)
+enableNodeMsg(node, id)
+
+8. 其他和函数或变量强相关的内容
+无

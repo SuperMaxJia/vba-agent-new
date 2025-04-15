@@ -1,0 +1,66 @@
+##功能##
+从字符串的左侧开始截取指定长度的子串。常用于处理固定格式的字符串数据，如解析通信协议中的特定字段或提取文件名的前缀。
+
+##vba规范##
+函数定义：strLeft(sourceStr As String, length As Integer) As String
+参数：
+- sourceStr：String类型，原始字符串
+- length：Integer类型，要截取的字符长度
+返回值：String类型，返回截取的子字符串
+行为：从字符串左侧开始精确截取指定长度的字符
+
+##capl规范##
+函数定义：substr(char sourceStr[], dword length)
+参数：
+- sourceStr：char数组，原始字符串
+- length：dword类型，要截取的字符长度
+返回值：char数组，返回截取的子字符串
+示例1：
+```
+variables {
+  char result[10];
+}
+on start {
+  result = substr("abcdef", 3);
+  write("Result: %s", result); // 输出：abc
+}
+```
+示例2：
+```
+on message CAN1::Msg1 {
+  char header[4];
+  header = substr(this.signal_text, 4);
+}
+```
+
+##capl名##
+substr
+
+##转换须知##
+1. CAPL使用0-based索引而VBA使用1-based索引
+2. CAPL的substr可以处理byte数组而VBA只能处理String
+3. CAPL需要预先分配结果变量空间而VBA自动管理内存
+4. 当length超过字符串长度时，CAPL返回完整字符串而VBA可能报错
+
+##转换示例##
+CAPL原始代码：
+```
+variables {
+  char id[5];
+}
+on key 'a' {
+  id = substr("ABCD1234", 4);
+}
+```
+
+转换后的VBA代码：
+```
+Dim id As String
+id = strLeft("ABCD1234", 4)
+```
+
+关键转换说明：
+1. 将CAPL的char数组改为VBA的String类型
+2. 移除变量声明块，改为VBA的Dim语句
+3. 将substr替换为strLeft函数调用
+4. 移除事件处理结构(on key)改为直接赋值

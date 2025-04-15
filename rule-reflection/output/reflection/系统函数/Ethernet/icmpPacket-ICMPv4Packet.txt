@@ -1,0 +1,68 @@
+##功能##
+ICMPv4Packet函数用于创建和配置ICMPv4协议的网络报文，主要用于网络通信测试和诊断，如ping请求(0x08)或目标不可达(0x03)消息。在实际应用中，常用于网络设备间的连通性测试和错误报告。
+
+##vba规范##
+函数名：ICMPv4Packet
+返回值：ICMPv4Packet对象
+参数：
+- message_type: int类型，设置ICMPv4报文的消息类型
+- identifier: int类型，设置ICMPv4报文的标识符
+- sequence_number: int类型，设置16位无符号整数序列号
+- internet_packet: object类型，设置网络层协议包(IPv4Packet)
+内置方法：
+- setMessageType(int)
+- setIdentifier(int)
+- setSequenceNumber(int)
+- setInternetPacket(object)
+
+##capl规范##
+CAPL中使用icmpPacket结构体处理ICMPv4报文，通过以下函数配置：
+- icmpSetType(byte)
+- icmpSetId(word)
+- icmpSetSeqNum(word)
+- icmpSetIpv4Packet(ipv4Packet)
+
+示例1：
+// 创建ICMP Echo请求
+icmpPacket icmp;
+icmpSetType(icmp, 0x08);
+icmpSetId(icmp, 0x0000);
+icmpSetSeqNum(icmp, 0x0000);
+icmpSetIpv4Packet(icmp, ipv4);
+
+示例2：
+// 创建目标不可达消息
+icmpPacket icmp;
+icmpSetType(icmp, 0x03);
+icmpSetIpv4Packet(icmp, ipv4);
+
+##capl名##
+icmpPacket
+
+##转换须知##
+1. CAPL使用结构体而非对象，需要先声明icmpPacket变量
+2. CAPL参数类型更严格：type为byte，id/seq为word
+3. CAPL需要显式传递icmpPacket作为第一个参数
+4. IPv4Packet在CAPL中需先创建并配置好
+5. CAPL没有返回值，直接操作结构体变量
+
+##转换示例##
+1. CAPL原始代码：
+icmpPacket icmp;
+icmpSetType(icmp, 0x08);
+icmpSetId(icmp, 0x1234);
+icmpSetSeqNum(icmp, 0x5678);
+icmpSetIpv4Packet(icmp, ipv4);
+
+2. 转换后的VBA代码：
+Set icmp = ICMPv4Packet()
+icmp.setMessageType &H08
+icmp.setIdentifier &H1234
+icmp.setSequenceNumber &H5678
+icmp.setInternetPacket IPv4Packet
+
+3. 关键转换说明：
+- CAPL结构体声明转为VBA对象实例化
+- 函数参数从CAPL的(结构体,值)变为VBA的对象方法调用
+- 十六进制表示法保持一致(&H)
+- IPv4Packet需在VBA中预先创建好

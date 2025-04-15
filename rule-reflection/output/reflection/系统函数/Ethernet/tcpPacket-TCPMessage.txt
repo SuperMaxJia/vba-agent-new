@@ -1,0 +1,71 @@
+##功能##
+用于创建一条TCP以太网报文（走协议栈），设置目标IP地址、源端口、目标端口和数据payload，最终通过发送函数发送。常用于汽车电子测试中模拟TCP通信场景。
+
+##vba规范##
+函数名：TCPMessage
+描述：创建TCP报文对象
+返回值：TCPMessage对象
+参数：
+- destination_ip_address: str类型，目标IP地址
+- source_port: int类型，16位无符号整数，源端口
+- destination_port: int类型，16位无符号整数，目标端口
+- payload: list类型，报文数据
+内置方法：
+- setDestinationIPAddress()
+- setSourcePort()
+- setDestinationPort()
+- setPayload()
+
+##capl规范##
+在CAPL中对应TCP报文创建和设置功能，主要通过以下方式实现：
+1. 使用tcpPacket创建TCP报文
+2. 通过成员变量直接设置参数：
+   - ip.dstAddr - 目标IP
+   - tcp.srcPort - 源端口
+   - tcp.dstPort - 目标端口
+   - data - 数据payload
+
+示例1：
+tcpPacket pkt;
+pkt.ip.dstAddr = "192.168.2.2"; 
+pkt.tcp.srcPort = 7000;
+pkt.tcp.dstPort = 8000;
+pkt.data = "";
+
+示例2：
+tcpPacket msg;
+msg.ip.dstAddr = "10.10.10.1";
+msg.tcp.srcPort = 8080;
+msg.tcp.dstPort = 80;
+msg.data = {0x01, 0x02, 0x03};
+
+##capl名##
+tcpPacket
+
+##转换须知##
+1. CAPL使用结构体成员变量直接赋值，VBA使用setter方法
+2. CAPL的data字段直接赋值，VBA需要list类型
+3. CAPL端口号为直接数值，VBA也是数值但需要通过方法设置
+4. CAPL中IP为字符串直接赋值，VBA需要通过方法设置
+
+##转换示例##
+CAPL原始代码：
+tcpPacket pkt;
+pkt.ip.dstAddr = "192.168.1.100";
+pkt.tcp.srcPort = 5000;
+pkt.tcp.dstPort = 6000;
+pkt.data = {0x12, 0x34};
+
+转换后的VBA代码：
+Dim tcpMsg As TCPMessage
+Set tcpMsg = TCPMessage()
+tcpMsg.setDestinationIPAddress "192.168.1.100"
+tcpMsg.setSourcePort 5000
+tcpMsg.setDestinationPort 6000
+tcpMsg.setPayload Array(&H12, &H34)
+
+关键转换步骤：
+1. CAPL结构体声明转为VBA对象创建
+2. 成员变量赋值转为setter方法调用
+3. 字节数组转为VBA Array
+4. 保持相同的参数值和顺序

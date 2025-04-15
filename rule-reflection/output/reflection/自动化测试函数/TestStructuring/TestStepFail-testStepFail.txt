@@ -1,0 +1,50 @@
+##功能##
+用于报告测试步骤中的失败信息，同时将失败的信息记录在测试报告中。此函数也会改变测试用例的状态为Fail状态（除非当前状态已经是Error）。常用于自动化测试中标记测试步骤失败并记录相关信息。
+
+##vba规范##
+函数名：testStepFail
+参数：
+- levelOfDetail: str类型，表示测试步骤的重要性级别（0表示非常重要，数字越大重要程度越低）
+- description: str类型，表示测试步骤的描述信息（可选，默认为空字符串）
+返回值：无
+行为：会改变测试用例状态为Fail（除非已经是Error状态），并将失败信息记录到测试报告
+
+##capl规范##
+函数名：TestStepFail
+参数：
+- level: long类型，表示测试步骤的重要性级别（0表示最重要）
+- description: char[]类型，表示测试步骤的描述信息
+返回值：void
+示例1：
+TestStepFail(3, "Communication prepared failed");
+示例2：
+if(res == 0) {
+    TestStepFail(1, "Invalid response received");
+}
+
+##capl名##
+TestStepFail
+
+##转换须知##
+1. 参数类型差异：VBA使用字符串表示levelOfDetail，CAPL使用long整数
+2. 参数数量：两者都接受2个参数
+3. 返回值：两者都无返回值
+4. 函数行为：两者都会改变测试状态并记录失败信息
+5. 特殊情况：在CAPL中level参数必须是整数，而在VBA中可以是浮点数
+
+##转换示例##
+1. CAPL原始代码：
+if(errorCode != 0) {
+    TestStepFail(2, "Error detected in communication");
+}
+
+2. 转换后的VBA代码：
+If errorCode <> 0 Then
+    testStepFail "2.0", "Error detected in communication"
+End If
+
+3. 关键转换说明：
+- 将CAPL的整数level参数2转换为VBA的字符串"2.0"
+- 保持相同的条件判断逻辑
+- 保持相同的描述信息
+- 调整语法结构为VBA风格

@@ -1,0 +1,47 @@
+##功能##
+abs函数用于计算数字的绝对值，即不考虑符号的正数值。常用于需要确保数值为正的场景，如距离计算、差值比较等。
+
+##vba规范##
+函数名: abs
+参数: num (int) - 需要取绝对值的数值
+返回值: absNum (int) - 返回参数的绝对值
+内置函数: 是
+示例: abs(-50) 返回 50
+
+##capl规范##
+函数名: abs
+参数: num (int/dword/float/double) - 需要取绝对值的数值
+返回值: 与输入参数相同类型 - 返回参数的绝对值
+内置函数: 是
+示例1: 
+int x = -10;
+int y = abs(x); // y = 10
+
+示例2:
+double a = -3.14;
+double b = abs(a); // b = 3.14
+
+##capl名##
+abs
+
+##转换须知##
+1. CAPL和VBA的abs函数参数和返回值类型基本相同
+2. CAPL支持更多数值类型(float/double等)作为输入
+3. 函数行为完全一致，无需特殊处理
+4. 两种语言都内置此函数，无需额外包含
+
+##转换示例##
+1. CAPL原始代码:
+int negativeValue = -25;
+int positiveValue = abs(negativeValue);
+
+2. 转换后的VBA代码:
+Dim negativeValue As Integer
+negativeValue = -25
+Dim positiveValue As Integer
+positiveValue = Abs(negativeValue)
+
+3. 关键转换说明:
+- CAPL的int类型对应VBA的Integer
+- 函数名从abs改为Abs(VBA习惯大写)
+- 变量声明方式不同但逻辑相同

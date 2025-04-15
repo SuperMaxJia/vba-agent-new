@@ -1,0 +1,29 @@
+1. 函数名
+strIsEmpty
+
+2. 函数描述
+判断字符串是否为None
+
+3. 函数体
+strToLower(sourceStr)
+
+4. 返回值
+名称: flag
+类型: boolean
+描述: 返回布尔类型
+
+5. 参数
+名称       类型     描述
+sourceStr  String  需要校验是否为空的字符串
+
+6. 内置函数
+函数名称: strToLower
+函数描述: 将字符串转换为小写
+
+7. 示例
+示例功能: 检查None值是否为空
+示例代码: strIsEmpty(None)
+代码注释: 当输入为None时返回True
+
+8. 其他说明
+该函数通过调用strToLower函数实现功能

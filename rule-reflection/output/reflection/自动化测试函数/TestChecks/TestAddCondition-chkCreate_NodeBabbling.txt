@@ -1,0 +1,104 @@
+##功能##
+该函数用于检测节点是否处于休眠状态，在给定的容忍时间内允许报文发送，超过容忍时间后若收到该节点的报文则触发事件。主要用于自动化测试中验证节点通信行为是否符合预期。
+
+##vba规范##
+函数名：chkCreate_NodeBabbling
+参数：
+- node (ECUNode)：要检测的节点对象
+- aMaxQuietTime (int)：最大容忍时间(毫秒)
+返回值：int类型，返回创建的检测对象ID，-1表示创建失败
+相关函数：
+- chkControl_Start：启动检测
+- testAddCondition：添加测试条件
+- testWaitForTimeout：设置超时
+- testRemoveCondition：移除测试条件
+
+##capl规范##
+CAPL中没有完全对应的内置函数，但可以通过组合以下函数实现类似功能：
+1. 使用TestWaitForTimeout设置检测时间
+2. 使用TestAddCondition添加检测条件
+3. 使用on message事件处理报文接收
+
+示例1：
+```capl
+variables {
+  int checkId;
+  message * msg;
+}
+
+on start {
+  checkId = TestAddCondition("Node Babbling Check");
+  TestWaitForTimeout(300);
+}
+
+on message CAN1.* {
+  if(this.time >= 300) {
+    TestReport(checkId, "Node babbling detected after quiet period");
+  }
+}
+```
+
+示例2：
+```capl
+variables {
+  int timerId;
+}
+
+on timer timerId {
+  // 容忍时间后检测到报文的处理
+}
+
+on message CAN1.NodeToObserve.* {
+  if(@sysvar::TimerActive[timerId]) {
+    TestReport("Node babbling detected");
+  }
+}
+
+on start {
+  timerId = setTimer(300);
+}
+```
+
+##capl名##
+TestAddCondition
+
+##转换须知##
+1. CAPL中没有直接对应的检测创建函数，需要组合多个函数实现
+2. CAPL使用事件驱动模型处理报文接收
+3. 时间检测在CAPL中通常通过定时器实现
+4. CAPL的测试报告机制与VBA不同
+5. 需要手动实现容忍时间逻辑
+
+##转换示例##
+CAPL原始代码：
+```capl
+variables {
+  int checkId;
+  message * msg;
+}
+
+on start {
+  checkId = TestAddCondition("Node Babbling Check");
+  TestWaitForTimeout(300);
+}
+
+on message CAN1.NodeToObserve.* {
+  if(this.time >= 300) {
+    TestReport(checkId, "Node babbling detected");
+  }
+}
+```
+
+转换后的VBA代码：
+```vba
+checkId = ChkStart_NodeBabbling(CAN1.NodeToObserve, 300)
+testAddCondition(checkId)
+testWaitForTimeout(1000)
+testRemoveCondition(checkId)
+```
+
+关键转换步骤说明：
+1. CAPL的TestAddCondition对应VBA的testAddCondition
+2. CAPL的TestWaitForTimeout对应VBA的testWaitForTimeout
+3. CAPL的on message事件处理对应VBA的内置检测逻辑
+4. 时间检测逻辑在VBA中由函数内部实现，CAPL需要显式编码

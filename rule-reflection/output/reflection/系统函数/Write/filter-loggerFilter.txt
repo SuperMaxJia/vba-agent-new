@@ -1,0 +1,55 @@
+##功能##
+loggerFilter用于在数据记录时设置过滤条件，可以指定要记录的特定网络段和报文ID。主要用于减少记录的数据量，只捕获感兴趣的网络通信数据。
+
+##vba规范##
+函数名：loggerFilter
+对象类型：LoggerFilter
+内置方法：
+1. setFilterNetworks(networkList=[]) - 参数为字符串列表，默认空列表表示不过滤
+2. setFilterMsgIDs(ids, flag) - 第一个参数为ID列表，第二个参数为布尔标志(1/0)
+返回值：LoggerFilter对象
+使用前需先创建LoggerFilter对象实例
+
+##capl规范##
+CAPL中使用filter函数和事件处理来实现类似功能：
+1. 设置网络过滤：使用filterCanBus()
+2. 设置ID过滤：使用filterMsg()或filterMsgEx()
+返回值：void
+示例1：
+```
+filterCanBus(1);  // 过滤CAN1总线
+filterMsg(0x1A0); // 过滤ID为0x1A0的报文
+```
+示例2：
+```
+filterCanBus(0);  // 不过滤任何总线
+filterMsgEx(0x100, 0x1FF); // 过滤ID范围0x100-0x1FF
+```
+
+##capl名##
+filter
+
+##转换须知##
+1. CAPL使用单独函数设置过滤，VBA使用对象方法
+2. CAPL的filterMsg()只接受单个ID，VBA可接受列表
+3. CAPL没有置反标志参数，需要额外逻辑实现
+4. CAPL中总线用数字索引，VBA用字符串名称
+5. CAPL过滤是全局设置，VBA可创建多个过滤对象
+
+##转换示例##
+CAPL原始代码：
+```
+filterCanBus(1);
+filterMsg(0x1A0);
+```
+转换后的VBA代码：
+```
+Set loggerFilter = New LoggerFilter
+loggerFilter.setFilterNetworks Array("CAN1")
+loggerFilter.setFilterMsgIDs Array(&H1A0), 1
+```
+关键转换说明：
+1. filterCanBus(1) 转换为 setFilterNetworks(["CAN1"])
+2. filterMsg(0x1A0) 转换为 setFilterMsgIDs([0x1A0],1)
+3. 添加了VBA必需的对象创建语句
+4. 注意16进制表示法的转换

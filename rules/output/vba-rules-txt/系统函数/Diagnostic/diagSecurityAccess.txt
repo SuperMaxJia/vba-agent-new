@@ -1,0 +1,35 @@
+1. 函数名  
+diagSecurityAccess  
+
+2. 函数描述  
+诊断节点快速安全认证。  
+
+3. 函数体  
+```vba
+diagSecurityAccess(diagNode, level)
+```  
+
+4. 返回值  
+| 情况 | 名称 | 类型 | 描述 |  
+|------|------|------|------|  
+| 情况1 | list | List | 正常PDU返回List类型 |  
+| 情况2 | res | int | -1：诊断通道激活失败；1：服务执行失败；2：服务发送失败；3：服务响应超时；4：响应PDU解析失败 |  
+
+5. 参数  
+| 名称 | 类型 | 描述 |  
+|------|------|------|  
+| diagNode | DiagNode | 诊断节点对象（DiagNode类） |  
+| level | int | 安全模式级别（例如：1 代表 27 01） |  
+
+6. 内置函数  
+无  
+
+7. 示例  
+**功能**：诊断节点EMS快速通过安全认证  
+**代码**：  
+```vba
+diagSecurityAccess(CAN1.DiagNodes.EMS, 1)
+```  
+
+8. 其他说明  
+无

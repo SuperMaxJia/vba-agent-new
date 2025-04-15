@@ -1,0 +1,46 @@
+##功能##
+该函数用于在接收到CAN错误帧时触发特定操作，主要用于错误检测和处理场景，如网络监控、故障诊断等。
+
+##vba规范##
+函数定义：@onErrorFrame装饰器标记的def函数
+参数：canErrorMsg (CANErrorMsg类型)
+返回值：无
+功能：当总线出现错误帧时自动调用，可通过errorMsg对象获取时间戳和通道信息
+
+##capl规范##
+在CAPL中对应on error事件处理：
+on error {
+    write("Error frame detected at %f", this.time);
+}
+或带通道检测：
+on error {
+    if(this.channel == 1) {
+        write("Error on channel 1 at %f", this.time);
+    }
+}
+
+##capl名##
+on error
+
+##转换须知##
+1. CAPL使用this关键字访问错误信息，VBA使用参数传递
+2. CAPL时间戳通过this.time获取，VBA需要调用getTimestamp()
+3. CAPL直接支持write输出，VBA需要调用writeInfo
+4. 多个错误处理在CAPL中统一使用on error，VBA需要定义不同函数名
+
+##转换示例##
+CAPL原始代码：
+on error {
+    write("Error! Time: %f Ch:%d", this.time, this.channel);
+}
+
+转换后的VBA代码：
+@onErrorFrame 
+def onErrorFrame1(canErrorMsg):
+    writeInfo("Error! Time: " + canErrorMsg.getTimestamp() + " Ch:" + canErrorMsg.getChannel())
+
+关键转换说明：
+1. CAPL的on error块转换为@onErrorFrame装饰的函数
+2. this.time转换为getTimestamp()方法调用
+3. write函数转换为writeInfo函数调用
+4. 直接成员访问改为方法调用
