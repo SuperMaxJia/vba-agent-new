@@ -1,37 +1,41 @@
 import os
-from typing import Dict, List, Optional
-from autogen import AssistantAgent, UserProxyAgent, GroupChat, GroupChatManager
 import openai
+from colorama import init, Fore, Style
+import re
+import json
+from typing import Dict, List, Optional, Tuple
+from autogen import AssistantAgent, UserProxyAgent, GroupChat, GroupChatManager
 from pathlib import Path
-from colorama import Fore, Style, init
 
 # 初始化colorama
 init()
 
-# 定义颜色常量
-COLOR_USER = Fore.CYAN
-COLOR_ASSISTANT = Fore.YELLOW
-COLOR_SYSTEM = Fore.GREEN
+# 颜色常量
+COLOR_USER = Fore.GREEN
+COLOR_ASSISTANT = Fore.BLUE
+COLOR_SYSTEM = Fore.YELLOW
 COLOR_ERROR = Fore.RED
-COLOR_INFO = Fore.WHITE
-COLOR_DEBUG = Fore.MAGENTA
+COLOR_RESET = Style.RESET_ALL
 
-def print_colored(text: str, color: str = COLOR_INFO, prefix: str = ""):
+def print_colored(text: str, color: str) -> None:
     """打印带颜色的文本"""
-    print(f"{color}{prefix}{text}{Style.RESET_ALL}")
+    print(f"{color}{text}{COLOR_RESET}")
 
-def print_message(msg: dict):
-    """打印消息内容"""
-    role = msg["role"]
-    content = msg["content"]
+def print_message(message: Dict) -> None:
+    """打印消息"""
+    role = message["role"]
+    content = message["content"]
     
     if role == "user":
-        print_colored(f"用户消息:", COLOR_USER)
-    else:
-        print_colored(f"助手消息 ({msg.get('name', 'unknown')}):", COLOR_ASSISTANT)
-    
-    print_colored(content, COLOR_INFO)
-    print_colored("-"*50, COLOR_INFO)
+        print_colored(f"用户: {content}", COLOR_USER)
+    elif role == "assistant":
+        print_colored(f"助手: {content}", COLOR_ASSISTANT)
+    elif role == "system":
+        print_colored(f"系统: {content}", COLOR_SYSTEM)
+
+# OpenAI API配置
+openai.api_key = os.getenv("OPENAI_API_KEY")
+MODEL_NAME = "gpt-4-turbo-preview"
 
 # OpenAI配置
 OPENAI_CONFIG = {
@@ -47,10 +51,10 @@ OPENAI_CONFIG = {
 }
 
 class RuleLoader:
+    """规则加载器类"""
     def __init__(self):
-        """初始化规则加载器"""
-        self.capl_to_vba_map = {}  # CAPL到VBA的映射规则
-        self.vba_rule_map = {}     # VBA规则文档
+        self.capl_to_vba_map = {}
+        self.vba_rule_map = {}
         
     def load_rules(self):
         """加载所有规则"""
@@ -59,66 +63,32 @@ class RuleLoader:
         
     def _load_capl_to_vba_mapping(self):
         """加载CAPL到VBA的映射规则"""
-        mapping_dir = Path("/Users/cuisijia/source/rule-reflection/output/reflection")
-        # print(f"\n开始加载CAPL到VBA的映射规则...")
-        # print(f"映射规则目录: {mapping_dir}")
-        
-        # 遍历映射规则目录及其所有子目录
-        for file_path in mapping_dir.rglob("*.txt"):
-            # 解析文件名获取规则映射
-            file_name = file_path.stem
-            parts = file_name.split("-")
-            if len(parts) != 2:
-                continue
-                
-            capl_rule = parts[0]
-            vba_rule = parts[1]
-            
-            # 读取文件内容
-            with open(file_path, "r", encoding="utf-8") as f:
-                content = f.read().strip()
-                
-            # 存储映射规则
-            if capl_rule not in self.capl_to_vba_map:
-                self.capl_to_vba_map[capl_rule] = []
-            self.capl_to_vba_map[capl_rule].append({
-                "vba_rule": vba_rule,
-                "content": content
-            })
-            
-            # print(f"加载映射规则: {capl_rule} -> {vba_rule}")
-            
-        # print(f"\n共加载 {len(self.capl_to_vba_map)} 个CAPL规则的映射")
-        
+        mapping_dir = "/Users/cuisijia/source/rule-reflection/output/reflection"
+        for filename in os.listdir(mapping_dir):
+            if filename.endswith(".txt"):
+                with open(os.path.join(mapping_dir, filename), "r") as f:
+                    content = f.read()
+                    # 解析文件名获取规则名称
+                    rule_name = filename.replace(".txt", "")
+                    self.capl_to_vba_map[rule_name] = content
+                    
     def _load_vba_rules(self):
-        """加载VBA规则文档"""
-        rules_dir = Path("/Users/cuisijia/source/rules/output/vba-rules-txt")
-        # print(f"\n开始加载VBA规则文档...")
-        # print(f"VBA规则目录: {rules_dir}")
+        """加载VBA规则"""
+        vba_rules_dir = "/Users/cuisijia/source/rules/output/vba-rules-txt"
+        for filename in os.listdir(vba_rules_dir):
+            if filename.endswith(".txt"):
+                with open(os.path.join(vba_rules_dir, filename), "r") as f:
+                    content = f.read()
+                    rule_name = filename.replace(".txt", "")
+                    self.vba_rule_map[rule_name] = content
+                    
+    def get_capl_mapping(self, capl_rule: str) -> Optional[str]:
+        """获取CAPL规则的VBA映射"""
+        return self.capl_to_vba_map.get(capl_rule)
         
-        # 遍历VBA规则目录及其所有子目录
-        for file_path in rules_dir.rglob("*.txt"):
-            # 获取规则名
-            rule_name = file_path.stem
-            
-            # 读取文件内容
-            with open(file_path, "r", encoding="utf-8") as f:
-                content = f.read().strip()
-                
-            # 存储规则文档
-            self.vba_rule_map[rule_name] = content
-            
-            # print(f"加载VBA规则文件: {file_path.name}")
-            
-        # print(f"\n共加载 {len(self.vba_rule_map)} 个VBA规则")
-        
-    def get_capl_mapping(self, capl_rule: str) -> List[dict]:
-        """获取CAPL规则的映射"""
-        return self.capl_to_vba_map.get(capl_rule, [])
-        
-    def get_vba_rule(self, vba_rule: str) -> str:
-        """获取VBA规则的文档"""
-        return self.vba_rule_map.get(vba_rule, "")
+    def get_vba_rule(self, vba_rule: str) -> Optional[str]:
+        """获取VBA规则的详细说明"""
+        return self.vba_rule_map.get(vba_rule)
 
 class CodeAnalyzerAgent(AssistantAgent):
     def __init__(self):
@@ -401,23 +371,13 @@ class CodeIntegratorAgent(AssistantAgent):
         )
 
 class CodeConverter:
+    """代码转换器类"""
     def __init__(self):
-        """初始化代码转换器"""
-        print("初始化代码转换器...")
-        
-        # 加载规则
         self.rule_loader = RuleLoader()
         self.rule_loader.load_rules()
-        print("规则加载完成...")
         
-        # 获取所有规则
-        self.all_rules = {
-            "capl_to_vba_map": self.rule_loader.capl_to_vba_map,
-            "vba_rule_map": self.rule_loader.vba_rule_map
-        }
-        
-        # 初始化各个agent，并传入规则
-        self.analyzer = CodeAnalyzerAgent()
+        # 初始化各个代理
+        self.code_analyzer = CodeAnalyzerAgent()
         self.importer = ImportConverterAgent()
         self.syntax_recognizer = SyntaxRecognizerAgent()
         self.converter = CodeConverterAgent()
@@ -426,7 +386,7 @@ class CodeConverter:
         
         # 将规则添加到每个agent的system_message中
         for agent in [self.converter]:
-            agent.update_system_message(agent.system_message + f"\n\n可用规则：\n{str(self.all_rules)}")
+            agent.update_system_message(agent.system_message + f"\n\n可用规则：\n{str(self.rule_loader.__dict__)}")
             
         self.user_proxy = UserProxyAgent(
             name="user_proxy",
@@ -441,7 +401,7 @@ class CodeConverter:
         self.groupchat = GroupChat(
             agents=[
                 self.user_proxy,
-                self.analyzer,
+                self.code_analyzer,
                 self.importer,
                 self.syntax_recognizer,
                 self.converter,
@@ -512,7 +472,7 @@ class CodeConverter:
                         
                     # 转换代码
                     print("开始转换代码...")
-                    python_vba_code = self.convert_code(capl_code, "CAPL", "Python-VBA")
+                    python_vba_code = self.convert_code(capl_code)
                     
                     # 保存转换后的代码
                     if self.save_python_vba_file(python_vba_code, output_file):
@@ -520,19 +480,16 @@ class CodeConverter:
                     else:
                         print(f"保存转换后的代码失败: {output_file}")
         
-    def convert_code(self, code: str, source_lang: str, target_lang: str) -> str:
-        """转换代码的主方法"""
-        print_colored(f"\n开始转换代码：从{source_lang}到{target_lang}", COLOR_SYSTEM)
-        print_colored("="*50, COLOR_SYSTEM)
-        
+    def convert_code(self, capl_code: str) -> str:
+        """转换CAPL代码为VBA代码"""
         # 初始化对话
         self.groupchat.messages = []
-        print_colored("初始化对话...", COLOR_SYSTEM)
+        print_colored("开始转换代码...", COLOR_SYSTEM)
         
         # 添加初始消息
         initial_message = {
             "role": "user",
-            "content": f"请将以下{source_lang}代码转换为{target_lang}代码：\n\n{code}"
+            "content": f"请将以下CAPL代码转换为VBA代码：\n\n{capl_code}"
         }
         self.groupchat.messages.append(initial_message)
         print_colored("添加初始消息...", COLOR_SYSTEM)
@@ -561,7 +518,7 @@ class CodeConverter:
             
             # 根据当前阶段选择下一个发言者
             if current_phase == "analysis":
-                next_agent = self.analyzer
+                next_agent = self.code_analyzer
             elif current_phase == "imports":
                 next_agent = self.importer
             elif current_phase == "syntax_recognize":
