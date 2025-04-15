@@ -3,5 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/git_mulagent/CodeLlama" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/temp-repo" vcs="Git" />
   </component>
 </project>
