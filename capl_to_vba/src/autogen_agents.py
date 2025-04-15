@@ -461,7 +461,7 @@ class CodeConverter:
             with open(output_path, 'w', encoding='utf-8') as f:
                 f.write(content)
             return True
-        except Exception as e:
+            except Exception as e:
             print(f"保存Python-VBA文件失败: {e}")
             return False
 
@@ -697,7 +697,7 @@ class CodeConverter:
         print_colored("="*50, COLOR_SYSTEM)
         return final_message
         
-if __name__ == "__main__":
+    if __name__ == "__main__":
     # 设置输入和输出目录
     input_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "input")  # CAPL文件目录
     output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "output")  # Python-VBA文件输出目录
