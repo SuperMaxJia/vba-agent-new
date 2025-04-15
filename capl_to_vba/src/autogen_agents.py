@@ -15,6 +15,7 @@ COLOR_USER = Fore.GREEN
 COLOR_ASSISTANT = Fore.BLUE
 COLOR_SYSTEM = Fore.YELLOW
 COLOR_ERROR = Fore.RED
+COLOR_INFO = Fore.CYAN
 COLOR_RESET = Style.RESET_ALL
 
 def print_colored(text: str, color: str) -> None:
@@ -33,22 +34,30 @@ def print_message(message: Dict) -> None:
     elif role == "system":
         print_colored(f"系统: {content}", COLOR_SYSTEM)
 
-# OpenAI API配置
-openai.api_key = os.getenv("OPENAI_API_KEY")
-MODEL_NAME = "gpt-4-turbo-preview"
-
-# OpenAI配置
+# 配置OpenAI
 OPENAI_CONFIG = {
     "config_list": [
         {
-            "model": "gpt-4-turbo-preview",
-            "api_key": os.getenv("OPENAI_API_KEY")  # 使用环境变量
+            "model": "gpt-3.5-turbo",
+            "api_key": os.getenv("OPENAI_API_KEY")
         }
     ],
     "temperature": 0.7,
     "timeout": 120,
     "cache_seed": None
 }
+
+# 检查API密钥
+if not OPENAI_CONFIG["config_list"][0]["api_key"]:
+    print_colored("错误：未设置OpenAI API密钥", COLOR_ERROR)
+    print_colored("请设置环境变量：export OPENAI_API_KEY='your-api-key'", COLOR_INFO)
+    exit(1)
+
+print_colored("API密钥检查：", COLOR_SYSTEM)
+print_colored(f"- 环境变量名称: OPENAI_API_KEY", COLOR_INFO)
+print_colored(f"- 密钥长度: {len(OPENAI_CONFIG['config_list'][0]['api_key'])} 字符", COLOR_INFO)
+print_colored(f"- 密钥前缀: {OPENAI_CONFIG['config_list'][0]['api_key'][:10]}", COLOR_INFO)
+print_colored(f"- 密钥后缀: {OPENAI_CONFIG['config_list'][0]['api_key'][-10:]}", COLOR_INFO)
 
 class RuleLoader:
     """规则加载器类"""
