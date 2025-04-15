@@ -16,6 +16,7 @@ COLOR_ASSISTANT = Fore.BLUE
 COLOR_SYSTEM = Fore.YELLOW
 COLOR_ERROR = Fore.RED
 COLOR_INFO = Fore.CYAN
+COLOR_DEBUG = Fore.MAGENTA  # 添加调试颜色
 COLOR_RESET = Style.RESET_ALL
 
 def print_colored(text: str, color: str) -> None:
