@@ -11,12 +11,12 @@ from pathlib import Path
 init()
 
 # 颜色常量
-COLOR_USER = Fore.GREEN
-COLOR_ASSISTANT = Fore.BLUE
-COLOR_SYSTEM = Fore.YELLOW
-COLOR_ERROR = Fore.RED
-COLOR_INFO = Fore.CYAN
-COLOR_DEBUG = Fore.MAGENTA  # 添加调试颜色
+COLOR_USER = Fore.GREEN  # 用户输入/关键信息
+COLOR_ASSISTANT = Fore.BLUE  # 助手输出/名词
+COLOR_SYSTEM = Fore.YELLOW  # 系统消息/流程旁白
+COLOR_ERROR = Fore.RED  # 错误信息
+COLOR_INFO = Fore.CYAN  # 一般信息
+COLOR_DEBUG = Fore.MAGENTA  # 调试信息/整理出的内容
 COLOR_RESET = Style.RESET_ALL
 
 def print_colored(text: str, color: str) -> None:
@@ -55,10 +55,10 @@ if not OPENAI_CONFIG["config_list"][0]["api_key"]:
     exit(1)
 
 print_colored("API密钥检查：", COLOR_SYSTEM)
-print_colored(f"- 环境变量名称: OPENAI_API_KEY", COLOR_INFO)
-print_colored(f"- 密钥长度: {len(OPENAI_CONFIG['config_list'][0]['api_key'])} 字符", COLOR_INFO)
-print_colored(f"- 密钥前缀: {OPENAI_CONFIG['config_list'][0]['api_key'][:10]}", COLOR_INFO)
-print_colored(f"- 密钥后缀: {OPENAI_CONFIG['config_list'][0]['api_key'][-10:]}", COLOR_INFO)
+print_colored(f"- 环境变量名称: OPENAI_API_KEY", COLOR_USER)
+print_colored(f"- 密钥长度: {len(OPENAI_CONFIG['config_list'][0]['api_key'])} 字符", COLOR_USER)
+print_colored(f"- 密钥前缀: {OPENAI_CONFIG['config_list'][0]['api_key'][:10]}", COLOR_USER)
+print_colored(f"- 密钥后缀: {OPENAI_CONFIG['config_list'][0]['api_key'][-10:]}", COLOR_USER)
 
 class RuleLoader:
     """规则加载器类"""
@@ -109,29 +109,39 @@ class CodeAnalyzerAgent(AssistantAgent):
             1. 分割预处理部分
                - 只有下面的属于预处理指令 ：#include, #define
                - 保持原始格式和缩进
+               - 不要添加任何注释或说明
             
             2. 分割代码片段
-               - 每个函数作为一个独立的代码片段
+               - 每个函数必须作为独立的代码片段输出
+               - 每个下面格式的内容视为一个函数，都必须作为一个代码片段输出
+                 ```c
+                 on name
+                 {
+                    
+                 }
+                 ```
+                 
                - 对于每个函数，需要包含：
                  * 函数定义本身
                  * 函数内部使用的所有全局变量定义
-                 * 如果函数内部使用了全局变量，必须在该代码片段中包含该全局变量的定义
+               - 仔细查找函数内部使用的变量，每一个变量都一定有一个定义，如果定义在函数外部，则认为是全局变量，将全局变量的定义和函数放在一起
                - 保持原始格式和缩进
+               - 不要添加任何注释或说明
             
             请按照以下格式输出分割结果：
             1. 预处理部分
                ```c
                预处理部分：
-               [直接复制源代码中的预处理指令，保持原始格式]
+               [直接复制源代码中的预处理指令，保持原始格式，如果没有预处理指令，则输出：预处理部分：空]
                ```
             
             2. 代码片段列表
                ```c
                代码片段1：
-               [直接复制源代码中的函数定义及其使用的全局变量定义，保持原始格式]
+               [直接复制源代码中的函数定义及其使用的全局变量定义，保持原始代码和格式，变量在前、函数在后]
                
                代码片段2：
-               [直接复制源代码中的函数定义及其使用的全局变量定义，保持原始格式]
+               [直接复制源代码中的函数定义及其使用的全局变量定义，保持原始代码和格式，变量在前、函数在后]
                
                [继续输出其他代码片段...]
                ```
@@ -147,6 +157,8 @@ class CodeAnalyzerAgent(AssistantAgent):
             8. 不要输出任何分析结果或统计信息
             9. 每个代码片段之间用空行分隔
             10. 代码片段的标题格式为"代码片段X："，其中X从1开始递增
+            11. 严格保持原始代码内容，不要添加任何注释或说明
+            12. 每个函数必须作为独立的代码片段输出，不能合并多个函数到一个代码片段中
             
             分割完成后，请添加"ANALYSIS_COMPLETE"标记。""",
             llm_config=OPENAI_CONFIG
@@ -503,7 +515,7 @@ class CodeConverter:
         }
         self.groupchat.messages.append(initial_message)
         print_colored("添加初始消息...", COLOR_SYSTEM)
-        print_colored(f"初始消息内容：\n{initial_message['content']}", COLOR_INFO)
+        print_colored(f"初始消息内容：\n{initial_message['content']}", COLOR_USER)
         
         # 开始对话
         last_speaker = self.user_proxy
@@ -521,6 +533,9 @@ class CodeConverter:
         # 存储当前正在处理的代码片段
         current_section = None
         current_section_type = None
+        
+        # 存储转换后的代码片段
+        self.converted_snippets = []
         
         while len(self.groupchat.messages) < self.groupchat.max_round:
             round_count += 1
@@ -544,26 +559,23 @@ class CodeConverter:
                 
             print_colored(f"选择下一个发言者: {next_agent.name}", COLOR_SYSTEM)
             
-            # 只保留最近的消息，限制在5条以内
-            recent_messages = self.groupchat.messages[-5:] if len(self.groupchat.messages) > 5 else self.groupchat.messages
-            
             # 生成回复
             print_colored("生成回复...", COLOR_SYSTEM)
             print_colored("\n发送给大模型的消息内容：", COLOR_SYSTEM)
             print_colored("="*50, COLOR_SYSTEM)
-            for msg in recent_messages:
+            for msg in self.groupchat.messages:
                 print_message(msg)
             print_colored("="*50, COLOR_SYSTEM)
             
             reply = next_agent.generate_reply(
-                messages=recent_messages,
+                messages=self.groupchat.messages,
                 sender=self.user_proxy
             )
             
             # 添加回复到消息历史
             if reply:
-                print_colored(f"收到回复，长度: {len(reply)} 字符", COLOR_DEBUG)
-                print_colored(f"回复内容：\n{reply}", COLOR_INFO)
+                print_colored(f"收到回复，长度: {len(reply)} 字符", COLOR_SYSTEM)
+                print_colored(f"回复内容：\n{reply}", COLOR_ASSISTANT)
                 self.groupchat.messages.append({
                     "role": "assistant",
                     "content": reply,
@@ -573,65 +585,43 @@ class CodeConverter:
                 
                 # 处理分析结果
                 if current_phase == "analysis" and "ANALYSIS_COMPLETE" in reply:
-                    # 提取各个部分
-                    import re
+                    # 提取预处理部分和代码片段
+                    sections = {
+                        "preprocess": "",  # 存储预处理部分
+                        "code_snippets": []  # 存储代码片段列表
+                    }
                     
-                    # 提取变量定义部分
-                    var_pattern = r"```c\n// 变量定义：\n(.*?)\n```"
-                    var_match = re.search(var_pattern, reply, re.DOTALL)
-                    if var_match:
-                        var_content = var_match.group(1)
-                        # 提取变量定义
-                        var_def_pattern = r"message\s+.*?;|msTimer\s+.*?;"
-                        analyzed_sections["variables"] = re.findall(var_def_pattern, var_content)
+                    # 提取预处理部分
+                    preprocess_pattern = r"```c\n预处理部分：\n(.*?)\n```"
+                    preprocess_match = re.search(preprocess_pattern, reply, re.DOTALL)
+                    if preprocess_match:
+                        sections["preprocess"] = preprocess_match.group(1).strip()
                     
-                    # 提取函数定义部分
-                    func_pattern = r"```c\n// 函数定义：\n(.*?)\n```"
-                    func_match = re.search(func_pattern, reply, re.DOTALL)
-                    if func_match:
-                        function_content = func_match.group(1)
-                        # 提取函数定义
-                        function_pattern = r"on\s+\w+\s*\([^)]*\)\s*{[^}]*}|on\s+\w+\s+\w+\s*{[^}]*}"
-                        analyzed_sections["functions"] = re.findall(function_pattern, function_content, re.DOTALL)
+                    # 提取代码片段
+                    code_snippet_pattern = r"```c\n代码片段\d+：\n(.*?)\n```"
+                    code_snippets = re.findall(code_snippet_pattern, reply, re.DOTALL)
+                    sections["code_snippets"] = [snippet.strip() for snippet in code_snippets]
                     
-                    print_colored(f"分析完成：\n- {len(analyzed_sections['includes'])} 个include\n- {len(analyzed_sections['variables'])} 个变量\n- {len(analyzed_sections['functions'])} 个函数\n- {len(analyzed_sections['structs'])} 个结构体", COLOR_DEBUG)
+                    # 打印提取结果
+                    print_colored("\n提取的预处理部分：", COLOR_SYSTEM)
+                    print_colored(sections["preprocess"] if sections["preprocess"] else "空", COLOR_DEBUG)
                     
-                    # 打印提取的内容
-                    print_colored("\n提取的变量：", COLOR_DEBUG)
-                    for var in analyzed_sections["variables"]:
-                        print_colored(var, COLOR_DEBUG)
+                    print_colored("\n提取的代码片段：", COLOR_SYSTEM)
+                    for i, snippet in enumerate(sections["code_snippets"], 1):
+                        print_colored(f"\n代码片段{i}：", COLOR_SYSTEM)
+                        print_colored(snippet, COLOR_DEBUG)
                     
-                    print_colored("\n提取的函数：", COLOR_DEBUG)
-                    for func in analyzed_sections["functions"]:
-                        print_colored(func, COLOR_DEBUG)
-                    
-                    # 如果有include，先处理导入
-                    if analyzed_sections["includes"]:
+                    # 进入下一阶段
+                    if sections["preprocess"]:
                         current_phase = "imports"
-                        current_section = analyzed_sections["includes"]
-                        current_section_type = "includes"
+                        current_section = sections["preprocess"]
+                        current_section_type = "preprocess"
                     else:
                         # 初始化处理队列
-                        self.processing_queue = {
-                            "variables": analyzed_sections["variables"].copy(),
-                            "functions": analyzed_sections["functions"].copy()
-                        }
-                        self.current_item = None
-                        self.current_item_type = None
+                        self.processing_queue = sections["code_snippets"].copy()
                         
-                        # 开始处理第一个项目
-                        if self.processing_queue["variables"]:
-                            self.current_item = self.processing_queue["variables"].pop(0)
-                            self.current_item_type = "variable"
-                            current_phase = "syntax_recognize"
-                            # 发送给 syntax_recognizer
-                            self.groupchat.messages.append({
-                                "role": "user",
-                                "content": f"请识别以下CAPL代码中的语法：\n\n{self.current_item}"
-                            })
-                        elif self.processing_queue["functions"]:
-                            self.current_item = self.processing_queue["functions"].pop(0)
-                            self.current_item_type = "function"
+                        if self.processing_queue:
+                            self.current_item = self.processing_queue.pop(0)
                             current_phase = "syntax_recognize"
                             # 发送给 syntax_recognizer
                             self.groupchat.messages.append({
@@ -639,7 +629,7 @@ class CodeConverter:
                                 "content": f"请识别以下CAPL代码中的语法：\n\n{self.current_item}"
                             })
                         else:
-                            # 如果没有需要处理的项目，直接进入集成阶段
+                            # 如果没有需要处理的代码片段，直接进入集成阶段
                             current_phase = "integration"
                 
                 # 处理导入转换结果
@@ -648,71 +638,58 @@ class CodeConverter:
                 
                 # 处理语法识别结果
                 elif current_phase == "syntax_recognize" and "SYNTAX_RECOGNIZED" in reply:
-                    # 根据当前项目类型决定下一步
-                    if self.current_item_type == "variable":
-                        current_phase = "variables"
-                        # 发送给 converter
-                        self.groupchat.messages.append({
-                            "role": "user",
-                            "content": f"请转换以下CAPL变量定义：\n\n{self.current_item}"
-                        })
-                    elif self.current_item_type == "function":
-                        current_phase = "functions"
-                        # 发送给 converter
-                        self.groupchat.messages.append({
-                            "role": "user",
-                            "content": f"请转换以下CAPL函数定义：\n\n{self.current_item}"
-                        })
-                
-                # 处理变量转换结果
-                elif current_phase == "variables" and "VARIABLES_COMPLETE" in reply:
-                    # 检查是否还有待处理的变量
-                    if self.processing_queue["variables"]:
-                        self.current_item = self.processing_queue["variables"].pop(0)
-                        self.current_item_type = "variable"
-                        current_phase = "syntax_recognize"
-                        # 发送给 syntax_recognizer
-                        self.groupchat.messages.append({
-                            "role": "user",
-                            "content": f"请识别以下CAPL代码中的语法：\n\n{self.current_item}"
-                        })
-                    elif self.processing_queue["functions"]:
-                        self.current_item = self.processing_queue["functions"].pop(0)
-                        self.current_item_type = "function"
-                        current_phase = "syntax_recognize"
-                        # 发送给 syntax_recognizer
-                        self.groupchat.messages.append({
-                            "role": "user",
-                            "content": f"请识别以下CAPL代码中的语法：\n\n{self.current_item}"
-                        })
-                    else:
-                        # 所有项目都已处理完，进入集成阶段
-                        current_phase = "integration"
-                
-                # 处理函数转换结果
-                elif current_phase == "functions" and "FUNCTIONS_COMPLETE" in reply:
-                    # 检查是否还有待处理的函数
-                    if self.processing_queue["functions"]:
-                        self.current_item = self.processing_queue["functions"].pop(0)
-                        self.current_item_type = "function"
-                        current_phase = "syntax_recognize"
-                        # 发送给 syntax_recognizer
-                        self.groupchat.messages.append({
-                            "role": "user",
-                            "content": f"请识别以下CAPL代码中的语法：\n\n{self.current_item}"
-                        })
-                    else:
-                        # 所有项目都已处理完，进入集成阶段
-                        current_phase = "integration"
-                
-                # 处理集成结果
-                elif current_phase == "integration" and "INTEGRATION_COMPLETE" in reply:
+                    # 存储当前代码片段的转换结果
+                    self.converted_snippets.append({
+                        "original": self.current_item,
+                        "converted": reply
+                    })
+                    
+                    # 对当前转换后的代码片段进行语法检查
                     current_phase = "syntax_check"
+                    # 只发送当前代码片段给 syntax_checker
+                    current_snippet = self.converted_snippets[-1]["converted"]
+                    self.groupchat.messages.append({
+                        "role": "user",
+                        "content": f"请检查以下单个Python-VBA代码片段的语法：\n\n{current_snippet}"
+                    })
                 
                 # 处理语法检查结果
                 elif current_phase == "syntax_check" and "SYNTAX_CHECK_COMPLETE" in reply:
-                    print_colored("\n代码转换完成！", COLOR_SYSTEM)
-                    return reply
+                    # 语法检查通过，处理下一个代码片段
+                    current_phase = "syntax_recognize"
+                    if self.processing_queue:
+                        self.current_item = self.processing_queue.pop(0)
+                        # 发送给 syntax_recognizer
+                        self.groupchat.messages.append({
+                            "role": "user",
+                            "content": f"请识别以下CAPL代码中的语法：\n\n{self.current_item}"
+                        })
+                    else:
+                        # 所有代码片段处理完成，进入集成阶段
+                        current_phase = "integration"
+                        # 发送所有转换后的代码片段给 integrator
+                        integration_content = "\n\n".join([snippet["converted"] for snippet in self.converted_snippets])
+                        self.groupchat.messages.append({
+                            "role": "user",
+                            "content": f"请将以下转换后的代码片段集成为完整的Python-VBA代码：\n\n{integration_content}"
+                        })
+                
+                # 处理集成结果
+                elif current_phase == "integration" and "INTEGRATION_COMPLETE" in reply:
+                    # 存储集成后的代码
+                    self.converted_code = reply
+                    current_phase = "syntax_check"
+                    # 发送给 syntax_checker
+                    self.groupchat.messages.append({
+                        "role": "user",
+                        "content": f"请检查以下完整的Python-VBA代码的语法：\n\n{self.converted_code}"
+                    })
+                
+                # 处理最终语法检查结果
+                elif current_phase == "syntax_check" and "SYNTAX_CHECK_COMPLETE" in reply:
+                    # 语法检查完成，转换结束
+                    current_phase = "complete"
+                    break
         
         # 如果循环结束还没有得到结果，返回最后一个消息
         final_message = self.groupchat.messages[-1]["content"]
