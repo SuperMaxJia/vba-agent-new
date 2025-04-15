@@ -42,7 +42,7 @@ OPENAI_CONFIG = {
     "config_list": [
         {
             "model": "gpt-4-turbo-preview",
-            "api_key": "YOUR_API_KEY"  # 请替换为您的API密钥
+            "api_key": os.getenv("OPENAI_API_KEY")  # 使用环境变量
         }
     ],
     "temperature": 0.7,
