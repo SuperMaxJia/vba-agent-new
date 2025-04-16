@@ -100,10 +100,118 @@ class RuleLoader:
         """获取VBA规则的详细说明"""
         return self.vba_rule_map.get(vba_rule)
 
+class ConversationData:
+    """对话数据管理类"""
+    def __init__(self):
+        self.capl_code = ""
+        self.preprocess_section = ""
+        self.code_snippets = []
+        self.processing_queue = []
+        self.converted_snippets = []
+        
+    def get_snippet(self) -> Optional[str]:
+        """获取下一个要处理的代码片段"""
+        if self.processing_queue:
+            return self.processing_queue.pop(0)
+        return None
+        
+    def add_snippet(self, snippet: str) -> None:
+        """添加代码片段到处理队列"""
+        self.processing_queue.append(snippet)
+        
+    def has_remaining_snippets(self) -> bool:
+        """检查是否还有未处理的代码片段"""
+        return len(self.processing_queue) > 0
+        
+    def clear(self) -> None:
+        """清空所有数据"""
+        self.capl_code = ""
+        self.preprocess_section = ""
+        self.code_snippets = []
+        self.processing_queue = []
+        self.converted_snippets = []
+
+
+
+    def convert_code(self, capl_code: str) -> str:
+        """转换CAPL代码为VBA代码"""
+        print_colored("开始转换代码...", COLOR_SYSTEM)
+        
+        # 清空对话数据
+        self.conversation_data.clear()
+        
+        # 存储CAPL代码
+        self.conversation_data.capl_code = capl_code
+        
+        # 开始对话
+        round_count = 0
+        current_phase = "analysis"
+        current_content = None
+        
+        while round_count < 15:  # 设置最大对话轮数
+            round_count += 1
+            print_colored(f"\n第{round_count}轮对话开始...", COLOR_SYSTEM)
+            
+            # 根据当前阶段选择下一个发言者
+            current_agent = self.code_analyzer if round_count == 1 else self._get_next_agent(current_phase)
+            if current_agent is None:
+                break
+                
+            print_colored(f"选择下一个发言者: {current_agent.name}", COLOR_SYSTEM)
+            
+            # 生成回复
+            print_colored("生成回复...", COLOR_SYSTEM)
+            print_colored("\n发送给大模型的消息内容：", COLOR_SYSTEM)
+            print_colored("="*50, COLOR_SYSTEM)
+            print_colored("="*50, COLOR_SYSTEM)
+            
+            # 构建消息
+            message = self._build_message(current_phase, current_content)
+            if not message:
+                break
+                
+            reply = current_agent.generate_reply(
+                messages=[message],
+                sender=self.user_proxy
+            )
+            
+            # 处理收到的回复
+            if reply:
+                print_colored(f"收到回复，长度: {len(reply)} 字符", COLOR_SYSTEM)
+                print_colored(f"回复内容：\n{reply}", COLOR_ASSISTANT)
+                
+                # 根据当前阶段处理回复
+                next_phase, next_content = self._process_reply(current_phase, reply)
+                if next_phase:
+                    current_phase = next_phase
+                    current_content = next_content
+                    if current_phase == "complete":
+                        break
+        
+        print_colored("\n转换完成！", COLOR_SYSTEM)
+        print_colored("="*50, COLOR_SYSTEM)
+        return reply if reply else "转换失败"
+
+    def _get_next_agent(self, next_phase: str) -> AssistantAgent:
+        """根据阶段名称获取下一个发言的智能体"""
+        phase_to_agent = {
+            "analysis": self.code_analyzer,
+            "imports": self.importer,
+            "syntax_recognize": self.syntax_recognizer,
+            "conversion": self.converter,
+            "syntax_check": self.syntax_checker,
+            "integration": self.integrator,
+            "final_check": self.final_checker,
+            "complete": None
+        }
+        return phase_to_agent.get(next_phase)
+
 class CodeAnalyzerAgent(AssistantAgent):
+    """代码分析器，负责将CAPL代码分割成预处理部分和代码片段列表"""
     def __init__(self):
         super().__init__(
             name="code_analyzer",
+            description="负责将CAPL代码分割成预处理部分和代码片段列表，确保每个函数和其使用的全局变量被正确提取",
             system_message="""你是一个CAPL代码分割专家，负责将CAPL脚本分割成预处理部分和代码片段列表。
             请专注于以下任务：
             1. 分割预处理部分
@@ -165,9 +273,11 @@ class CodeAnalyzerAgent(AssistantAgent):
         )
 
 class SyntaxRecognizerAgent(AssistantAgent):
+    """语法识别器，负责识别CAPL代码中的特有类型和函数名"""
     def __init__(self):
         super().__init__(
             name="syntax_recognizer",
+            description="负责识别CAPL代码中的特有类型和函数名，确保所有CAPL特有的语法元素被正确识别",
             system_message="""你是一个CAPL语法识别专家，负责识别CAPL脚本中使用的特有类型和函数名。
             请专注于以下任务：
             1. 识别使用的CAPL特有类型
@@ -225,9 +335,11 @@ class SyntaxRecognizerAgent(AssistantAgent):
         )
 
 class ImportConverterAgent(AssistantAgent):
+    """导入转换器，负责将CAPL的include语句转换为Python-VBA的导入语句"""
     def __init__(self):
         super().__init__(
             name="import_converter",
+            description="负责将CAPL代码中的include语句转换为Python-VBA代码的导入语句，确保所有必要的依赖被正确导入",
             system_message="""你是一个代码转换专家，负责将CAPL代码中的include语句转换为Python-VBA代码的导入语句。
             请专注于以下任务：
             1. 分析CAPL代码中的include语句
@@ -270,9 +382,11 @@ class ImportConverterAgent(AssistantAgent):
         )
 
 class CodeConverterAgent(AssistantAgent):
+    """代码转换器，负责将CAPL代码转换为Python-VBA代码"""
     def __init__(self):
         super().__init__(
             name="code_converter",
+            description="负责将CAPL代码转换为Python-VBA代码，根据映射规则进行类型和函数的转换",
             system_message="""你是一个代码转换专家，负责将CAPL代码转换为Python-VBA代码。
             请遵循以下规则：
             1. 分析CAPL代码中的变量和函数定义
@@ -338,9 +452,11 @@ class CodeConverterAgent(AssistantAgent):
         )
 
 class PythonSyntaxCheckerAgent(AssistantAgent):
+    """语法检查器，负责检查生成的Python-VBA代码是否符合语法规则"""
     def __init__(self):
         super().__init__(
             name="syntax_checker",
+            description="负责检查生成的Python-VBA代码是否符合语法规则，确保代码的正确性和可执行性",
             system_message="""你是一个Python-VBA语法检查专家，负责检查生成的Python-VBA代码是否符合语法规则。
             请遵循以下规则：
             1. 检查代码的缩进是否正确
@@ -366,9 +482,11 @@ class PythonSyntaxCheckerAgent(AssistantAgent):
         )
 
 class CodeIntegratorAgent(AssistantAgent):
+    """代码集成器，负责将转换后的代码组件整合在一起"""
     def __init__(self):
         super().__init__(
             name="code_integrator",
+            description="负责将转换后的Python-VBA代码组件整合在一起，确保代码的完整性和一致性",
             system_message="""你是一个代码集成专家，负责将转换后的Python-VBA代码组件整合在一起。
             请遵循以下规则：
             1. 确保所有导入语句位于文件顶部
@@ -392,11 +510,53 @@ class CodeIntegratorAgent(AssistantAgent):
             llm_config=OPENAI_CONFIG
         )
 
+class FinalCheckerAgent(AssistantAgent):
+    """最终检查器，负责对转换后的代码进行最终检查"""
+    def __init__(self):
+        super().__init__(
+            name="final_checker",
+            description="负责对转换后的代码进行最终检查，确保代码的完整性和正确性",
+            system_message="""你是一个代码检查专家，负责对转换后的Python-VBA代码进行最终检查。
+            请遵循以下规则：
+            1. 检查代码的完整性
+               - 确保所有必要的导入语句都存在
+               - 确保所有必要的函数和类都已定义
+               - 确保所有必要的变量都已声明
+            
+            2. 检查代码的正确性
+               - 检查代码是否符合Python-VBA的语法规则
+               - 检查代码是否符合VBA的最佳实践
+               - 检查代码是否遵循了所有转换规则
+            
+            3. 检查代码的一致性
+               - 检查变量命名是否一致
+               - 检查函数命名是否一致
+               - 检查代码风格是否一致
+            
+            4. 检查代码的可执行性
+               - 检查是否有未定义的变量
+               - 检查是否有未定义的函数
+               - 检查是否有语法错误
+            
+            请按照以下格式输出：
+            1. 如果发现错误：
+               - 指出错误位置
+               - 说明错误原因
+               - 给出修正建议
+            2. 如果检查通过：
+               - 输出"FINAL_CHECK_COMPLETE"
+               - 可以给出代码优化建议""",
+            llm_config=OPENAI_CONFIG
+        )
+
 class CodeConverter:
     """代码转换器类"""
     def __init__(self):
         self.rule_loader = RuleLoader()
         self.rule_loader.load_rules()
+        
+        # 初始化对话数据
+        self.conversation_data = ConversationData()
         
         # 初始化各个代理
         self.code_analyzer = CodeAnalyzerAgent()
@@ -405,11 +565,8 @@ class CodeConverter:
         self.converter = CodeConverterAgent()
         self.integrator = CodeIntegratorAgent()
         self.syntax_checker = PythonSyntaxCheckerAgent()
+        self.final_checker = FinalCheckerAgent()
         
-        # 将规则添加到每个agent的system_message中
-        for agent in [self.converter]:
-            agent.update_system_message(agent.system_message + f"\n\n可用规则：\n{str(self.rule_loader.__dict__)}")
-            
         self.user_proxy = UserProxyAgent(
             name="user_proxy",
             human_input_mode="NEVER",
@@ -428,7 +585,8 @@ class CodeConverter:
                 self.syntax_recognizer,
                 self.converter,
                 self.integrator,
-                self.syntax_checker
+                self.syntax_checker,
+                self.final_checker
             ],
             messages=[],
             max_round=50,
@@ -461,7 +619,7 @@ class CodeConverter:
             with open(output_path, 'w', encoding='utf-8') as f:
                 f.write(content)
             return True
-            except Exception as e:
+        except Exception as e:
             print(f"保存Python-VBA文件失败: {e}")
             return False
 
@@ -502,202 +660,220 @@ class CodeConverter:
                     else:
                         print(f"保存转换后的代码失败: {output_file}")
         
+    def _process_analysis_phase(self, reply: str) -> Tuple[str, str]:
+        """处理分析阶段的结果"""
+        if "ANALYSIS_COMPLETE" in reply:
+            # 提取预处理部分
+            preprocess_pattern = r"```c\n预处理部分：\n(.*?)\n```"
+            preprocess_match = re.search(preprocess_pattern, reply, re.DOTALL)
+            if preprocess_match:
+                self.conversation_data.preprocess_section = preprocess_match.group(1).strip()
+            
+            # 提取代码片段
+            code_snippet_pattern = r"```c\n代码片段\d+：\n(.*?)\n```"
+            code_snippets = re.findall(code_snippet_pattern, reply, re.DOTALL)
+            self.conversation_data.code_snippets = [snippet.strip() for snippet in code_snippets]
+            self.conversation_data.processing_queue = self.conversation_data.code_snippets.copy()
+            
+            # 打印提取结果
+            print_colored("\n提取的预处理部分：", COLOR_SYSTEM)
+            print_colored(self.conversation_data.preprocess_section if self.conversation_data.preprocess_section else "空", COLOR_DEBUG)
+            
+            print_colored("\n提取的代码片段：", COLOR_SYSTEM)
+            for i, snippet in enumerate(self.conversation_data.code_snippets, 1):
+                print_colored(f"\n代码片段{i}：", COLOR_SYSTEM)
+                print_colored(snippet, COLOR_DEBUG)
+            
+            # 确定下一阶段
+            if self.conversation_data.preprocess_section:
+                return "imports", self.conversation_data.preprocess_section
+            else:
+                if self.conversation_data.has_remaining_snippets():
+                    return "syntax_recognize", self.conversation_data.get_snippet()
+                else:
+                    return "integration", self.conversation_data.converted_snippets
+        return "analysis", None
+
+    def _process_imports_phase(self, reply: str) -> Tuple[str, str]:
+        """处理导入阶段的结果"""
+        if "IMPORTS_COMPLETE" in reply:
+            if self.conversation_data.has_remaining_snippets():
+                return "syntax_recognize", self.conversation_data.get_snippet()
+            else:
+                return "integration", None
+        return "integration", None
+
+    def _process_syntax_recognize_phase(self, reply: str) -> Tuple[str, str]:
+        """处理语法识别阶段的结果"""
+        if "SYNTAX_RECOGNIZED" in reply:
+            self.conversation_data.converted_snippets.append({
+                "original": self.conversation_data.get_snippet(),
+                "converted": reply
+            })
+            return "conversion", None  # 转向 converter 处理转换
+        return "integration", None  # 如果没有识别到语法，直接进入集成阶段
+
+    def _process_conversion_phase(self, reply: str) -> Tuple[str, str]:
+        """处理转换阶段的结果"""
+        if "CONVERSION_COMPLETE" in reply:
+            if self.conversation_data.has_remaining_snippets():
+                return "syntax_recognize", self.conversation_data.get_snippet()
+            else:
+                return "syntax_check", None
+        return "integration", None
+
+    def _process_syntax_check_phase(self, reply: str) -> str:
+        """处理语法检查阶段的结果"""
+        if "SYNTAX_CHECK_COMPLETE" in reply:
+            if self.conversation_data.has_remaining_snippets():
+                return "syntax_recognize"
+            else:
+                return "integration"
+        return None
+
+    def _process_integration_phase(self, reply: str) -> str:
+        """处理集成阶段的结果"""
+        if "INTEGRATION_COMPLETE" in reply:
+            return "final_check"
+        return None
+
+    def _process_final_check_phase(self, reply: str) -> Tuple[str, str]:
+        """处理最终检查阶段的结果"""
+        if "FINAL_CHECK_COMPLETE" in reply:
+            return "complete", None
+        return "integration", None
+
+    def _process_reply(self, current_phase: str, reply: str) -> Tuple[str, str]:
+        """处理不同阶段的回复"""
+        phase_handlers = {
+            "analysis": self._process_analysis_phase,
+            "imports": self._process_imports_phase,
+            "syntax_recognize": self._process_syntax_recognize_phase,
+            "conversion": self._process_conversion_phase,
+            "syntax_check": self._process_syntax_check_phase,
+            "integration": self._process_integration_phase,
+            "final_check": self._process_final_check_phase
+        }
+        
+        handler = phase_handlers.get(current_phase)
+        if handler:
+            return handler(reply)
+        return None, None
+
     def convert_code(self, capl_code: str) -> str:
         """转换CAPL代码为VBA代码"""
-        # 初始化对话
-        self.groupchat.messages = []
         print_colored("开始转换代码...", COLOR_SYSTEM)
         
-        # 添加初始消息
-        initial_message = {
-            "role": "user",
-            "content": f"请将以下CAPL代码转换为VBA代码：\n\n{capl_code}"
-        }
-        self.groupchat.messages.append(initial_message)
-        print_colored("添加初始消息...", COLOR_SYSTEM)
-        print_colored(f"初始消息内容：\n{initial_message['content']}", COLOR_USER)
+        # 清空对话数据
+        self.conversation_data.clear()
+        
+        # 存储CAPL代码
+        self.conversation_data.capl_code = capl_code
         
         # 开始对话
-        last_speaker = self.user_proxy
         round_count = 0
-        current_phase = "analysis"  # 当前处理阶段
+        current_phase = "analysis"
+        current_content = None
         
-        # 存储分析结果
-        analyzed_sections = {
-            "includes": [],  # 存储include部分
-            "variables": [],  # 存储变量定义部分
-            "functions": [],  # 存储函数定义部分
-            "structs": []    # 存储结构体定义部分
-        }
-        
-        # 存储当前正在处理的代码片段
-        current_section = None
-        current_section_type = None
-        
-        # 存储转换后的代码片段
-        self.converted_snippets = []
-        
-        while len(self.groupchat.messages) < self.groupchat.max_round:
+        while round_count < 15:  # 设置最大对话轮数
             round_count += 1
             print_colored(f"\n第{round_count}轮对话开始...", COLOR_SYSTEM)
             
             # 根据当前阶段选择下一个发言者
-            if current_phase == "analysis":
-                next_agent = self.code_analyzer
-            elif current_phase == "imports":
-                next_agent = self.importer
-            elif current_phase == "syntax_recognize":
-                next_agent = self.syntax_recognizer
-            elif current_phase == "variables":
-                next_agent = self.converter
-            elif current_phase == "functions":
-                next_agent = self.converter
-            elif current_phase == "integration":
-                next_agent = self.integrator
-            else:
-                next_agent = self.syntax_checker
+            current_agent = self.code_analyzer if round_count == 1 else self._get_agent_from_phase(current_phase)
+            if current_agent is None:
+                break
                 
-            print_colored(f"选择下一个发言者: {next_agent.name}", COLOR_SYSTEM)
+            print_colored(f"当前发言者: {current_agent.name}", COLOR_SYSTEM)
             
-            # 生成回复
-            print_colored("生成回复...", COLOR_SYSTEM)
+
             print_colored("\n发送给大模型的消息内容：", COLOR_SYSTEM)
             print_colored("="*50, COLOR_SYSTEM)
-            for msg in self.groupchat.messages:
-                print_message(msg)
             print_colored("="*50, COLOR_SYSTEM)
-            
-            reply = next_agent.generate_reply(
-                messages=self.groupchat.messages,
+
+            # 构建消息
+            message = self._build_message(current_phase, current_content)
+            if not message:
+                break
+            # 生成回复
+            print_colored("发送给大模型，正在等待生成回复...", COLOR_SYSTEM)
+                
+            reply = current_agent.generate_reply(
+                messages=[message],
                 sender=self.user_proxy
             )
             
-            # 添加回复到消息历史
+            # 处理收到的回复
             if reply:
                 print_colored(f"收到回复，长度: {len(reply)} 字符", COLOR_SYSTEM)
                 print_colored(f"回复内容：\n{reply}", COLOR_ASSISTANT)
-                self.groupchat.messages.append({
-                    "role": "assistant",
-                    "content": reply,
-                    "name": next_agent.name
-                })
-                last_speaker = next_agent
                 
-                # 处理分析结果
-                if current_phase == "analysis" and "ANALYSIS_COMPLETE" in reply:
-                    # 提取预处理部分和代码片段
-                    sections = {
-                        "preprocess": "",  # 存储预处理部分
-                        "code_snippets": []  # 存储代码片段列表
-                    }
-                    
-                    # 提取预处理部分
-                    preprocess_pattern = r"```c\n预处理部分：\n(.*?)\n```"
-                    preprocess_match = re.search(preprocess_pattern, reply, re.DOTALL)
-                    if preprocess_match:
-                        sections["preprocess"] = preprocess_match.group(1).strip()
-                    
-                    # 提取代码片段
-                    code_snippet_pattern = r"```c\n代码片段\d+：\n(.*?)\n```"
-                    code_snippets = re.findall(code_snippet_pattern, reply, re.DOTALL)
-                    sections["code_snippets"] = [snippet.strip() for snippet in code_snippets]
-                    
-                    # 打印提取结果
-                    print_colored("\n提取的预处理部分：", COLOR_SYSTEM)
-                    print_colored(sections["preprocess"] if sections["preprocess"] else "空", COLOR_DEBUG)
-                    
-                    print_colored("\n提取的代码片段：", COLOR_SYSTEM)
-                    for i, snippet in enumerate(sections["code_snippets"], 1):
-                        print_colored(f"\n代码片段{i}：", COLOR_SYSTEM)
-                        print_colored(snippet, COLOR_DEBUG)
-                    
-                    # 进入下一阶段
-                    if sections["preprocess"]:
-                        current_phase = "imports"
-                        current_section = sections["preprocess"]
-                        current_section_type = "preprocess"
-                    else:
-                        # 初始化处理队列
-                        self.processing_queue = sections["code_snippets"].copy()
-                        
-                        if self.processing_queue:
-                            self.current_item = self.processing_queue.pop(0)
-                            current_phase = "syntax_recognize"
-                            # 发送给 syntax_recognizer
-                            self.groupchat.messages.append({
-                                "role": "user",
-                                "content": f"请识别以下CAPL代码中的语法：\n\n{self.current_item}"
-                            })
-                        else:
-                            # 如果没有需要处理的代码片段，直接进入集成阶段
-                            current_phase = "integration"
-                
-                # 处理导入转换结果
-                elif current_phase == "imports" and "IMPORTS_COMPLETE" in reply:
-                    current_phase = "syntax_recognize"
-                
-                # 处理语法识别结果
-                elif current_phase == "syntax_recognize" and "SYNTAX_RECOGNIZED" in reply:
-                    # 存储当前代码片段的转换结果
-                    self.converted_snippets.append({
-                        "original": self.current_item,
-                        "converted": reply
-                    })
-                    
-                    # 对当前转换后的代码片段进行语法检查
-                    current_phase = "syntax_check"
-                    # 只发送当前代码片段给 syntax_checker
-                    current_snippet = self.converted_snippets[-1]["converted"]
-                    self.groupchat.messages.append({
-                        "role": "user",
-                        "content": f"请检查以下单个Python-VBA代码片段的语法：\n\n{current_snippet}"
-                    })
-                
-                # 处理语法检查结果
-                elif current_phase == "syntax_check" and "SYNTAX_CHECK_COMPLETE" in reply:
-                    # 语法检查通过，处理下一个代码片段
-                    current_phase = "syntax_recognize"
-                    if self.processing_queue:
-                        self.current_item = self.processing_queue.pop(0)
-                        # 发送给 syntax_recognizer
-                        self.groupchat.messages.append({
-                            "role": "user",
-                            "content": f"请识别以下CAPL代码中的语法：\n\n{self.current_item}"
-                        })
-                    else:
-                        # 所有代码片段处理完成，进入集成阶段
-                        current_phase = "integration"
-                        # 发送所有转换后的代码片段给 integrator
-                        integration_content = "\n\n".join([snippet["converted"] for snippet in self.converted_snippets])
-                        self.groupchat.messages.append({
-                            "role": "user",
-                            "content": f"请将以下转换后的代码片段集成为完整的Python-VBA代码：\n\n{integration_content}"
-                        })
-                
-                # 处理集成结果
-                elif current_phase == "integration" and "INTEGRATION_COMPLETE" in reply:
-                    # 存储集成后的代码
-                    self.converted_code = reply
-                    current_phase = "syntax_check"
-                    # 发送给 syntax_checker
-                    self.groupchat.messages.append({
-                        "role": "user",
-                        "content": f"请检查以下完整的Python-VBA代码的语法：\n\n{self.converted_code}"
-                    })
-                
-                # 处理最终语法检查结果
-                elif current_phase == "syntax_check" and "SYNTAX_CHECK_COMPLETE" in reply:
-                    # 语法检查完成，转换结束
-                    current_phase = "complete"
-                    break
+                # 根据当前阶段处理回复
+                next_phase, next_content = self._process_reply(current_phase, reply)
+                if next_phase:
+                    current_phase = next_phase
+                    current_content = next_content
+                    if current_phase == "complete":
+                        break
         
-        # 如果循环结束还没有得到结果，返回最后一个消息
-        final_message = self.groupchat.messages[-1]["content"]
         print_colored("\n转换完成！", COLOR_SYSTEM)
         print_colored("="*50, COLOR_SYSTEM)
-        return final_message
-        
-    if __name__ == "__main__":
+        return reply if reply else "转换失败"
+
+    def _get_agent_from_phase(self, next_phase: str) -> AssistantAgent:
+        """根据阶段名称获取下一个发言的智能体"""
+        phase_to_agent = {
+            "analysis": self.code_analyzer,
+            "imports": self.importer,
+            "syntax_recognize": self.syntax_recognizer,
+            "conversion": self.converter,
+            "syntax_check": self.syntax_checker,
+            "integration": self.integrator,
+            "final_check": self.final_checker,
+            "complete": None
+        }
+        return phase_to_agent.get(next_phase)
+
+    def _build_message(self, current_phase: str, content: str = None) -> Dict:
+        """根据当前阶段构建消息"""
+        if current_phase == "analysis":
+            return {
+                "role": "user",
+                "content": f"请将以下CAPL代码转换为VBA代码：\n\n{self.conversation_data.capl_code}"
+            }
+        elif current_phase == "imports":
+            return {
+                "role": "user",
+                "content": f"请处理以下预处理部分：\n\n{content}"
+            }
+        elif current_phase == "syntax_recognize":
+            return {
+                "role": "user",
+                "content": f"请识别以下CAPL代码中的语法：\n\n{content}"
+            }
+        elif current_phase == "conversion":
+            return {
+                "role": "user",
+                "content": f"请将以下CAPL代码转换为VBA代码：\n\n{content}"
+            }
+        elif current_phase == "syntax_check":
+            return {
+                "role": "user",
+                "content": f"请检查以下Python-VBA代码的语法：\n\n{content}"
+            }
+        elif current_phase == "integration":
+            return {
+                "role": "user",
+                "content": f"请将以下代码片段集成为完整的Python-VBA代码：\n\n{self.conversation_data.converted_snippets}"
+            }
+        elif current_phase == "final_check":
+            return {
+                "role": "user",
+                "content": f"请对以下Python-VBA代码进行最终检查：\n\n{content}"
+            }
+        return None
+
+if __name__ == "__main__":
     # 设置输入和输出目录
     input_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "input")  # CAPL文件目录
     output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "output")  # Python-VBA文件输出目录
