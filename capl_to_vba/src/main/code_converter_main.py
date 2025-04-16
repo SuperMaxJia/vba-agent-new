@@ -2,7 +2,7 @@ import os
 import re
 from colorama import init, Fore, Style
 from typing import Dict, List, Optional, Tuple
-from autogen import UserProxyAgent, GroupChat, GroupChatManager
+from autogen import UserProxyAgent, GroupChat, GroupChatManager, AssistantAgent
 from ..data.rule_loader import RuleLoader
 from ..data.conversation_data import ConversationData
 from ..agents.code_analyzer import CodeAnalyzerAgent
@@ -184,7 +184,7 @@ class CodeConverter:
                     return "syntax_recognize", self.conversation_data.get_snippet()
                 else:
                     return "integration", self.conversation_data.converted_snippets
-        return "analysis", None
+        return "error","No ANALYSIS_COMPLETE"
 
     def _process_imports_phase(self, reply: str) -> Tuple[str, str]:
         """处理导入阶段的结果"""
@@ -192,48 +192,69 @@ class CodeConverter:
             if self.conversation_data.has_remaining_snippets():
                 return "syntax_recognize", self.conversation_data.get_snippet()
             else:
-                return "integration", None
-        return "integration", None
+                return "integration", self.conversation_data.converted_snippets
+        return "error", "No IMPORTS_COMPLETE"
 
     def _process_syntax_recognize_phase(self, reply: str) -> Tuple[str, str]:
         """处理语法识别阶段的结果"""
         if "SYNTAX_RECOGNIZED" in reply:
-            self.conversation_data.converted_snippets.append({
-                "original": self.conversation_data.get_snippet(),
-                "converted": reply
-            })
-            return "conversion", None  # 转向 converter 处理转换
-        return "integration", None  # 如果没有识别到语法，直接进入集成阶段
+            # 按行读取回复内容
+            recognized_items = []
+            for line in reply.split('\n'):
+                if line.strip():  # 忽略空行
+                    recognized_items.append(line.strip())
+            
+            # 生成映射
+            mapping = {}
+            for item in recognized_items:
+                vba_rules = self.rule_loader.get_vba_rule(item)
+                if vba_rules:
+                    mapping[item] = vba_rules
+            
+            # 打印识别到的内容和映射
+            if recognized_items:
+                print_colored("\n识别到的内容：", COLOR_SYSTEM)
+                for item in recognized_items:
+                    print_colored(item, COLOR_DEBUG)
+                print_colored("\n对应的VBA规则：", COLOR_SYSTEM)
+                for key, value in mapping.items():
+                    print_colored(f"{key} -> {value}", COLOR_DEBUG)
+            
+            # 将mapping转换为字符串
+            mapping_str = "\n".join([f"{key} -> {value}" for key, value in mapping.items()])
+            
+            return "conversion", mapping_str  # 转向 converter 处理转换，并传递映射字符串
+        return "error", "No SYNTAX_RECOGNIZED"
 
     def _process_conversion_phase(self, reply: str) -> Tuple[str, str]:
         """处理转换阶段的结果"""
         if "CONVERSION_COMPLETE" in reply:
-            if self.conversation_data.has_remaining_snippets():
-                return "syntax_recognize", self.conversation_data.get_snippet()
-            else:
-                return "integration", None
-        return "integration", None
+                return "syntax_recognize", reply
+        return "error", "No CONVERSION_COMPLETE"
 
-    def _process_syntax_check_phase(self, reply: str) -> str:
+    def _process_syntax_check_phase(self, reply: str) -> Tuple[str, str]:
         """处理语法检查阶段的结果"""
         if "SYNTAX_CHECK_COMPLETE" in reply:
             if self.conversation_data.has_remaining_snippets():
-                return "syntax_recognize"
+                return "syntax_recognize", reply
             else:
-                return "integration"
-        return None
+                # 将converted_snippets转换为字符串
+                converted_str = "\n".join([str(snippet) for snippet in self.conversation_data.converted_snippets])
+                return "integration", converted_str
+        return "error", "No SYNTAX_CHECK_COMPLETE"
 
     def _process_integration_phase(self, reply: str) -> str:
         """处理集成阶段的结果"""
         if "INTEGRATION_COMPLETE" in reply:
-            return "final_check"
-        return None
+            return "final_check", reply
+        return "error", "No INTEGRATION_COMPLETE"
+
 
     def _process_final_check_phase(self, reply: str) -> Tuple[str, str]:
         """处理最终检查阶段的结果"""
         if "FINAL_CHECK_COMPLETE" in reply:
             return "complete", None
-        return "integration", None
+        return "error", "No FINAL_CHECK_COMPLETE"
 
     def _process_reply(self, current_phase: str, reply: str) -> Tuple[str, str]:
         """处理不同阶段的回复"""
@@ -250,7 +271,7 @@ class CodeConverter:
         handler = phase_handlers.get(current_phase)
         if handler:
             return handler(reply)
-        return None, None
+        return "error", "The non-existent stage: " + current_phase
 
     def convert_code(self, capl_code: str) -> str:
         """转换CAPL代码为VBA代码"""
@@ -274,6 +295,7 @@ class CodeConverter:
             # 根据当前阶段选择下一个发言者
             current_agent = self.code_analyzer if round_count == 1 else self._get_agent_from_phase(current_phase)
             if current_agent is None:
+                print_colored(f"阶段异常: 无法找到{current_phase}阶段的代理", COLOR_ERROR)
                 break
                 
             print_colored(f"当前发言者: {current_agent.name}", COLOR_SYSTEM)
@@ -320,10 +342,9 @@ class CodeConverter:
             "conversion": self.converter,
             "syntax_check": self.syntax_checker,
             "integration": self.integrator,
-            "final_check": self.final_checker,
-            "complete": None
+            "final_check": self.final_checker
         }
-        return phase_to_agent.get(next_phase)
+        return phase_to_agent.get(next_phase, None)  # 如果找不到对应的代理，返回None
 
     def _build_message(self, current_phase: str, content: str = None) -> Dict:
         """根据当前阶段构建消息"""
