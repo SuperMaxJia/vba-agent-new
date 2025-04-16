@@ -54,12 +54,6 @@ if not OPENAI_CONFIG["config_list"][0]["api_key"]:
     print_colored("请设置环境变量：export OPENAI_API_KEY='your-api-key'", COLOR_INFO)
     exit(1)
 
-print_colored("API密钥检查：", COLOR_SYSTEM)
-print_colored(f"- 环境变量名称: OPENAI_API_KEY", COLOR_USER)
-print_colored(f"- 密钥长度: {len(OPENAI_CONFIG['config_list'][0]['api_key'])} 字符", COLOR_USER)
-print_colored(f"- 密钥前缀: {OPENAI_CONFIG['config_list'][0]['api_key'][:10]}", COLOR_USER)
-print_colored(f"- 密钥后缀: {OPENAI_CONFIG['config_list'][0]['api_key'][-10:]}", COLOR_USER)
-
 class RuleLoader:
     """规则加载器类"""
     def __init__(self):
@@ -133,78 +127,8 @@ class ConversationData:
 
 
 
-    def convert_code(self, capl_code: str) -> str:
-        """转换CAPL代码为VBA代码"""
-        print_colored("开始转换代码...", COLOR_SYSTEM)
-        
-        # 清空对话数据
-        self.conversation_data.clear()
-        
-        # 存储CAPL代码
-        self.conversation_data.capl_code = capl_code
-        
-        # 开始对话
-        round_count = 0
-        current_phase = "analysis"
-        current_content = None
-        
-        while round_count < 15:  # 设置最大对话轮数
-            round_count += 1
-            print_colored(f"\n第{round_count}轮对话开始...", COLOR_SYSTEM)
-            
-            # 根据当前阶段选择下一个发言者
-            current_agent = self.code_analyzer if round_count == 1 else self._get_next_agent(current_phase)
-            if current_agent is None:
-                break
-                
-            print_colored(f"选择下一个发言者: {current_agent.name}", COLOR_SYSTEM)
-            
-            # 生成回复
-            print_colored("生成回复...", COLOR_SYSTEM)
-            print_colored("\n发送给大模型的消息内容：", COLOR_SYSTEM)
-            print_colored("="*50, COLOR_SYSTEM)
-            print_colored("="*50, COLOR_SYSTEM)
-            
-            # 构建消息
-            message = self._build_message(current_phase, current_content)
-            if not message:
-                break
-                
-            reply = current_agent.generate_reply(
-                messages=[message],
-                sender=self.user_proxy
-            )
-            
-            # 处理收到的回复
-            if reply:
-                print_colored(f"收到回复，长度: {len(reply)} 字符", COLOR_SYSTEM)
-                print_colored(f"回复内容：\n{reply}", COLOR_ASSISTANT)
-                
-                # 根据当前阶段处理回复
-                next_phase, next_content = self._process_reply(current_phase, reply)
-                if next_phase:
-                    current_phase = next_phase
-                    current_content = next_content
-                    if current_phase == "complete":
-                        break
-        
-        print_colored("\n转换完成！", COLOR_SYSTEM)
-        print_colored("="*50, COLOR_SYSTEM)
-        return reply if reply else "转换失败"
 
-    def _get_next_agent(self, next_phase: str) -> AssistantAgent:
-        """根据阶段名称获取下一个发言的智能体"""
-        phase_to_agent = {
-            "analysis": self.code_analyzer,
-            "imports": self.importer,
-            "syntax_recognize": self.syntax_recognizer,
-            "conversion": self.converter,
-            "syntax_check": self.syntax_checker,
-            "integration": self.integrator,
-            "final_check": self.final_checker,
-            "complete": None
-        }
-        return phase_to_agent.get(next_phase)
+
 
 class CodeAnalyzerAgent(AssistantAgent):
     """代码分析器，负责将CAPL代码分割成预处理部分和代码片段列表"""
@@ -719,7 +643,7 @@ class CodeConverter:
             if self.conversation_data.has_remaining_snippets():
                 return "syntax_recognize", self.conversation_data.get_snippet()
             else:
-                return "syntax_check", None
+                return "integration", None
         return "integration", None
 
     def _process_syntax_check_phase(self, reply: str) -> str:
