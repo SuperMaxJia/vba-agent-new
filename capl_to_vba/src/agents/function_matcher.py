@@ -1,4 +1,6 @@
 from autogen import AssistantAgent
+
+from ..config.llm_config import OPENAI_CONFIG
 from ..data.rule_loader import RuleLoader
 
 class FunctionMatcherAgent(AssistantAgent):
@@ -69,5 +71,5 @@ class FunctionMatcherAgent(AssistantAgent):
             8. 必须考虑函数的性能影响
             
             分析完成后，请添加"FUNCTION_MATCHED"标记。""",
-            llm_config=rule_loader.OPENAI_CONFIG
+            llm_config=OPENAI_CONFIG
         ) 

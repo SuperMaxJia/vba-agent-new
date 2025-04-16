@@ -1,4 +1,6 @@
 from autogen import AssistantAgent
+
+from ..config.llm_config import OPENAI_CONFIG
 from ..data.rule_loader import RuleLoader
 
 class ImportConverterAgent(AssistantAgent):
@@ -45,5 +47,5 @@ class ImportConverterAgent(AssistantAgent):
             ```
             
             IMPORTS_COMPLETE""",
-            llm_config=rule_loader.OPENAI_CONFIG
+            llm_config=OPENAI_CONFIG
         ) 

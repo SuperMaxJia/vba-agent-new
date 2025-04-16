@@ -20,15 +20,13 @@ class SyntaxRecognizerAgent(AssistantAgent):
                - 识别所有使用的CAN总线函数（如output, write等）
             
             请按照以下格式输出识别结果：
-            ```c
-            // 类型：
+            ```
             message
             msTimer
-            
-            // 函数：
             output
             setTimer
             write
+            ......
             ```
             
             重要说明：

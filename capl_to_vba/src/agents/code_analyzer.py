@@ -1,4 +1,6 @@
 from autogen import AssistantAgent
+
+from ..config.llm_config import OPENAI_CONFIG
 from ..data.rule_loader import RuleLoader
 
 class CodeAnalyzerAgent(AssistantAgent):
@@ -64,5 +66,5 @@ class CodeAnalyzerAgent(AssistantAgent):
             12. 每个函数必须作为独立的代码片段输出，不能合并多个函数到一个代码片段中
             
             分割完成后，请添加"ANALYSIS_COMPLETE"标记。""",
-            llm_config=rule_loader.OPENAI_CONFIG
+            llm_config=OPENAI_CONFIG
         ) 

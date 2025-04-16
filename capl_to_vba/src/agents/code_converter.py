@@ -1,4 +1,6 @@
 from autogen import AssistantAgent
+
+from ..config.llm_config import OPENAI_CONFIG
 from ..data.rule_loader import RuleLoader
 
 class CodeConverterAgent(AssistantAgent):
@@ -68,5 +70,5 @@ class CodeConverterAgent(AssistantAgent):
             3. 确保所有变量和函数都被正确转换
             4. 添加必要的注释说明转换依据
             5. 使用Python-VBA的最佳实践""",
-            llm_config=rule_loader.OPENAI_CONFIG
+            llm_config=OPENAI_CONFIG
         ) 

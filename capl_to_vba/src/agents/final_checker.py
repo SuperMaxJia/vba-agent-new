@@ -1,4 +1,6 @@
 from autogen import AssistantAgent
+
+from ..config.llm_config import OPENAI_CONFIG
 from ..data.rule_loader import RuleLoader
 
 class FinalCheckerAgent(AssistantAgent):
@@ -37,5 +39,5 @@ class FinalCheckerAgent(AssistantAgent):
             2. 如果检查通过：
                - 输出"FINAL_CHECK_COMPLETE"
                - 可以给出代码优化建议""",
-            llm_config=rule_loader.OPENAI_CONFIG
+            llm_config=OPENAI_CONFIG
         ) 

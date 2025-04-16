@@ -1,4 +1,6 @@
 from autogen import AssistantAgent
+
+from ..config.llm_config import OPENAI_CONFIG
 from ..data.rule_loader import RuleLoader
 
 class CodeIntegratorAgent(AssistantAgent):
@@ -22,5 +24,5 @@ class CodeIntegratorAgent(AssistantAgent):
             3. 最后添加"TERMINATE"标记
             
             注意：必须包含完整的代码，不能只输出TERMINATE。""",
-            llm_config=rule_loader.OPENAI_CONFIG
+            llm_config=OPENAI_CONFIG
         ) 

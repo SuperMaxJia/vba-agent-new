@@ -1,5 +1,6 @@
 from autogen import AssistantAgent
 from ..data.rule_loader import RuleLoader
+from ..config.llm_config import OPENAI_CONFIG
 
 class PythonSyntaxCheckerAgent(AssistantAgent):
     """语法检查器，负责检查生成的Python-VBA代码是否符合语法规则"""
@@ -28,5 +29,5 @@ class PythonSyntaxCheckerAgent(AssistantAgent):
             2. 如果语法正确：
                - 输出"SYNTAX_CORRECT"
                - 可以给出代码优化建议""",
-            llm_config=rule_loader.OPENAI_CONFIG
+            llm_config=OPENAI_CONFIG
         ) 
