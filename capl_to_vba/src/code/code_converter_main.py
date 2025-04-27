@@ -3,6 +3,9 @@ import re
 from colorama import init, Fore, Style
 from typing import Dict, List, Optional, Tuple
 from autogen import UserProxyAgent, GroupChat, GroupChatManager, AssistantAgent
+import json  # 添加 json 模块导入
+
+from ..config.llm_config import OPENAI_CONFIG
 from ..data.rule_loader import RuleLoader
 from ..data.conversation_data import ConversationData
 from ..agents.code_analyzer import CodeAnalyzerAgent
@@ -65,7 +68,7 @@ class CodeConverter:
             max_consecutive_auto_reply=10,
             is_termination_msg=lambda x: x.get("content", "").rstrip().endswith("TERMINATE"),
             code_execution_config=False,
-            llm_config=self.rule_loader.OPENAI_CONFIG
+            llm_config=OPENAI_CONFIG
         )
         
         # 创建群聊
@@ -88,7 +91,7 @@ class CodeConverter:
         # 创建群聊管理器
         self.manager = GroupChatManager(
             groupchat=self.groupchat,
-            llm_config=self.rule_loader.OPENAI_CONFIG
+            llm_config=OPENAI_CONFIG
         )
 
     def read_capl_file(self, file_path: str) -> str:
@@ -154,37 +157,59 @@ class CodeConverter:
         
     def _process_analysis_phase(self, reply: str) -> Tuple[str, str]:
         """处理分析阶段的结果"""
-        if "ANALYSIS_COMPLETE" in reply:
-            # 提取预处理部分
-            preprocess_pattern = r"```c\n预处理部分：\n(.*?)\n```"
-            preprocess_match = re.search(preprocess_pattern, reply, re.DOTALL)
-            if preprocess_match:
-                self.conversation_data.preprocess_section = preprocess_match.group(1).strip()
-            
-            # 提取代码片段
-            code_snippet_pattern = r"```c\n代码片段\d+：\n(.*?)\n```"
-            code_snippets = re.findall(code_snippet_pattern, reply, re.DOTALL)
-            self.conversation_data.code_snippets = [snippet.strip() for snippet in code_snippets]
-            self.conversation_data.processing_queue = self.conversation_data.code_snippets.copy()
-            
-            # 打印提取结果
-            print_colored("\n提取的预处理部分：", COLOR_SYSTEM)
-            print_colored(self.conversation_data.preprocess_section if self.conversation_data.preprocess_section else "空", COLOR_DEBUG)
-            
-            print_colored("\n提取的代码片段：", COLOR_SYSTEM)
-            for i, snippet in enumerate(self.conversation_data.code_snippets, 1):
-                print_colored(f"\n代码片段{i}：", COLOR_SYSTEM)
-                print_colored(snippet, COLOR_DEBUG)
-            
-            # 确定下一阶段
-            if self.conversation_data.preprocess_section:
-                return "imports", self.conversation_data.preprocess_section
-            else:
-                if self.conversation_data.has_remaining_snippets():
-                    return "syntax_recognize", self.conversation_data.get_snippet()
+        try:
+            print(reply)
+            # 尝试解析 JSON 响应
+            analysis_result = json.loads(reply)
+
+            # 检查是否完成分析
+            if analysis_result.get("status") == "ANALYSIS_COMPLETE":
+                # 设置预处理部分
+                self.conversation_data.preprocess_section = analysis_result.get("preprocess", "").strip()
+
+                # 处理代码片段
+                code_snippets = []
+                for snippet in analysis_result.get("code_snippets", []):
+                    # 组合全局变量和函数定义
+                    global_vars = snippet.get("global_variables", "").strip()
+                    function_code = snippet.get("function", "").strip()
+
+                    # 如果有全局变量，先添加全局变量，然后是函数代码
+                    full_snippet = ""
+                    if global_vars:
+                        full_snippet += global_vars + "\n\n"
+                    full_snippet += function_code
+
+                    code_snippets.append(full_snippet.strip())
+
+                self.conversation_data.code_snippets = code_snippets
+                self.conversation_data.processing_queue = code_snippets.copy()
+
+                # 打印提取结果
+                print_colored("\n提取的预处理部分：", COLOR_SYSTEM)
+                print_colored(
+                    self.conversation_data.preprocess_section if self.conversation_data.preprocess_section else "空",
+                    COLOR_DEBUG)
+
+                print_colored("\n提取的代码片段：", COLOR_SYSTEM)
+                for i, snippet in enumerate(self.conversation_data.code_snippets, 1):
+                    print_colored(f"\n代码片{i}：", COLOR_SYSTEM)
+                    print_colored(snippet, COLOR_DEBUG)
+
+                # 确定下一阶段
+                if self.conversation_data.preprocess_section:
+                    return "imports", self.conversation_data.preprocess_section
                 else:
-                    return "integration", self.conversation_data.converted_snippets
-        return "error","No ANALYSIS_COMPLETE"
+                    if self.conversation_data.has_remaining_snippets():
+                        return "syntax_recognize", self.conversation_data.get_snippet()
+                    else:
+                        return "integration", self.conversation_data.converted_snippets
+
+            return "error", "Analysis not complete"
+        except json.JSONDecodeError:
+            return "error", "Invalid JSON response"
+        except Exception as e:
+            return "error", f"Error processing analysis: {str(e)}"
 
     def _process_imports_phase(self, reply: str) -> Tuple[str, str]:
         """处理导入阶段的结果"""
@@ -198,45 +223,74 @@ class CodeConverter:
     def _process_syntax_recognize_phase(self, reply: str) -> Tuple[str, str]:
         """处理语法识别阶段的结果"""
         if "SYNTAX_RECOGNIZED" in reply:
-            # 按行读取回复内容
-            recognized_items = []
-            for line in reply.split('\n'):
-                if line.strip():  # 忽略空行
-                    recognized_items.append(line.strip())
-            
-            # 生成映射
-            mapping = {}
-            for item in recognized_items:
-                vba_rules = self.rule_loader.get_vba_rule(item)
-                if vba_rules:
-                    mapping[item] = vba_rules
-            
-            # 打印识别到的内容和映射
-            if recognized_items:
-                print_colored("\n识别到的内容：", COLOR_SYSTEM)
-                for item in recognized_items:
-                    print_colored(item, COLOR_DEBUG)
-                print_colored("\n对应的VBA规则：", COLOR_SYSTEM)
-                for key, value in mapping.items():
-                    print_colored(f"{key} -> {value}", COLOR_DEBUG)
-            
-            # 将mapping转换为字符串
-            mapping_str = "\n".join([f"{key} -> {value}" for key, value in mapping.items()])
-            
-            return "conversion", mapping_str  # 转向 converter 处理转换，并传递映射字符串
+            try:
+                # 提取 JSON 部分
+                json_start = reply.find('{')
+                json_end = reply.rfind('}') + 1
+                if json_start != -1 and json_end != -1:
+                    json_str = reply[json_start:json_end]
+                    # 解析 JSON
+                    result = json.loads(json_str)
+                    recognized_items = result.get("syntax_elements", [])
+                    
+                    # 生成映射
+                    self.vba_rule_map = {}
+                    self.current_mapping = {}
+                    for capl_function in recognized_items:
+
+
+                        # 获取CAPL函数对应的VBA映射列表
+                        vba_mapping_list = self.rule_loader.get_capl_mapping(capl_function)
+                        self.current_mapping[capl_function] = vba_mapping_list
+                        if not vba_mapping_list:
+                            continue
+
+                        # 遍历VBA映射列表中的每个函数
+                        for vba_func in vba_mapping_list:
+                            vba_rule = self.rule_loader.get_vba_rule(vba_func)
+                            if vba_rule:
+                                self.vba_rule_map[vba_func] = vba_rule
+
+
+                    
+
+                    
+                    return "conversion", ""
+                else:
+                    return "error", "未找到有效的JSON数据"
+            except json.JSONDecodeError as e:
+                return "error", f"JSON解析错误: {str(e)}"
+            except Exception as e:
+                return "error", f"处理语法识别结果时出错: {str(e)}"
         return "error", "No SYNTAX_RECOGNIZED"
 
     def _process_conversion_phase(self, reply: str) -> Tuple[str, str]:
         """处理转换阶段的结果"""
         if "CONVERSION_COMPLETE" in reply:
-                return "syntax_recognize", reply
+            try:
+                # 提取最终代码部分
+                start_marker = "最终代码："
+                end_marker = "CONVERSION_COMPLETE"
+                
+                # 找到开始和结束位置
+                start_idx = reply.find(start_marker)
+                end_idx = reply.find(end_marker)
+                
+                if start_idx != -1 and end_idx != -1:
+                    # 提取代码内容
+                    code_content = reply[start_idx + len(start_marker):end_idx].strip()
+                    return "syntax_check", code_content
+                else:
+                    return "error", "未找到有效的代码内容"
+            except Exception as e:
+                return "error", f"提取代码内容时出错: {str(e)}"
         return "error", "No CONVERSION_COMPLETE"
 
     def _process_syntax_check_phase(self, reply: str) -> Tuple[str, str]:
         """处理语法检查阶段的结果"""
         if "SYNTAX_CHECK_COMPLETE" in reply:
             if self.conversation_data.has_remaining_snippets():
-                return "syntax_recognize", reply
+                return "syntax_recognize", self.conversation_data.get_snippet()
             else:
                 # 将converted_snippets转换为字符串
                 converted_str = "\n".join([str(snippet) for snippet in self.conversation_data.converted_snippets])
@@ -286,7 +340,7 @@ class CodeConverter:
         # 开始对话
         round_count = 0
         current_phase = "analysis"
-        current_content = None
+        current_content = self.conversation_data.capl_code
         
         while round_count < 15:  # 设置最大对话轮数
             round_count += 1
@@ -302,20 +356,19 @@ class CodeConverter:
             
             print_colored("\n发送给大模型的消息内容：", COLOR_SYSTEM)
             print_colored("="*50, COLOR_SYSTEM)
-            print_colored("="*50, COLOR_SYSTEM)
 
             # 构建消息
             message = self._build_message(current_phase, current_content)
             if not message:
                 break
-            # 生成回复
-            print_colored("发送给大模型，正在等待生成回复...", COLOR_SYSTEM)
-                
+
             reply = current_agent.generate_reply(
                 messages=[message],
                 sender=self.user_proxy
             )
-            
+            # 生成回复
+            print_colored("即将发送给大模型，等待生成回复...", COLOR_SYSTEM)
+
             # 处理收到的回复
             if reply:
                 print_colored(f"收到回复，长度: {len(reply)} 字符", COLOR_SYSTEM)
@@ -348,39 +401,55 @@ class CodeConverter:
 
     def _build_message(self, current_phase: str, content: str = None) -> Dict:
         """根据当前阶段构建消息"""
+        print("\n" + "=" * 50)
+        print(f"当前阶段: {current_phase}")
+        print("构建的消息内容:")
+
+        message = None
         if current_phase == "analysis":
-            return {
+            message = {
                 "role": "user",
-                "content": f"请将以下CAPL代码转换为VBA代码：\n\n{self.conversation_data.capl_code}"
+                "content": f"请分析以下CAPL代码：\n\n{content}"
             }
         elif current_phase == "imports":
-            return {
+            message = {
                 "role": "user",
-                "content": f"请处理以下预处理部分：\n\n{content}"
+                "content": f"请转换以下预处理指令：\n\n{content}"
             }
         elif current_phase == "syntax_recognize":
-            return {
+            message = {
                 "role": "user",
-                "content": f"请识别以下CAPL代码中的语法：\n\n{content}"
+                "content": f"请识别以下代码片段的语法结构：\n\n{content}"
             }
+
         elif current_phase == "conversion":
-            return {
+            message = {
                 "role": "user",
-                "content": f"请将以下CAPL代码转换为VBA代码：\n\n{content}"
+                "content": f"请将以下CAPL代码按照规则转换为VBA代码：\n\n代码：\n{self.conversation_data.current_snippet}\n\n 映射关系：\n{self.current_mapping}\n\nVBA规则：\n{self.vba_rule_map}"
             }
         elif current_phase == "syntax_check":
-            return {
+            message = {
                 "role": "user",
-                "content": f"请检查以下Python-VBA代码的语法：\n\n{content}"
+                "content": f"请检查以下VBA代码的语法：\n\n{content}"
             }
         elif current_phase == "integration":
-            return {
+            message = {
                 "role": "user",
-                "content": f"请将以下代码片段集成为完整的Python-VBA代码：\n\n{self.conversation_data.converted_snippets}"
+                "content": f"请整合以下代码片段：\n\n{content}"
             }
         elif current_phase == "final_check":
-            return {
+            message = {
                 "role": "user",
-                "content": f"请对以下Python-VBA代码进行最终检查：\n\n{content}"
+                "content": f"请对以下VBA代码进行最终检查：\n\n{content}"
             }
-        return None 
+
+        if message:
+            print("-" * 50)
+            print(f"角色: {message['role']}")
+            print(f"内容:\n{message['content']}")
+            print("=" * 50)
+        else:
+            print("未能构建消息！")
+            print("=" * 50)
+
+        return message
